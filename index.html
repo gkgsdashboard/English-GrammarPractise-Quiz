@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>English Practice Dashboard</title>
+  <style>
+    :root {
+      --bg: #eef2f7;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #475569;
+      --border: #cbd5e1;
+      --navy-dark: #0f172a;
+      --blue-accent: #2563eb;
+      --header-border: #2563eb;
+      --badge-yellow: #f59e0b;
+      --card-hover-border: #f59e0b;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+      --border: #334155;
+      --navy-dark: #020617;
+      --header-border: #38bdf8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    /* Top Utility Bar */
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+
+    .dark-toggle {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    /* Banner Header */
+    .banner {
+      background: var(--card-bg);
+      border: 3px solid var(--header-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .banner-title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--navy-dark);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    [data-theme="dark"] .banner-title {
+      color: #38bdf8;
+    }
+
+    .badges {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: var(--badge-yellow);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      text-transform: uppercase;
+    }
+
+    .goal-tag {
+      position: absolute;
+      right: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--navy-dark);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      text-align: center;
+      border: 2px dashed var(--badge-yellow);
+    }
+
+    .goal-tag span {
+      display: block;
+      color: var(--badge-yellow);
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 850px) {
+      .goal-tag { position: static; transform: none; margin-top: 1rem; display: inline-block; }
+    }
+
+    /* Cards Grid Layout */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--card-hover-border);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--subtext);
+      font-weight: 600;
+    }
+
+    .start-btn {
+      color: var(--blue-accent);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Bottom Quote Banner */
+    .footer-quote {
+      background: var(--navy-dark);
+      color: white;
+      text-align: center;
+      padding: 1.25rem;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-quote span { color: var(--badge-yellow); display: block; margin-top: 0.25rem; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="top-bar">
+      <button class="dark-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+    </div>
+
+    <!-- Banner Header -->
+    <div class="banner">
+      <div class="banner-title">ENGLISH PRACTICE DASHBOARD</div>
+      <div class="badges">
+        <span class="badge">★ FOCUS</span>
+        <span class="badge">★ CONSISTENCY</span>
+        <span class="badge">★ ANALYSIS</span>
+        <span class="badge">★ SUCCESS</span>
+      </div>
+      <div class="goal-tag">
+        TARGET
+        <span>MY GOALS</span>
+      </div>
+    </div>
+
+    <!-- Quizzes Grid -->
+    <div class="grid-container" id="quizGrid"></div>
+
+    <!-- Bottom Motivational Quote -->
+    <div class="footer-quote">
+      ONE DAY OR DAY ONE. YOU DECIDE. | SMALL STEPS EVERY DAY LEAD TO BIG RESULTS.
+      <span>ALL THE BEST! 🔥</span>
+    </div>
+  </div>
+
+  <script>
+    const quizFiles = [
+      { name: "1. Pronoun Practice", file: "pronoun.html" },
+      { name: "2. Adjective Practice", file: "adjective.html" },
+      { name: "3. Verb Practice", file: "verb.html" },
+      { name: "4. Noun Practice", file: "noun.html" },
+      { name: "5. Adverb Practice", file: "adverb.html" },
+      { name: "6. Subject Verb Agreement", file: "subjectverbagreement.html" },
+      { name: "7. Tense Practice", file: "tense.html" },
+      { name: "8. Conjunction Practice", file: "conjuction.html" },
+      { name: "9. Preposition Practice", file: "prepostion.html" },
+      { name: "10. Advanced Verb Practice", file: "advancedverb.html" },
+      { name: "11. Question Tag & Superfluous", file: "questiontagandsuperflous.html" },
+      { name: "12. Conditional Sentences", file: "conditionalsentences.html" },
+      { name: "13. Voice Practice", file: "voice.html" },
+      { name: "14. Narration Practice", file: "narration.html" },
+      { name: "15. Articles Practice", file: "articles.html" },
+      { name: "16. Miscellaneous", file: "miscelleneous.html" },
+      { name: "17. Miscellaneous Part 2", file: "miscelleneous2.html" }
+    ];
+
+    const grid = document.getElementById("quizGrid");
+
+    function renderCards() {
+      grid.innerHTML = "";
+      quizFiles.forEach(quiz => {
+        const card = document.createElement("a");
+        card.className = "card";
+        card.href = "./topics/" + encodeURIComponent(quiz.file);
+
+        card.innerHTML = `
+          <div class="card-title">${quiz.name}</div>
+          <div class="card-footer">
+            <span>Quiz Test</span>
+            <span class="start-btn">Start &rarr;</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function toggleTheme() {
+      const current = document.body.getAttribute("data-theme");
+      if (current === "dark") {
+        document.body.removeAttribute("data-theme");
+      } else {
+        document.body.setAttribute("data-theme", "dark");
+      }
+    }
+
+    renderCards();
+  </script>
+</body>
+</html>
