@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Conjunction Practice Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "A woman can not understand (a)/ how difficult it is to take care of a newborn baby (b)/ unless she doesn't experience the sleepless nights herself (c)/ for several weeks. (d)",
+    options: ["A woman can not understand", "how difficult it is to take care of", "unless she doesn't experience the", "sleepless nights herself for several weeks."],
+    answer: 2,
+    explanation: "Correction: Use 'experiences' instead of 'doesn't experience'. 'Unless' itself is a negative conjunction, so using 'not' or 'doesn't' in its clause creates an incorrect double negative[cite: 10]."
+  },
+  {
+    id: 2,
+    question: "Both government policies as well as individual (a)/ responsibility are necessary to reduce pollution (b)/ and protect natural resources for future generations. (c) No error (d)",
+    options: ["Both government policies as well as individual", "responsibility are necessary to reduce pollution", "and protect natural resources for future generations.", "No error"],
+    answer: 0,
+    explanation: "Correction: Use 'and' instead of 'as well as'. The correlative conjunction 'Both' forms a strict pair with 'and'[cite: 10]."
+  },
+  {
+    id: 3,
+    question: "A wise investor knows that (a)/ he has no other option (b)/ but to diversify his investments across multiple sectors (c)/ to protect himself from unexpected financial crises. (d)",
+    options: ["A wise investor knows that", "he has no other option", "but to diversify his investments across", "multiple sectors to protect himself from..."],
+    answer: 2,
+    explanation: "Correction: Use 'than' instead of 'but'. Words like 'other' and 'otherwise' are followed by 'than' rather than 'but'[cite: 10]."
+  },
+  {
+    id: 4,
+    question: "As soon as the heavy rain (a)/ started pouring on the crowded street (b)/ then people rushed to take shelter in nearby shops. (c)/ No error (d)",
+    options: ["As soon as the heavy rain", "started pouring on the crowded street", "then people rushed to take shelter", "No error"],
+    answer: 2,
+    explanation: "Correction: Remove 'then'. Clauses introduced by 'As soon as' take a simple comma to link the main clause, making 'then' redundant[cite: 10]."
+  },
+  {
+    id: 5,
+    question: "The children were playing happily in the backyard (a)/ during their mothers were preparing (b)/ lunch for them in the kitchen. (c)/ No error (d)",
+    options: ["The children were playing happily", "during their mothers were preparing", "lunch for them in the kitchen.", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'while' instead of 'during'. 'During' is a preposition and must be followed by a noun/noun phrase, whereas 'while' acts as a conjunction to link clauses[cite: 10]."
+  },
+  {
+    id: 6,
+    question: "She asked me that why (a)/ I had suddenly moved to a new city (b)/ without informing anyone in my neighbourhood. (c)/ No error (d)",
+    options: ["She asked me that why", "I had suddenly moved to a new city", "without informing anyone in my neighbourhood.", "No error"],
+    answer: 0,
+    explanation: "Correction: Remove 'that'. In indirect speech, relative question words ('why', 'what', 'how') do not take the conjunction 'that' preceding them[cite: 10]."
+  },
+  {
+    id: 7,
+    question: "No sooner did (a)/ she send her job application (b)/ then she received a reply inviting her for an interview (c)/ which surprised her because she wasn't expecting... (d)",
+    options: ["No sooner did", "she send her job application", "then she received a reply inviting her", "which surprised her because she wasn't..."],
+    answer: 2,
+    explanation: "Correction: Use 'than' instead of 'then'. 'No sooner' introduces a comparative sequence and requires a matching 'than' link[cite: 10]."
+  },
+  {
+    id: 8,
+    question: "The new technology is as efficient, if not (a)/ more than most (b)/ systems currently used in government offices (c)/ for long-term data storage. (d)",
+    options: ["The new technology is as efficient, if not", "more than most", "systems currently used in government offices", "for long-term data storage."],
+    answer: 0,
+    explanation: "Correction: Use 'as efficient as' instead of 'as efficient'. Positive degree comparison structures must be fully completed before transitioning to alternative phrases[cite: 10]."
+  },
+  {
+    id: 9,
+    question: "Maria finished the marathon (a)/ with a bright smile on her face (b)/ even she was exhausted after running for hours. (c)/ No error (d)",
+    options: ["Maria finished the marathon", "with a bright smile on her face", "even she was exhausted after running", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'even though' or 'though' instead of 'even' to introduce a valid subordinating clause of concession[cite: 10]."
+  },
+  {
+    id: 10,
+    question: "The environmental campaign (a)/ raised not only awareness about plastic pollution (b)/ but also encouraged people to adopt sustainable habits (c)/ in their daily lifestyle. (d)",
+    options: ["The environmental campaign", "raised not only awareness about plastic", "but also encouraged people to adopt", "sustainable habits in their daily lifestyle."],
+    answer: 1,
+    explanation: "Correction: Position it as 'not only raised awareness'. To preserve strict grammatical parallelism with 'but also encouraged' (verb phrase), 'not only' must directly precede the verb 'raised'[cite: 10]."
+  },
+  {
+    id: 11,
+    question: "Hardly had the students begun solving (a)/ the questions than the invigilator announced (b)/ an important instruction (c)/ about the question paper. (d)",
+    options: ["Hardly had the students begun solving", "the questions than the invigilator", "an important instruction", "about the question paper."],
+    answer: 1,
+    explanation: "Correction: Use 'when' instead of 'than'. Negative introductory words like 'Hardly' and 'Scarcely' are strictly correlated with 'when'[cite: 10]."
+  },
+  {
+    id: 12,
+    question: "The teacher said to the students (a)/ \"Complete your homework on time, lest you (b)/ will face difficulty in understanding tomorrow's lesson.\" (c)/ No error (d)",
+    options: ["The teacher said to the students", "\"Complete your homework on time, lest you", "will face difficulty in understanding...", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'should face' or simply the base verb 'face' instead of 'will face'. The negative introductory conjunction 'lest' is conventionally followed by 'should' or a subjunctive layout[cite: 10]."
+  },
+  {
+    id: 13,
+    question: "He saves a portion of his income every month (a)/ that he can build a secure future (b)/ for his family and avoid financial stress (c)/ during emergencies. (d)",
+    options: ["He saves a portion of his income every month", "that he can build a secure future", "for his family and avoid financial stress", "during emergencies."],
+    answer: 1,
+    explanation: "Correction: Use 'so that' instead of 'that' to establish a proper clause showing purpose[cite: 10]."
+  },
+  {
+    id: 14,
+    question: "Identify the part of the sentence that has an error: It is incorrect to assume that artificial intelligence systems can behave same like the human brain in all situations.",
+    options: ["It is incorrect to assume that", "artificial intelligence systems can behave", "same like the human brain", "in all situations."],
+    answer: 2,
+    explanation: "Explanation: Use 'same as' instead of 'same like' to fulfill standard comparative structural idioms[cite: 10]."
+  },
+  {
+    id: 15,
+    question: "Identify the part of the sentence that has an error: As she had prepared well for the debate competition, she forgot her lines on stage.",
+    options: ["As she had prepared well", "for the debate competition", "she forgot her lines on stage", "No error"],
+    answer: 0,
+    explanation: "Explanation: Use 'Although' instead of 'As'. The sentence depicts a clear contrast rather than a cause-and-effect relationship[cite: 10]."
+  },
+  {
+    id: 16,
+    question: "Identify the part of the sentence that has an error: At the end of the long trek we were exhausted and delighted that we had finally reached the summit.",
+    options: ["At the end of the long trek", "we were exhausted and delighted", "that we had finally reached the summit", "No error"],
+    answer: 1,
+    explanation: "Explanation: Use 'but' instead of 'and' ('exhausted but delighted') to show the contrasting relationship between tiredness and joy[cite: 10]."
+  },
+  {
+    id: 17,
+    question: "Researchers have discovered that certain plants (a)/ can defend themselves against harmful insects (b)/ by releasing natural chemicals as pheromones, essential oils, and defensive enzymes. (c)/ No error (d)",
+    options: ["Researchers have discovered that certain plants", "can defend themselves against harmful insects", "by releasing natural chemicals as pheromones...", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'such as' or 'like' instead of 'as' to correctly introduce a list of concrete examples[cite: 10]."
+  },
+  {
+    id: 18,
+    question: "Identify the part of the sentence that has an error: You will not succeed in this exam as you study regularly with complete focus.",
+    options: ["You will not succeed in this exam", "as you study regularly", "with complete focus", "No error"],
+    answer: 1,
+    explanation: "Explanation: Use 'unless' instead of 'as' to add the negative conditional requirement needed to make the clause logical[cite: 10]."
+  },
+  {
+    id: 19,
+    question: "Identify the part of the sentence that has an error: Smart home devices have made daily life far more convenient and automated, so they also pose serious privacy concerns for users around the world.",
+    options: ["Smart home devices have made daily life", "far more convenient and automated", "so they also pose serious privacy concerns", "for users around the world."],
+    answer: 2,
+    explanation: "Explanation: Use the adversarial conjunction 'but' or 'yet' instead of 'so' to establish a valid contrasting relationship[cite: 10]."
+  },
+  {
+    id: 20,
+    question: "Identify the part of the sentence that has an error: The earthquake caused massive destruction although it struck the city during the early hours of the morning.",
+    options: ["The earthquake caused massive destruction", "although it struck", "the city during the early hours of the morning", "No error"],
+    answer: 1,
+    explanation: "Explanation: Use time conjunctions like 'as' or 'when' instead of 'although' to provide proper temporal context[cite: 10]."
+  },
+  {
+    id: 21,
+    question: "If this cadet can run ten miles with ease (a)/ and complete high-altitude drills without resting, (b)/ his partner struggles to finish even half the course (c)/ and gasps for breath after every steep climb. (d)",
+    options: ["If this cadet can run ten miles with ease", "and complete high-altitude drills without resting,", "his partner struggles to finish even half the course", "and gasps for breath after every steep climb."],
+    answer: 0,
+    explanation: "Correction: Use 'While' or 'Whereas' instead of 'If' to properly project a direct stylistic comparison or contrast between the two cadets[cite: 10]."
+  },
+  {
+    id: 22,
+    question: "Such intelligence officers who monitor dark-web activities (a)/ to prevent cyber-attacks and digital frauds (b)/ often work anonymously (c)/ and handle extremely sensitive information. (d)",
+    options: ["Such intelligence officers who monitor dark-web", "to prevent cyber-attacks and digital frauds", "often work anonymously", "and handle extremely sensitive information."],
+    answer: 0,
+    explanation: "Correction: Use 'as' instead of 'who' to complete the restrictive comparative configuration 'Such... as...'[cite: 10]."
+  },
+  {
+    id: 23,
+    question: "The witness was (a)/ too nervous (b)/ for speak the truth in the courtroom (c)/ after receiving threats from the accused gang members. (d)",
+    options: ["The witness was", "too nervous", "for speak the truth in the courtroom", "after receiving threats from the accused..."],
+    answer: 2,
+    explanation: "Correction: Use 'to speak' instead of 'for speak' to satisfy the standard 'too... to...' infinitive pattern requirement[cite: 10]."
+  },
+  {
+    id: 24,
+    question: "In today's world, you cannot achieve financial stability (a)/ although you save and invest a decent amount every month (b)/ because steady planning and disciplined saving (c)/ are required to secure your future. (d)",
+    options: ["In today's world, you cannot achieve stability", "although you save and invest a decent amount", "because steady planning and disciplined saving", "are required to secure your future."],
+    answer: 1,
+    explanation: "Correction: Use 'unless' instead of 'although' to appropriately attach a negative conditional clause[cite: 10]."
+  },
+  {
+    id: 25,
+    question: "A successful career can give you financial security, (a)/ global exposure, and respect in society, as it also (b)/ demands time, sacrifices, and long years of consistency (c)/ no error (d)",
+    options: ["A successful career can give you security,", "global exposure, and respect in society, as it also", "demands time, sacrifices, and long years...", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'but' or 'yet' instead of 'as' to highlight the trade-offs or opposing requirements of a career[cite: 10]."
+  },
+  {
+    id: 26,
+    question: "She is neither interested in casual relationships (a)/ or ready for marriage right now (b)/ as she wants to focus on her career (c)/ and explore life independently. (d)",
+    options: ["She is neither interested in casual relationships", "or ready for marriage right now", "as she wants to focus on her career", "and explore life independently."],
+    answer: 1,
+    explanation: "Correction: Use 'nor' instead of 'or'. 'Neither' must strictly pair with 'nor'[cite: 10]."
+  },
+  {
+    id: 27,
+    question: "The students asked the administrator (a)/ that if the university portal would crash again like last year (b)/ because the server was already running slow. (c)/ No error (d)",
+    options: ["The students asked the administrator", "that if the university portal would crash again", "because the server was already running slow.", "No error"],
+    answer: 1,
+    explanation: "Correction: Remove 'that'. In indirect questions or conditional inquiries, combining the conjunction 'that' with 'if' is a structural error[cite: 10]."
+  },
+  {
+    id: 28,
+    question: "Not only the employees reported repeated system crashes (a)/ and slow network issues, (b)/ but they also complained about frequent data loss (c)/ during the peak working hours. (d)",
+    options: ["Not only the employees reported repeated crashes", "and slow network issues,", "but they also complained about frequent data loss", "during the peak working hours."],
+    answer: 0,
+    explanation: "Correction: When beginning a sentence with 'Not only', use inversion format: 'Not only did the employees report...'[cite: 10]."
+  },
+  {
+    id: 29,
+    question: "The reason for thousands of aspirants gathering (a)/ outside the commission office last week (b)/ was because the exam results (c)/ were delayed without any official notification. (d)",
+    options: ["The reason for thousands of aspirants gathering", "outside the commission office last week", "was because the exam results", "were delayed without any official notification."],
+    answer: 2,
+    explanation: "Correction: Use 'that' instead of 'because'. Phrases starting with 'The reason... was' must be completed using 'that' to avoid a structural explanation redundancy[cite: 10]."
+  },
+  {
+    id: 30,
+    question: "When the cyclist noticed a car speeding recklessly towards the crossing (a)/ he waved his hands repeatedly (b)/ so that to alert the pedestrians (c)/ standing near the zebra crossing. (d)",
+    options: ["When the cyclist noticed a car speeding...", "he waved his hands repeatedly", "so that to alert the pedestrians", "standing near the zebra crossing."],
+    answer: 2,
+    explanation: "Correction: Use 'so as' or simply 'to' instead of 'so that'. 'So that' requires a full following clause with a subject and verb, not a direct infinitive[cite: 10]."
+  },
+  {
+    id: 31,
+    question: "This social media platform will implement strict verification rules (a)/ to reduce misinformation and fake profiles (b)/ if the influencers like them or not. (c)/ No error (d)",
+    options: ["This social media platform will implement rules", "to reduce misinformation and fake profiles", "if the influencers like them or not.", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'whether' instead of 'if'. An alternative condition presenting the phrase 'or not' directly requires 'whether'[cite: 10]."
+  },
+  {
+    id: 32,
+    question: "The storm across the coastal districts (a)/ was such a violent one (b)/ but fishermen couldn't sail their boats (c)/ for two consecutive days. (d)",
+    options: ["The storm across the coastal districts", "was such a violent one", "but fishermen couldn't sail their boats", "for two consecutive days."],
+    answer: 2,
+    explanation: "Correction: Use 'that' instead of 'but'. The core modifier structure 'such... that' is required to correctly present a clear consequence clause[cite: 10]."
+  },
+  {
+    id: 33,
+    question: "The express train was delayed for several hours (a)/ at the central station (b)/ because the dense fog covering the tracks (c)/ early in the morning. (d)",
+    options: ["The express train was delayed for several hours", "at the central station", "because the dense fog covering the tracks", "early in the morning."],
+    answer: 2,
+    explanation: "Correction: Use 'because of' instead of 'because'. 'Because' links full independent clauses, whereas 'the dense fog...' functions as a noun phrase block requiring a preposition[cite: 10]."
+  },
+  {
+    id: 34,
+    question: "You are so late (a)/ to start preparing for this year's civil services exam (b)/ so you should prepare for the next year's exam (c)/ for better results. (d)",
+    options: ["You are so late", "to start preparing for this year's civil services", "so you should prepare for the next year's", "for better results."],
+    answer: 0,
+    explanation: "Correction: Use 'too late' instead of 'so late' to establish a proper negative infinitive consequence layout ('too... to...')[cite: 10]."
+  },
+  {
+    id: 35,
+    question: "As such you ever receive suspicious messages (a)/ on social media asking for your personal details (b)/ report and block the sender (c)/ without replying. (d)",
+    options: ["As such you ever receive suspicious messages", "on social media asking for your personal details", "report and block the sender", "without replying."],
+    answer: 0,
+    explanation: "Correction: Use conditional 'If' instead of the awkward introductory phrase 'As such'[cite: 10]."
+  },
+  {
+    id: 36,
+    question: "Always wear a helmet while riding a two-wheeler (a)/ but you might face a hefty fine or (b)/ serious injury if an accident happens. (c) No error (d)",
+    options: ["Always wear a helmet while riding a two-wheeler", "but you might face a hefty fine or", "serious injury if an accident happens.", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'otherwise' or 'or else' instead of 'but' to introduce an alternative negative consequence[cite: 10]."
+  },
+  {
+    id: 37,
+    question: "I was amazed to know that if Riya (a)/ had designed a working model (b)/ of a solar-powered water purifier (c)/ on her own. (d)",
+    options: ["I was amazed to know that if Riya", "had designed a working model", "of a solar-powered water purifier", "on her own."],
+    answer: 0,
+    explanation: "Correction: Remove the conditional word 'if'. The sentence reports a direct, verified fact which requires only the declarative link 'that'[cite: 10]."
+  },
+  {
+    id: 38,
+    question: "Students find it much easier (a)/ to watch recorded lectures (b)/ then attend a live class with full concentration. (c)/ No error (d)",
+    options: ["Students find it much easier", "to watch recorded lectures", "then attend a live class with full concentration.", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'than' instead of 'then'. Comparisons involving an explicit modifier ('easier') require the comparative particle 'than'[cite: 10]."
+  },
+  {
+    id: 39,
+    question: "She missed her practical examination (a)/ due to she was suffering from (b)/ various medical issues (c)/ No error. (d)",
+    options: ["She missed her practical examination", "due to she was suffering from", "various medical issues", "No error."],
+    answer: 1,
+    explanation: "Correction: Use the causal conjunction 'because' instead of the prepositional phrase 'due to' preceding a full active clause[cite: 10]."
+  },
+  {
+    id: 40,
+    question: "The doctors had no choice when to perform (a)/ an emergency surgery on the accident victim, (b)/ as delaying the procedure could have resulted (c)/ in severe internal bleeding and permanent organ damage. (d)",
+    options: ["The doctors had no choice when to perform", "an emergency surgery on the accident victim,", "as delaying the procedure could have resulted", "in severe internal bleeding and permanent organ..."],
+    answer: 0,
+    explanation: "Correction: Use the standard restrictive exclusion idiom phrase 'no choice but to perform' instead of 'when to perform'[cite: 10]."
+  },
+  {
+    id: 41,
+    question: "Our rural healthcare system can improve (a)/ but if we invest more in medical infrastructure (b)/ and train local doctors properly. (c)/ no error (d)",
+    options: ["Our rural healthcare system can improve", "but if we invest more in medical infrastructure", "and train local doctors properly.", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'only if' instead of 'but if' to properly state a mandatory requirement for improvement[cite: 10]."
+  },
+  {
+    id: 42,
+    question: "Many army units have been deployed (a)/ in Delhi and other major cities (b)/ in order that intelligence agencies have noticed some (c)/ suspicious activities in border areas. (d)",
+    options: ["Many army units have been deployed", "in Delhi and other major cities", "in order that intelligence agencies have noticed", "some suspicious activities in border areas."],
+    answer: 2,
+    explanation: "Correction: Use 'because' or 'since' instead of 'in order that'. The clause states a cause/reason for the deployment rather than an intended future purpose[cite: 10]."
+  },
+  {
+    id: 43,
+    question: "The new government policy (a) / neither aims to reduce unemployment (b) / nor improve the quality of education (c) / across rural areas effectively. (d)",
+    options: ["The new government policy", "neither aims to reduce unemployment", "nor improve the quality of education", "across rural areas effectively."],
+    answer: 1,
+    explanation: "Correction: Position it as 'aims neither to reduce'. To maintain proper parallelism with 'nor improve' (infinitive phrase), 'neither' must directly precede its matching infinitive 'to reduce'[cite: 10]."
+  },
+  {
+    id: 44,
+    question: "Sentence Improvement: Either this high-performance electric car, which offers rapid acceleration and advanced self-driving features, and the hybrid SUV will be selected for the road-trip across the mountains.",
+    options: ["or the hybrid SUV", "nor the hybrid SUV", "but the hybrid SUV", "yet the hybrid SUV"],
+    answer: 0,
+    explanation: "Option (a) is correct. The correlative conjunction 'Either' must strictly form a pair with 'or'[cite: 10]."
+  },
+  {
+    id: 45,
+    question: "Sentence Improvement: While he heard the explosion, he immediately rushed outside, called the emergency services, and tried his best to help the injured people who were screaming for assistance.",
+    options: ["Hardly he heard the explosion", "No substitution", "No sooner did he hear the explosion", "When he heard the explosion"],
+    answer: 3,
+    explanation: "Option (d) is correct. 'When' is the contextually appropriate time conjunction to introduce a single past action that triggered an immediate sequence of events[cite: 10]."
+  },
+  {
+    id: 46,
+    question: "Sentence Improvement: After the sudden breakdown of their car in the middle of the highway, the family had no choice to wait patiently for the towing service to arrive.",
+    options: ["no substitution required", "no choice as to wait", "no choice but to wait", "no choice how to wait"],
+    answer: 2,
+    explanation: "Option (c) is correct. The standard idiomatic phrase configuration meaning no alternative available is 'no choice but to wait'[cite: 10]."
+  },
+  {
+    id: 47,
+    question: "Sentence Improvement: Ensure that your car has sufficient fuel, proper tyre pressure, and all essential tools before starting this long highway journey however you may get stranded in an isolated area with no help nearby.",
+    options: ["No improvement", "otherwise", "yet", "still"],
+    answer: 1,
+    explanation: "Option (b) is correct. 'Otherwise' is required to introduce a negative consequence that will occur if the stated conditions are not met[cite: 10]."
+  },
+  {
+    id: 48,
+    question: "Sentence Improvement: This phone is not as durable like the previous model, which could easily withstand rough use and still work smoothly for years.",
+    options: ["so durable as", "so durable that", "as durable like", "as durable as"],
+    answer: 0,
+    explanation: "Option (a) applies the correct negative equative comparative idiom 'not so... as' or 'not as... as', with option (a) providing a standard choice format[cite: 10]."
+  },
+  {
+    id: 49,
+    question: "Sentence Improvement: In spite of my friend's little puppy gets excited and chews everything, everyone adores him because he's so playful.",
+    options: ["No substitution required", "Although", "Nevertheles", "However"],
+    answer: 1,
+    explanation: "Option (b) is correct. 'Although' functions as a true conjunction capable of linking a full subordinate finite clause, unlike prepositions like 'In spite of'[cite: 10]."
+  },
+  {
+    id: 50,
+    question: "Sentence Improvement: Such was the intensity of the storm that the entire coastal town had to be evacuated urgently to ensure everyone's safety.",
+    options: ["So was the intensity", "Much was the intensity", "No substitution required", "Such as the intensity"],
+    answer: 2,
+    explanation: "Option (c) requires no substitution. The introductory inversion format 'Such was... that' is completely sound[cite: 10]."
+  },
+  {
+    id: 51,
+    question: "Sentence Improvement: Unless you have balance in your metro smart card, you will face no problem in entering the station.",
+    options: ["Only", "Until", "Provided", "No improvement required"],
+    answer: 2,
+    explanation: "Option (c) is correct. 'Provided' or 'Provided that' introduces a positive condition meaning 'if' or 'on the condition that', making the clause logical with 'face no problem'[cite: 10]."
+  },
+  {
+    id: 52,
+    question: "Sentence Improvement: Pasta is Rohan's favourite food, even burgers is Priya's favourite.",
+    options: ["but burgers be", "while burgers are", "No substitution required", "either burgers are"],
+    answer: 1,
+    explanation: "Option (b) is correct. 'While' appropriately introduces a parallel contrastive clause, and 'burgers' requires the plural verb 'are'[cite: 10]."
+  },
+  {
+    id: 53,
+    question: "Sentence Improvement: No sooner you complete the online application, you will receive a confirmation email along with your registration ID.",
+    options: ["Although", "As soon as", "Hardly", "No substitution required"],
+    answer: 1,
+    explanation: "Option (b) is correct. 'As soon as' introduces a standard conditional sequence clause without requiring immediate inversion or specific core correlates like 'than'[cite: 10]."
+  },
+  {
+    id: 54,
+    question: "Sentence Improvement: Just when we locked the main door and stepped outside for our evening walk, than it started raining heavily.",
+    options: ["No sooner did we lock the main door and step outside", "Hardly when we locked the main door", "As soon as we locked the main door", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) correctly updates the initial clause to form a structurally standard inverted past perfect/simple past sequence paired with 'than'[cite: 10]."
+  },
+  {
+    id: 55,
+    question: "Sentence Improvement: Unless residents submit a written request to the municipality, they will not install new streetlights in the neighbourhood.",
+    options: ["Without residents submit a written request", "Despite residents submit a written request", "No substitution required", "Except residents submit a written request"],
+    answer: 2,
+    explanation: "Option (c) requires no substitution. 'Unless' introduces the negative condition logically ('if they do not submit...')[cite: 10]."
+  },
+  {
+    id: 56,
+    question: "Sentence Improvement: She spoke politely but behaving confidently during the meeting, which impressed everyone present in the conference room.",
+    options: ["but behaved", "so behaved", "and behaved", "No substitution"],
+    answer: 2,
+    explanation: "Option (c) applies the coordinating conjunction 'and' to smoothly combine parallel simple past finite verbs ('spoke... and behaved')[cite: 10]."
+  },
+  {
+    id: 57,
+    question: "Sentence Improvement: The ladder was so long to reach the roof of the old farmhouse when the workers needed to repair the chimney.",
+    options: ["too long for", "long enough to", "so long that", "No improvement"],
+    answer: 1,
+    explanation: "Option (b) is correct. 'Long enough to' accurately indicates that the ladder possessed the sufficient length required to fulfill the goal[cite: 10]."
+  },
+  {
+    id: 58,
+    question: "Sentence Improvement: But for his timely medical advice, the patient would have suffered from severe complications and might not have recovered so quickly.",
+    options: ["Except with his timely medical advice", "Because of his timely medical advice", "No improvement", "But about his timely medical advice"],
+    answer: 2,
+    explanation: "Option (c) requires no improvement. The conditional idiomatic prepositional phrase 'But for' properly means 'if it had not been for'[cite: 10]."
+  },
+  {
+    id: 59,
+    question: "Sentence Improvement: So much as you keep helping me in my projects, I will not tell your secret to our parents.",
+    options: ["As long to", "As much to", "As long as", "No improvement"],
+    answer: 2,
+    explanation: "Option (c) is correct. The conditional time-limit phrase idiom required here is 'As long as' (जब तक)[cite: 10]."
+  },
+  {
+    id: 60,
+    question: "Sentence Improvement: Hardly had she opened the classroom window than a strong gust of wind blew inside and scattered all the papers across the desks.",
+    options: ["No substitution", "opened the classroom window when", "opens the classroom window when", "open the classroom window then"],
+    answer: 1,
+    explanation: "Option (b) is correct. The negative introductory adverb 'Hardly' must pair with the temporal conjunction 'when'[cite: 10]."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>${q.id}. ${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q${i+1}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

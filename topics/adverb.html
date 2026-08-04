@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Adverb Practice Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+
+/* Corrected Syntax Here */
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "Select the sentence with the appropriate use of adverb of manner.",
+    options: ["He completed the assignment efficiently.", "He finished the task on time.", "He completes the assignment every day.", "He is working on the assignment at the new site."],
+    answer: 0,
+    explanation: "Option (a) is correct. 'Efficiently' is an adverb of manner that shows how the assignment was completed."
+  },
+  {
+    id: 2,
+    question: "He seldom or ever (a)/ visits his relatives (b)/ during the festival season (c)/ as he hates social gatherings (d).",
+    options: ["He seldom or ever", "visits his relatives", "during the festival season", "as he hates social gatherings"],
+    answer: 0,
+    explanation: "Correction: Use 'seldom or never' or 'seldom if ever' instead of 'seldom or ever'."
+  },
+  {
+    id: 3,
+    question: "Though she is intelligent (a)/ she could not handle (b)/ the challenges in her career confident. (c)/ no error (d)",
+    options: ["Though she is intelligent", "she could not handle", "the challenges in her career confident.", "no error"],
+    answer: 2,
+    explanation: "Correction: Use the adverb form 'confidently', 'in a confident manner', or 'with confidence' in place of the adjective 'confident' to modify the verb 'handle'."
+  },
+  {
+    id: 4,
+    question: "Select the sentence with the appropriate use of adverb of frequency.",
+    options: ["She works at the hospital with full dedication.", "She works at the hospital to help the patients.", "She usually works at the hospital from 9 am to 5 am.", "She works at the hospital with her friends."],
+    answer: 2,
+    explanation: "Option (c) is correct. 'Usually' is an adverb of frequency showing how often an event occurs."
+  },
+  {
+    id: 5,
+    question: "They were luckily (a)/ not travelling in the train (b)/ which met with an accident (c)/ last night (d).",
+    options: ["They were luckily", "not travelling in the train", "which met with an accident", "last night"],
+    answer: 0,
+    explanation: "Correction: Use sentence modifier 'Luckily, they were' in place of 'They were luckily' to modify the whole clause."
+  },
+  {
+    id: 6,
+    question: "I know this dress looks very (a)/ elegant but it is too much (b)/ tight to wear (c)/ comfortably (d).",
+    options: ["I know this dress looks very", "elegant but it is too much", "tight to wear", "comfortably"],
+    answer: 1,
+    explanation: "Correction: Use 'much too' in place of 'too much' because 'much too' is followed by an adjective ('tight')."
+  },
+  {
+    id: 7,
+    question: "Since her birth, her parents (a)/ have always encouraged (b)/ her to aim highly (c)/ and never give up. (d)",
+    options: ["Since her birth, her parents", "have always encouraged", "her to aim highly", "and never give up."],
+    answer: 2,
+    explanation: "Correction: Use 'high' instead of 'highly' when referring to a literal or figurative direction of aiming."
+  },
+  {
+    id: 8,
+    question: "Hardly they visit (a)/ their relatives (b)/ after the dispute (c)/ that arose over the property last year (d).",
+    options: ["Hardly they visit", "their relatives", "after the dispute", "that arose over the property last year"],
+    answer: 0,
+    explanation: "Correction: When starting a sentence with a negative adverb like 'Hardly', use inversion structure: 'Hardly do they visit' in place of 'Hardly they visit'."
+  },
+  {
+    id: 9,
+    question: "This smartphone is (a)/ very costlier than the previous model (b)/ because of its advanced features (c)/ and upgraded camera system (d).",
+    options: ["This smartphone is", "very costlier than the previous model", "because of its advanced features", "and upgraded camera system"],
+    answer: 1,
+    explanation: "Correction: Use 'much' instead of 'very' preceding a comparative degree adjective ('costlier')."
+  },
+  {
+    id: 10,
+    question: "Although she only earns (a)/ a few hundred rupees every month (b)/ yet she manages to pay (c)/ her child's school fees and household bills (d).",
+    options: ["Although she only earns", "a few hundred rupees every month", "yet she manages to pay", "her child's school fees and household bills"],
+    answer: 0,
+    explanation: "Correction: Use 'earns only' instead of 'only earns' so that the modifier is placed immediately next to the element it restricts ('a few hundred rupees')."
+  },
+  {
+    id: 11,
+    question: "She was very praised (a)/ by the teachers (b)/ for her dedication and hard work (c). no error (d)",
+    options: ["She was very praised", "by the teachers", "for her dedication and hard work", "no error"],
+    answer: 0,
+    explanation: "Correction: 'Very' cannot modify a past participle verb directly in this manner. Use 'praised a lot' or 'much praised' instead of 'very praised'."
+  },
+  {
+    id: 12,
+    question: "She was (a)/ quite completely (b)/ sure about her decision (c)/ to move abroad for higher studies (d).",
+    options: ["She was", "quite completely", "sure about her decision", "to move abroad for higher studies"],
+    answer: 1,
+    explanation: "Correction: 'Quite' and 'completely' are redundant when used together. Remove 'completely' after 'quite'."
+  },
+  {
+    id: 13,
+    question: "She was (a)/ rewarded generously for (b)/ her efforts to manage (c)/ the entire event efficient (d).",
+    options: ["She was", "rewarded generously for", "her efforts to manage", "the entire event efficient"],
+    answer: 3,
+    explanation: "Correction: Use adverb form 'efficiently' instead of adjective 'efficient' to describe how the event was managed."
+  },
+  {
+    id: 14,
+    question: "I never remember (a)/ to have seen a more dedicated (b)/ teacher in my entire life (c)/. No error (d).",
+    options: ["I never remember", "to have seen a more dedicated", "teacher in my entire life", "No error"],
+    answer: 0,
+    explanation: "Correction: Shift the negative modifier properly: use 'I remember never to have seen' or 'I don't remember to have seen' in place of 'I never remember to have seen'."
+  },
+  {
+    id: 15,
+    question: "She does not even (a)/ know how to cut the fabric (b)/ straightly so I won't be able (c)/ to hire her (d).",
+    options: ["She does not even", "know how to cut the fabric", "straightly so I won't be able", "to hire her"],
+    answer: 2,
+    explanation: "Correction: 'Straightly' is incorrect. Use 'straight' because 'straight' acts as both an adjective and an adverb."
+  },
+  {
+    id: 16,
+    question: "He is a quiet talented musician (a)/ who has composed (b)/ many beautiful melodies (c)/ without any formal training (d).",
+    options: ["He is a quiet talented musician", "who has composed", "many beautiful melodies", "without any formal training"],
+    answer: 0,
+    explanation: "Correction: Use the adverb of degree 'quite a talented' instead of the adjective 'quiet' (which means silent)."
+  },
+  {
+    id: 17,
+    question: "He told me that his brother (a)/ who is a soldier got injured (b)/ in a battle (c)/ about six months behind (d).",
+    options: ["He told me that his brother", "who is a soldier got injured", "in a battle", "about six months behind"],
+    answer: 3,
+    explanation: "Correction: Replace the positional word 'behind' with the time word 'ago' for past references measured from the present."
+  },
+  {
+    id: 18,
+    question: "People praised (a)/ his several (b)/ attempts fearlessly (c)/ to rescue the children trapped inside the bus (d).",
+    options: ["People praised", "his several", "attempts fearlessly", "to rescue the children trapped inside the bus"],
+    answer: 2,
+    explanation: "Correction: The modifier is misplaced. It should be 'his several fearless attempts' in place of 'attempts fearlessly' to describe the nouns properly."
+  },
+  {
+    id: 19,
+    question: "She was not enough confident (a)/ to deliver the speech (b)/ in front of such a huge audience (c)/ no error (d).",
+    options: ["She was not enough confident", "to deliver the speech", "in front of such a huge audience", "no error"],
+    answer: 0,
+    explanation: "Correction: The adverb 'enough' must always succeed the adjective it modifies. Use 'confident enough' instead of 'enough confident'."
+  },
+  {
+    id: 20,
+    question: "The city has become (a)/ very much noisy these days (b)/ because of the constant traffic jams, (c)/ though people have learnt to adjust somehow (d).",
+    options: ["The city has become", "very much noisy these days", "because of the constant traffic jams,", "though people have learnt to adjust somehow"],
+    answer: 1,
+    explanation: "Correction: 'Very much' is not standard before a positive degree adjective. Use 'very noisy' or 'too noisy' instead of 'very much noisy'."
+  },
+  {
+    id: 21,
+    question: "She is (a)/ the very intelligent student (b)/ I have ever (c)/ taught in my teaching career (d).",
+    options: ["She is", "the very intelligent student", "I have ever", "taught in my teaching career"],
+    answer: 1,
+    explanation: "Correction: Since it represents the absolute highest limit within a group timeline choice ('I have ever taught'), replace 'very' with the superlative degree marker 'most'."
+  },
+  {
+    id: 22,
+    question: "She has written (a)/ a rather impressive article which (b)/ highlights the challenges faced by (c)/ underprivileged children in remote villages (d).",
+    options: ["She has written", "a rather impressive article which", "highlights the challenges faced by", "underprivileged children in remote villages"],
+    answer: 1,
+    explanation: "Correction: 'Rather' is typically preferred for unfavorable traits, while 'fairly' applies to favorable ones. Use 'fairly impressive' instead of 'rather impressive'."
+  },
+  {
+    id: 23,
+    question: "Of course, you will get (a)/ a promotion soon, (b)/ if you keep working (c)/ with the same level of commitment (d).",
+    options: ["Of course, you will get", "a promotion soon,", "if you keep working", "with the same level of commitment"],
+    answer: 0,
+    explanation: "Correction: Replace conversational marker 'of course' with formal assertive adverb 'certainly' inside structural prediction sentences."
+  },
+  {
+    id: 24,
+    question: "I have presently got to know (a)/ that Shalini is moving abroad, (b)/ but I am not able to decide (c)/ how to react to this news (d).",
+    options: ["I have presently got to know", "that Shalini is moving abroad,", "but I am not able to decide", "how to react to this news"],
+    answer: 0,
+    explanation: "Correction: 'Presently' refers to upcoming actions shortly. Use 'I have just/recently got to know' to denote immediate past realization."
+  },
+  {
+    id: 25,
+    question: "Many drones were seen flying exact (a)/ above the army base (b)/ during the early hours (c)/ of the operation (d).",
+    options: ["Many drones were seen flying exact", "above the army base", "during the early hours", "of the operation"],
+    answer: 0,
+    explanation: "Correction: Use the adverb form 'exactly' instead of adjective 'exact' to modify the prepositional description."
+  },
+  {
+    id: 26,
+    question: "Ravi looked tired (a)/ as he had not (b)/ properly slept (c)/ for the last two nights (d).",
+    options: ["Ravi looked tired", "as he had not", "properly slept", "for the last two nights"],
+    answer: 2,
+    explanation: "Correction: Change modifier position: use 'slept properly' instead of 'properly slept'."
+  },
+  {
+    id: 27,
+    question: "The young athlete completed the marathon (a)/ with hardly no sign of fatigue (b)/ even after running continuously (c)/ for more than four hours (d).",
+    options: ["The young athlete completed the marathon", "with hardly no sign of fatigue", "even after running continuously", "for more than four hours"],
+    answer: 1,
+    explanation: "Correction: Avoid double negatives. 'Hardly' is negative, so use 'any' instead of 'no' ('with hardly any sign')."
+  },
+  {
+    id: 28,
+    question: "So tired (a)/ he was that he could (b)/ hardly keep his eyes open (c)/ during the late-night meeting (d).",
+    options: ["So tired", "he was that he could", "hardly keep his eyes open", "during the late-night meeting"],
+    answer: 1,
+    explanation: "Correction: Adjective combinations with 'So...' opening a sentence trigger inversion. Use 'was he' instead of 'he was'."
+  },
+  {
+    id: 29,
+    question: "Don't worry your student is too brave (a)/ to face the challenges of this (b)/ competition without any help (c). no error (d)",
+    options: ["Don't worry your student is too brave", "to face the challenges of this", "competition without any help", "no error"],
+    answer: 0,
+    explanation: "Correction: 'Too...to' implies a negative consequence (too weak to walk), which is improper for positive traits here. Use 'brave enough' instead of 'too brave'."
+  },
+  {
+    id: 30,
+    question: "The weather during our vacation was (a)/ only too pleasant so we had to cancel (b)/ several outdoor plans (c)/ despite booking everything in advance (d).",
+    options: ["The weather during our vacation was", "only too pleasant so we had to cancel", "several outdoor plans", "despite booking everything in advance"],
+    answer: 1,
+    explanation: "Correction: 'Only too' means very/pleasantly. Since the consequence was negative (cancelling plans), use the restrictive marker 'none too' instead of 'only too'."
+  },
+  {
+    id: 31,
+    question: "Among all the novels written by her, (a)/ this one is said to be (b)/ the much greatest achievement (c)/ of her career (d).",
+    options: ["Among all the novels written by her,", "this one is said to be", "the much greatest achievement", "of her career"],
+    answer: 2,
+    explanation: "Correction: 'Much' does not precede superlative degree articles like 'the greatest'. Use 'much the greatest' or 'by far the greatest'."
+  },
+  {
+    id: 32,
+    question: "The chef performed (a)/ very good in the competition (b)/ despite the limited ingredients (c)/ available in the kitchen (d).",
+    options: ["The chef performed", "very good in the competition", "despite the limited ingredients", "available in the kitchen"],
+    answer: 1,
+    explanation: "Correction: Use the adverb form 'well' in place of the adjective 'good' to modify the action verb 'performed'."
+  },
+  {
+    id: 33,
+    question: "The workers were instructed (a)/ to keep the tools (b)/ orderly before leaving (c)/ the construction site every evening (d).",
+    options: ["The workers were instructed", "to keep the tools", "orderly before leaving", "the construction site every evening"],
+    answer: 2,
+    explanation: "Correction: 'Orderly' is an adjective, not an adverb. Use the adverbial phrase 'in an orderly manner' instead of 'orderly'."
+  },
+  {
+    id: 34,
+    question: "Only when the storm (a)/ was over we could (b)/ see the extent of (c)/ the destruction around us (d).",
+    options: ["Only when the storm", "was over we could", "see the extent of", "the destruction around us"],
+    answer: 1,
+    explanation: "Correction: Introductory restrictive conditions ('Only when...') trigger inversion in the main clause. Use 'could we see' in place of 'we could see'."
+  },
+  {
+    id: 35,
+    question: "The farmers (a)/ worked hardly (b)/ throughout the summer (c)/ to save their dying crops (d).",
+    options: ["The farmers", "worked hardly", "throughout the summer", "to save their dying crops"],
+    answer: 1,
+    explanation: "Correction: 'Hardly' means barely/scarcely. Use the energetic adverb 'hard' instead of 'hardly' to reflect intense physical labor."
+  },
+  {
+    id: 36,
+    question: "The beautiful painted mural (a)/ on the old temple wall (b)/ attracted many tourists (c)/ in the cultural festival (d).",
+    options: ["The beautiful painted mural", "on the old temple wall", "attracted many tourists", "in the cultural festival"],
+    answer: 0,
+    explanation: "Correction: Use the adverb form 'beautifully' instead of adjective 'beautiful' to properly qualify the following participle 'painted'."
+  },
+  {
+    id: 37,
+    question: "Not only he broke (a)/ the traffic rules (b)/ but he also (c)/ argued with the police officer (d).",
+    options: ["Not only he broke", "the traffic rules", "but he also", "argued with the police officer"],
+    answer: 0,
+    explanation: "Correction: Starting a sentence with the correlative negative 'Not only' requires inversion. Use 'did he break' in place of 'he broke'."
+  },
+  {
+    id: 38,
+    question: "They are yet hoping (a)/ that the situation will (b)/ improve when the (c)/ new policy gets implemented (d).",
+    options: ["They are yet hoping", "that the situation will", "improve when the", "new policy gets implemented"],
+    answer: 0,
+    explanation: "Correction: Use the continuous status marker 'still' instead of 'yet' inside affirmative ongoing action clauses."
+  },
+  {
+    id: 39,
+    question: "The manager shouted (a)/ in the meeting very angrily (b)/ when the team failed to answer (c)/ his questions (d).",
+    options: ["The manager shouted", "in the meeting very angrily", "when the team failed to answer", "his questions"],
+    answer: 1,
+    explanation: "Correction: Adverbs of manner precede adverbs of place. Replace 'in the meeting very angrily' with 'very angrily in the meeting'."
+  },
+  {
+    id: 40,
+    question: "He forgets usually (a)/ to carry his ID card (b)/ to the examination centre (c). No error (d)",
+    options: ["He forgets usually", "to carry his ID card", "to the examination centre", "No error"],
+    answer: 0,
+    explanation: "Correction: Adverbs of frequency belong between the subject and the main verb. Use 'usually forgets' in place of 'forgets usually'."
+  },
+  {
+    id: 41,
+    question: "The villagers trusted (a)/ the new leader so more that (b)/ they followed all his instructions (c)/ without any question (d).",
+    options: ["The villagers trusted", "the new leader so more that", "they followed all his instructions", "without any question"],
+    answer: 1,
+    explanation: "Correction: Complete the degree intensive 'so...that' pairing by using the base adverb 'much' instead of 'more'."
+  },
+  {
+    id: 42,
+    question: "It was a most enjoyable evening and everyone (a)/ praised the host for arranging (b)/ such a pleasant get-together. (c)/ no error (d)",
+    options: ["It was a most enjoyable evening and everyone", "praised the host for arranging", "such a pleasant get-together.", "no error"],
+    answer: 3,
+    explanation: "The sentence contains no error. 'A most' is an accepted idiomatic alternative style meaning 'a very'."
+  },
+  {
+    id: 43,
+    question: "You will be surprised (a)/ to know that she hasn't apologized (b)/ for her rude behaviour, nor her brother has (c)/ No error (d).",
+    options: ["You will be surprised", "to know that she hasn't apologized", "for her rude behaviour, nor her brother has", "No error"],
+    answer: 2,
+    explanation: "Correction: Negative conjunction coordination triggers inversion. Use 'nor has her brother' instead of 'nor her brother has'."
+  },
+  {
+    id: 44,
+    question: "No matter she works how sincerely, (a)/ she never gets appreciated (b)/ for her efforts. (c)/ no error (d)",
+    options: ["No matter she works how sincerely,", "she never gets appreciated", "for her efforts.", "no error"],
+    answer: 0,
+    explanation: "Correction: The correct phrasing sequence is 'No matter how sincerely she works' instead of 'No matter she works sincerely'."
+  },
+  {
+    id: 45,
+    question: "Neem leaves are often used in making soaps (a)/ which are specially very effective (b)/ in preventing skin infections. (c)/ no error (d).",
+    options: ["Neem leaves are often used in making soaps", "which are specially very effective", "in preventing skin infections.", "no error"],
+    answer: 1,
+    explanation: "Correction: Adjust focus structure: use 'very effective especially' or 'particularly effective' in place of 'specially very effective'."
+  },
+  {
+    id: 46,
+    question: "The audience clapped when the singer graceful bowed at the end of her mesmerizing performance.",
+    options: ["gracefulness", "gracious", "gracefully", "graciousness"],
+    answer: 2,
+    explanation: "Option (c) provides the correct adverb 'gracefully' to accurately modify the action verb 'bowed'."
+  },
+  {
+    id: 47,
+    question: "The students were too happy to see their favourite teacher return after a long medical leave.",
+    options: ["very happy", "to happy", "so happy", "no improvement"],
+    answer: 0,
+    explanation: "Option (a) is correct. Use 'very happy' because 'too happy' carries an undesirable negative consequence tone that is contextually inappropriate."
+  },
+  {
+    id: 48,
+    question: "Select the appropriate option to replace the underlined word with the adverb of frequency. 'She did not agree that her decision had hurt her close friends...'",
+    options: ["never agreed", "yesterday agreed", "willingly agreed", "happily agreed"],
+    answer: 0,
+    explanation: "Option (a) provides 'never', which is the proper replacement functioning as an adverb of frequency."
+  },
+  {
+    id: 49,
+    question: "Hardly we had reached the examination hall when the final bell rang, and everyone rushed to their seats.",
+    options: ["we are reached", "we have reached", "had we reached", "we will reach"],
+    answer: 2,
+    explanation: "Option (c) applies the essential inversion layout 'had we reached' required by the initial negative adverb 'Hardly'."
+  },
+  {
+    id: 50,
+    question: "No sooner did the students finish their final exams, than they began planning for a long vacation.",
+    options: ["No sooner do the students finish", "No sooner have the students finished", "No substitution", "No sooner had the students finishing"],
+    answer: 2,
+    explanation: "Option (c) requires no substitution. 'No sooner did... than' is perfectly aligned with past narrative structure rules."
+  },
+  {
+    id: 51,
+    question: "Even though both my sisters dance gracefully, I can perform more well than both of them on stage.",
+    options: ["I can perform more good than both of them", "I can perform good than both of them", "I can perform best than both of them", "I can perform better than both of them"],
+    answer: 3,
+    explanation: "Option (d) is correct. The comparative degree form of the adverb 'well' is 'better'."
+  },
+  {
+    id: 52,
+    question: "The old bridge became so weak that vehicles could none long cross it safely during the monsoon.",
+    options: ["no longer cross", "cross no no long", "not cross longest", "No improvement required"],
+    answer: 0,
+    explanation: "Option (a) introduces the accurate time limiting idiom 'no longer cross'."
+  },
+  {
+    id: 53,
+    question: "The teacher observed close how each student responded during the practical exam.",
+    options: ["closely observed", "close observed", "No improvement required", "observe closely"],
+    answer: 0,
+    explanation: "Option (a) correctly uses the descriptive adverb 'closely' positioned properly to modify 'observed'."
+  },
+  {
+    id: 54,
+    question: "Drinking too much green tea can act as a mild diuretic, making your body release water more often.",
+    options: ["more much often", "many often", "more oftenly", "No improvement required"],
+    answer: 3,
+    explanation: "Option (d) is correct. 'More often' is a perfectly sound comparative phrase layout; 'oftenly' is not a word."
+  },
+  {
+    id: 55,
+    question: "The students presented their dance in the auditorium beautifully last night.",
+    options: ["beautifully in the auditorium last night", "last night beautifully in the auditorium", "in the auditorium last night beautifully", "beautifully last night in the auditorium"],
+    answer: 0,
+    explanation: "Option (a) obeys the strict order of adverbs principle: Manner ('beautifully') + Place ('in the auditorium') + Time ('last night')."
+  },
+  {
+    id: 56,
+    question: "The speeding truck lost control on the highway, narrowly missing a group of school children crossing the road.",
+    options: ["narrowly missed", "narrowly miss", "narrowed missing", "No substitution"],
+    answer: 3,
+    explanation: "Option (d) requires no substitution. The participle phrase modifier 'narrowly missing' functions perfectly here."
+  },
+  {
+    id: 57,
+    question: "They only invited their close friends to the private ceremony.",
+    options: ["They invited only their close friends to...", "They invited their only close friends to...", "Only they invited their close friends to...", "No improvement."],
+    answer: 0,
+    explanation: "Option (a) shifts the restrictive word 'only' into its correct position to immediately modify the explicit targeted target group 'their close friends'."
+  },
+  {
+    id: 58,
+    question: "The soldier ran away from the battlefield like coward.",
+    options: ["like cowardly", "like a coward", "in a coward manner", "No improvement"],
+    answer: 1,
+    explanation: "Option (b) is correct. 'Coward' is a noun and requires a singular article inside the phrase 'like a coward' to establish a valid comparison."
+  },
+  {
+    id: 59,
+    question: "The officer ordered the guards to immediately close the gates.",
+    options: ["the guards to close the gates immediately", "the guards immediately to close the gates", "to the guards close immediately the gates", "No improvement"],
+    answer: 0,
+    explanation: "Option (a) safely eliminates the split-infinitive layout ('to immediately close') by transferring the adverb to the logical end of the clause."
+  },
+  {
+    id: 60,
+    question: "The journey was comfortable but the bit tiring than I thought it would be.",
+    options: ["the bit more tiring", "No improvement", "a bit tiring", "a bit more tiring"],
+    answer: 3,
+    explanation: "Option (d) is correct. Since a comparison is explicitly introduced by 'than', the comparative phrase 'a bit more tiring' is required."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q${i+1}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Verb Practice Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "Before the main concert began, (a)/ the singer sung (b)/ a couple of old folk songs to warm up the crowd. (c)/ No error (d)",
+    options: ["Before the main concert began,", "the singer sung", "a couple of old folk songs to warm up...", "No error"],
+    answer: 1,
+    explanation: "Use 'sang' or 'had sung' instead of 'sung'. 'Sung' is the $V_3$ form and cannot be used without an auxiliary verb; here simple past $V_2$ 'sang' is preferred."
+  },
+  {
+    id: 2,
+    question: "The unexpected decision by the principal (a)/ was surprised (b)/ all the students and the teachers present at the event. (c)/ No error (d)",
+    options: ["The unexpected decision by the principal", "was surprised", "all the students and the teachers present...", "No error"],
+    answer: 1,
+    explanation: "Replace 'was surprised' with 'surprised'. The sentence is in the active voice because the decision itself caused the surprise."
+  },
+  {
+    id: 3,
+    question: "The entire cost of the wedding celebration (a)/ was born (b)/ by the bride's parents. (c)/ No error (d)",
+    options: ["The entire cost of the wedding celebration", "was born", "by the bride's parents.", "No error"],
+    answer: 1,
+    explanation: "Use 'borne' in place of 'born'. 'Born' relates to birth, whereas 'borne' is the past participle of bear, meaning carried, sustained, or endured."
+  },
+  {
+    id: 4,
+    question: "The ancient texts regarded (a)/ the sun the primary source of all life (b)/ and energy on the earth. (c)/ No error(d)",
+    options: ["The ancient texts regarded", "the sun the primary source of all life", "and energy on the earth.", "No error"],
+    answer: 1,
+    explanation: "Use 'regarded as the' instead of 'regarded the'. The verb 'regard' takes 'as' to introduce a descriptive complement."
+  },
+  {
+    id: 5,
+    question: "After the exhausting football match, (a)/ the player laid (b)/ on the grass to recover his strength. (c)/ No error (d)",
+    options: ["After the exhausting football match,", "the player laid", "on the grass to recover his strength.", "No error"],
+    answer: 1,
+    explanation: "Use 'lay' in place of 'laid'. The intransitive verb lie (meaning to recline) forms its past tense as 'lay', whereas 'laid' is the past of the transitive verb lay (to put down object)."
+  },
+  {
+    id: 6,
+    question: "The speaker's emotional story managed to rouse deep sympathy among the audience, and many were seen wiping their tears as he continued.",
+    options: ["The speaker's emotional story managed to", "rouse deep sympathy among the audience,", "and many were seen wiping their tears", "No error"],
+    answer: 1,
+    explanation: "Replace 'rouse' with 'arouse'. 'Arouse' means to evoke or awaken a feeling, emotion, or response, which fits perfectly with sympathy."
+  },
+  {
+    id: 7,
+    question: "Despite repeated reminders from the accounting department, (a)/ the branch manager did not paid (b)/ the quarterly utility bills (c)/ No error (d)",
+    options: ["Despite repeated reminders from the department,", "the branch manager did not paid", "the quarterly utility bills", "No error"],
+    answer: 1,
+    explanation: "Use 'did not pay' instead of 'did not paid'. The auxiliary verb 'did' must always be followed by the base form of the verb ($V_1$)."
+  },
+  {
+    id: 8,
+    question: "During the sudden inspection conducted by the health ministry, (a)/ a significant number of expired food items (b)/ was finding in the main storage facility of the restaurant. (c)/ No error (d)",
+    options: ["During the sudden inspection conducted...", "a significant number of expired food items", "was finding in the main storage facility...", "No error"],
+    answer: 2,
+    explanation: "Use 'were found' instead of 'was finding'. The phrase 'a significant number of' requires a plural verb, and passive voice ('were found') is necessary here."
+  },
+  {
+    id: 9,
+    question: "Before the children left for the playground after breakfast, (a)/ their mother instructed them to lie (b)/ all their soiled clothes carefully into the laundry basket. (c)/ No error (d)",
+    options: ["Before the children left for the playground...", "their mother instructed them to lie", "all their soiled clothes carefully into...", "No error"],
+    answer: 1,
+    explanation: "Use 'lay' in place of 'lie'. 'Lay' is a transitive verb requiring a direct object ('all their soiled clothes'), meaning to place something flat."
+  },
+  {
+    id: 10,
+    question: "Before the passengers could board the aircraft, (a)/ they had to confirm that their luggage was correctly tagged (b)/ for the flight bounded for Paris. (c)/ No error(d)",
+    options: ["Before the passengers could board...", "they had to confirm that their luggage...", "for the flight bounded for Paris.", "No error"],
+    answer: 2,
+    explanation: "Use 'bound' in place of 'bounded'. The adjective form indicating a destination heading is 'bound' ('bound for Paris')."
+  },
+  {
+    id: 11,
+    question: "Despite the initial objections from several members of the board, (a)/ they eventually decided to consider her as (b)/ the primary candidate for the prestigious fellowship. (c)/ No error (d)",
+    options: ["Despite the initial objections from...", "they eventually decided to consider her as", "the primary candidate for the prestigious...", "No error"],
+    answer: 1,
+    explanation: "Remove 'as'. The verb 'consider' does not take the preposition 'as' before its object complement."
+  },
+  {
+    id: 12,
+    question: "While the scientists were performing the delicate experiment, (a)/ they clearly felt (b)/ a distinct ringing sound coming from the high-frequency magnetron placed nearby. (c)/ No error (d)",
+    options: ["While the scientists were performing...", "they clearly felt", "a distinct ringing sound coming from...", "No error"],
+    answer: 1,
+    explanation: "Use 'heard' in place of 'felt' because a 'ringing sound' is perceived through auditory sense (hearing)."
+  },
+  {
+    id: 13,
+    question: "During the quarterly financial review, the CEO warned that (a)/ their biggest competitor would take over (b)/ them in terms of global market share by the end of the year. (c)/ No error (d)",
+    options: ["During the quarterly financial review...", "their biggest competitor would take over", "them in terms of global market share...", "No error"],
+    answer: 1,
+    explanation: "Use 'overtake' in place of 'take over'. 'Overtake' means to surpass someone in performance or share, whereas 'take over' means to assume control of something."
+  },
+  {
+    id: 14,
+    question: "The ostensibly transparent mechanism (1)/ for employee feedback (2)/ paradoxically obfuscating (3)/ all channels of genuine expression. (4)",
+    options: ["The ostensibly transparent mechanism", "for employee feedback", "paradoxically obfuscating", "all channels of genuine expression."],
+    answer: 2,
+    explanation: "Use 'obfuscates' or 'is obfuscating' instead of the bare participle 'obfuscating' to provide a functional main finite verb for the sentence."
+  },
+  {
+    id: 15,
+    question: "Had he been knowing (1)/ about the regulatory changes (2)/ he would not have proceeded (3)/ with the merger deal. (4)",
+    options: ["Had he been knowing", "about the regulatory changes", "he would not have proceeded", "with the merger deal."],
+    answer: 0,
+    explanation: "Use 'known' in place of 'been knowing'. Stative verbs like 'know' are generally not used in continuous tenses; it should be part of a past perfect structure ('Had he known')."
+  },
+  {
+    id: 16,
+    question: "He made a quick shower before heading to the office.",
+    options: ["quick", "shower", "before", "made"],
+    answer: 3,
+    explanation: "Use 'took' or 'had' in place of 'made'. Collocationally, one 'takes a shower' rather than 'makes' one."
+  },
+  {
+    id: 17,
+    question: "The teacher advised to listen attentively.",
+    options: ["to listen attentively", "No error", "The teacher", "advised"],
+    answer: 0,
+    explanation: "Use 'listening attentively' or supply an object like 'advised us to listen attentively'. Without a direct personal object, 'advise' takes a gerund complement."
+  },
+  {
+    id: 18,
+    question: "She does not know to swim.",
+    options: ["She does not", "know to swim", "swim", "No error"],
+    answer: 1,
+    explanation: "Use 'knows how to swim' in place of 'know to swim'. The verb 'know' requires a wh-clause structural link before an infinitive showing skills."
+  },
+  {
+    id: 19,
+    question: "The children swinged happily (a)/ on the old tire hung from the tree (b)/ and laughed loudly (c)/ as the sun set in the evening.(d)",
+    options: ["The children swinged happily", "on the old tire hung from the tree", "and laughed loudly", "as the sun set in the evening."],
+    answer: 0,
+    explanation: "Replace 'swinged' with the irregular past tense form 'swung'."
+  },
+  {
+    id: 20,
+    question: "The magistrate asked the accused what was he doing with his hand in the gentleman's pocket.",
+    options: ["in the gentleman's pocket", "with his hand", "what was he doing", "The magistrate asked"],
+    answer: 2,
+    explanation: "In indirect questions, the clause order is assertive (subject + verb). The correct layout is 'what he was doing' instead of 'what was he doing'."
+  },
+  {
+    id: 21,
+    question: "The heavy rainfall and sudden drop in temperature (a)/ could effect not only (b)/ the crop yields but also the transportation of goods. (c)/ No error (d)",
+    options: ["The heavy rainfall and sudden drop", "could effect not only", "the crop yields but also the transportation", "No error"],
+    answer: 1,
+    explanation: "Use 'affect' in place of 'effect'. 'Affect' is the verb meaning to influence, whereas 'effect' is typically a noun meaning the result."
+  },
+  {
+    id: 22,
+    question: "While I was preparing for my presentation in the library, (a)/ I suddenly listened to (b)/ a loud, unexpected crash from the upper floor. (c)/ No error (d)",
+    options: ["While I was preparing for my presentation...", "I suddenly listened to", "a loud, unexpected crash from...", "No error"],
+    answer: 1,
+    explanation: "Use 'heard' in place of 'listened to'. 'Hear' signifies involuntary physical perception of sudden sounds, while 'listen' implies voluntary focus."
+  },
+  {
+    id: 23,
+    question: "The students who were prepared (a)/ the presentation on sustainable energy (b)/ were praised by the principal during the assembly. (c)/ No error (d)",
+    options: ["The students who were prepared", "the presentation on sustainable energy", "were praised by the principal...", "No error"],
+    answer: 0,
+    explanation: "Remove 'were'. The relative clause requires an active past verb structure ('who prepared') because the students performed the preparation task themselves."
+  },
+  {
+    id: 24,
+    question: "Before the guests arrived for the evening party, (a)/ the homeowner carefully hanged (b)/ all the new curtains in the drawing room. (c)/ No error (d)",
+    options: ["Before the guests arrived for the party,", "the homeowner carefully hanged", "all the new curtains in the drawing room.", "No error"],
+    answer: 1,
+    explanation: "Use 'hung' in place of 'hanged'. 'Hanged' is exclusively used for executions by hanging persons, while 'hung' applies to hanging objects like curtains."
+  },
+  {
+    id: 25,
+    question: "While the tourist was walking through the dense jungle, (a)/ he suddenly wandered (b)/ how he would find his way back to the camp before sunset. (c)/ No error (d)",
+    options: ["While the tourist was walking through...", "he suddenly wandered", "how he would find his way back...", "No error"],
+    answer: 1,
+    explanation: "Use 'wondered' in place of 'wandered'. 'Wondered' means to think or feel curious about something, while 'wandered' means to roam around aimlessly."
+  },
+  {
+    id: 26,
+    question: "The reporter had to ask several probing questions (a)/ in order to illicit (b)/ a confession from the corrupt official about his hidden assets. (c)/ No error (d)",
+    options: ["The reporter had to ask several questions", "in order to illicit", "a confession from the corrupt official...", "No error"],
+    answer: 1,
+    explanation: "Use the verb 'elicit' (to draw out or evoke information) instead of the spelling homophone adjective 'illicit' (meaning illegal)."
+  },
+  {
+    id: 27,
+    question: "When the temperature dropped suddenly, the water (a)/ got freeze inside the pipes and (b)/ caused them to burst, which (c) / resulted in heavy damage to the building.(d)",
+    options: ["When the temperature dropped suddenly,", "the water got freeze inside the pipes", "and caused them to burst, which", "resulted in heavy damage to the building."],
+    answer: 1,
+    explanation: "Replace 'got freeze' with 'got frozen'. The linking construction 'get' requires a past participle ($V_3$) to indicate a passive transformation state."
+  },
+  {
+    id: 28,
+    question: "The traffic signal on the main highway intersection (a)/ suddenly malfunctioned last evening, and several collisions were occurred (b)/ within a span of just fifteen minutes. (c)/ No error (d)",
+    options: ["The traffic signal on the main highway", "suddenly malfunctioned, and several collisions were occurred", "within a span of just fifteen minutes.", "No error"],
+    answer: 1,
+    explanation: "Use active 'occurred' instead of 'were occurred'. 'Occur' is an intransitive verb and can never be configured into passive forms."
+  },
+  {
+    id: 29,
+    question: "During the sudden thunderstorm, the villagers fleed to higher ground to avoid the rapidly rising water and waited anxiously until the rain stopped.",
+    options: ["No error", "fleed to higher ground", "to avoid the rapidly rising water", "until the rain stopped"],
+    answer: 1,
+    explanation: "Replace 'fleed' with 'fled'. The past tense of the verb 'flee' is irregularly spelled as 'fled'."
+  },
+  {
+    id: 30,
+    question: "I trust him a lot because he (a)/ has always and will (b)/ support me in future too(c)/. No error (d)",
+    options: ["I trust him a lot because he", "has always and will", "support me in future too", "No error"],
+    answer: 1,
+    explanation: "Use 'has always supported and will support'. Separate auxiliaries ('has' and 'will') require their respective principal verb structural forms ($V_3$ and $V_1$)."
+  },
+  {
+    id: 31,
+    question: "The captain carefully examined (a) / the sunk ship (b) / at the bottom of the bay, hoping to recover some valuables. (c) / No error (d)",
+    options: ["The captain carefully examined", "the sunk ship", "at the bottom of the bay,", "No error"],
+    answer: 1,
+    explanation: "Replace 'sunk' with 'sunken'. When used attributively directly preceding a noun, the participial adjective form 'sunken' is required."
+  },
+  {
+    id: 32,
+    question: "During the storm, the river overflew (a) / its banks and flooded (b) / several nearby villages, causing extensive damage. (c)/No error (d)",
+    options: ["During the storm, the river overflew", "its banks and flooded", "several nearby villages, causing...", "No error"],
+    answer: 0,
+    explanation: "Replace 'overflew' with 'overflowed'. The past tense of 'overflow' (to flow over edges) is 'overflowed'. 'Overflew' is the past of 'overfly' (to fly over)."
+  },
+  {
+    id: 33,
+    question: "She asked to him (a) / to explain the procedure clearly (b) / before starting the experiment. (c) / No error(d)",
+    options: ["She asked to him", "to explain the procedure clearly", "before starting the experiment.", "No error"],
+    answer: 0,
+    explanation: "Remove 'to' after 'asked'. 'Ask' is a transitive verb that directly links to its object person without prepositions."
+  },
+  {
+    id: 34,
+    question: "The mechanic warned the driver that the front right wheel of the truck was very lose and needed immediate tightening to prevent an accident.",
+    options: ["very losing", "very loose", "too loss", "No substitution required"],
+    answer: 1,
+    explanation: "The correct adjective is 'loose' (meaning slack/unfastened), whereas 'lose' is a verb meaning to misplace or suffer defeat."
+  },
+  {
+    id: 35,
+    question: "The lionesses, after a long and exhausting chase across the savanna, usually prey on the slowest member of the herd to conserve their energy.",
+    options: ["pray", "preys", "praise", "No substitution required"],
+    answer: 3,
+    explanation: "No substitution required. 'Prey on' means to hunt down and feed on animals, which matches the natural habits of lionesses."
+  },
+  {
+    id: 36,
+    question: "The main speech of the political leader at the massive rally were telecasted live on all major news channels last night.",
+    options: ["were telecast", "was telecasted", "was telecast", "No substitution required"],
+    answer: 2,
+    explanation: "The singular subject 'speech' demands the singular auxiliary verb 'was', and the verb 'telecast' remains identical across its base and past forms ($V_1=V_2=V_3$)."
+  },
+  {
+    id: 37,
+    question: "Dr. Harris welcomed the members of the committee and went on ______ the subject of the meeting.",
+    options: ["to enjoy", "to live", "to admire", "to introduce"],
+    answer: 3,
+    explanation: "The correct contextual infinitive is 'to introduce' since it refers to presenting the core matter of a business meeting."
+  },
+  {
+    id: 38,
+    question: "The chief guest stepped onto the stage and began waiving vigorously to the huge crowd gathered at the convention center.",
+    options: ["to waive", "waving", "wagering", "No substitution required"],
+    answer: 1,
+    explanation: "The required spelling participle is 'waving' (moving hands to greet), whereas 'waive' means to relinquish a right or claim."
+  },
+  {
+    id: 39,
+    question: "The intern should take a right choice in choosing the right job for her.",
+    options: ["rake a right choice", "make a right choice", "fix a right choice", "take the right choice"],
+    answer: 1,
+    explanation: "The correct idiomatic collocation verb is 'make' ('make a choice')."
+  },
+  {
+    id: 40,
+    question: "The teacher described about the historical events of the revolution in detail during the lecture.",
+    options: ["described the historical events", "described over the historical events", "described on the historical events", "No improvement required"],
+    answer: 0,
+    explanation: "The verb 'describe' is a transitive verb that directly takes its object without needing the preposition 'about'."
+  },
+  {
+    id: 41,
+    question: "The businessman is owning multiple companies across Asia, and he is believing that his investments will continue to grow despite the market fluctuations.",
+    options: ["owns; believes", "is owning; is believing", "has owned; is believing", "was owning; believed"],
+    answer: 0,
+    explanation: "Ownership and belief states are represented using non-progressive stative verbs, which use simple indefinite tenses ('owns; believes')."
+  },
+  {
+    id: 42,
+    question: "It is the responsibility of all of us to invest time and effort in verifying information and not follow victim to fake news.",
+    options: ["not following victim", "not falls victim", "No improvement", "not fall victim"],
+    answer: 3,
+    explanation: "The correct idiomatic verbal expression phrase is 'fall victim' (meaning to be harmed or deceived by something), matching the leading bare infinitive parallel structure."
+  },
+  {
+    id: 43,
+    question: "Preparing children for uncertainties keeps them in readiness to face challenges.",
+    options: ["keeps them for readiness", "keep them ready", "No improvement required", "keep them to be ready"],
+    answer: 2,
+    explanation: "No improvement required. The gerund phrase subject 'Preparing children' is singular and properly aligns with the singular verb form 'keeps'."
+  },
+  {
+    id: 44,
+    question: "Despite her busy schedule, she ______ to complete all the household chores and ______ for the cleaning service to come in the following week.",
+    options: ["insured; ensure", "ensured; insure", "arranged; manage", "managed; arrange"],
+    answer: 3,
+    explanation: "Contextually, she 'managed' to complete her tough routine tasks and 'arranged' for future third-party assistance."
+  },
+  {
+    id: 45,
+    question: "You ______ take a break if you feel tired; working continuously is harmful to your health.",
+    options: ["ought to", "need", "should have", "might"],
+    answer: 0,
+    explanation: "The presence of the post-blank preposition 'to' requires the semi-modal 'ought' to convey proper structural sense of advice."
+  },
+  {
+    id: 46,
+    question: "He realized that his reckless driving (a)/ should have been (b)/ the cause of that serious accident. (c)/ No error (d)",
+    options: ["He realized that his reckless driving", "should have been", "the cause of that serious accident.", "No error"],
+    answer: 1,
+    explanation: "Use 'could have been' or 'must have been' in place of 'should have been'. 'Should have been' denotes unfulfilled obligation, which is illogical for guessing past causes."
+  },
+  {
+    id: 47,
+    question: "Even if the heavy fog continues all through the night, (a)/ the rescue team will ready (b)/ to begin the search operation early in the morning. (c)/ No error (d)",
+    options: ["Even if the heavy fog continues...", "the rescue team will ready", "to begin the search operation...", "No error"],
+    answer: 1,
+    explanation: "Use 'will be ready' in place of 'will ready'. The modal 'will' must be followed by a base verb form ('be') before an adjective complement ('ready')."
+  },
+  {
+    id: 48,
+    question: "She said that she can finish (a) / the project before the deadline (b) / if she got enough support from her team. (c) / No error (d)",
+    options: ["She said that she can finish", "the project before the deadline", "if she got enough support from her team.", "No error"],
+    answer: 0,
+    explanation: "Replace 'can' with 'could' to maintain past tense harmony across indirect narrative structures introduced by 'said' and 'got'."
+  },
+  {
+    id: 49,
+    question: "After we receive the advanced payment for the consignment, (a)/ the client need not to worry (b)/ about any further financial formalities until the final delivery. (c)/ No error (d)",
+    options: ["After we receive the advanced payment...", "the client need not to worry", "about any further financial formalities...", "No error"],
+    answer: 1,
+    explanation: "Use 'need not worry' in place of 'need not to worry'. When configured as a negative modal auxiliary, 'need not' takes a bare infinitive."
+  },
+  {
+    id: 50,
+    question: "This retired couple has now become (a)/ used to walk (b)/ ten kilometers every morning. (c)/ No error (d)",
+    options: ["This retired couple has now become", "used to walk", "ten kilometers every morning.", "No error"],
+    answer: 1,
+    explanation: "Use 'used to walking' in place of 'used to walk'. The expression 'become/be used to' functions as a prepositional phrase requiring a gerund."
+  },
+  {
+    id: 51,
+    question: "I will inform you immediately should (a)/ he arrives late for the meeting (b)/ tomorrow morning. (c)/ No error (d)",
+    options: ["I will inform you immediately should", "he arrives late for the meeting", "tomorrow morning.", "No error"],
+    answer: 1,
+    explanation: "Use 'arrive' in place of 'arrives'. The inverted conditional helper 'should' acts as a modal and demands a base verb configuration."
+  },
+  {
+    id: 52,
+    question: "During my college days in Bangalore, (a)/ I used to woke up (b)/ very early to catch the first bus to the university campus every single morning. (c)/ No error (d)",
+    options: ["During my college days in Bangalore,", "I used to woke up", "very early to catch the first bus...", "No error"],
+    answer: 1,
+    explanation: "Use 'used to wake up' instead of 'used to woke up'. The marginal modal particle 'to' must link directly to a base form verb ($V_1$)."
+  },
+  {
+    id: 53,
+    question: "Even with all the evidence against Roshan, (a)/ no one dare believe (b)/ that he could commit such a heinous crime. (c)/ No error (d)",
+    options: ["Even with all the evidence against Roshan,", "no one dare believe", "that he could commit such a heinous crime.", "No error"],
+    answer: 1,
+    explanation: "Use 'dares to believe' or 'dares believe'. The indefinite singular subject 'no one' requires a singular verb form."
+  },
+  {
+    id: 54,
+    question: "Whenever the weather changes suddenly, (a)/ the old gardener uses to complain (b)/ about severe pain in his knee joints. (c)/ No error (d)",
+    options: ["Whenever the weather changes suddenly,", "the old gardener uses to complain", "about severe pain in his knee joints.", "No error"],
+    answer: 1,
+    explanation: "Use 'complains' or 'is in the habit of complaining'. 'Uses to' is not an accurate grammatical structure for presenting present recurring routine habits."
+  },
+  {
+    id: 55,
+    question: "If the security guard had not arrived on time, (a)/ the thieves might stole (b)/ all the valuables from the safe last night. (c)/ No error (d)",
+    options: ["If the security guard had not arrived...", "the thieves might stole", "all the valuables from the safe last night.", "No error"],
+    answer: 1,
+    explanation: "Use 'might have stolen' instead of 'might stole'. Past conditional capability/possibility schemas require 'modal + have + $V_3$'."
+  },
+  {
+    id: 56,
+    question: "I never expected that Roshan, my best friend would (a)/ leave me in lurch like this and (b)/ then do not even apologise.(c)/ no error (d)",
+    options: ["I never expected that Roshan, my best friend", "leave me in lurch like this and", "then do not even apologise.", "no error"],
+    answer: 2,
+    explanation: "Remove 'do' to properly balance parallel infinitives following the shared structural modal auxiliary 'would'."
+  },
+  {
+    id: 57,
+    question: "When I was a child, I would play (a) / in the fields every evening (b) / and with my friends. (c) / No error (d)",
+    options: ["When I was a child, I would play", "in the fields every evening", "and with my friends.", "No error"],
+    answer: 3,
+    explanation: "No error. The modal structure 'would + play' perfectly shows past routine habits."
+  },
+  {
+    id: 58,
+    question: "Riya should go (a) / to the doctor earlier / when she noticed the persistent cough, / but she ignored it for weeks. (b) / No error(c)",
+    options: ["Riya should go", "to the doctor earlier / when she noticed...", "No error", ""],
+    answer: 0,
+    explanation: "Use 'should have gone' instead of 'should go'. An unfulfilled past recommendation or descriptive criticism requires the perfect modal pattern."
+  },
+  {
+    id: 59,
+    question: "Despite the recent increase in funding, the local community center still needs collect more resources to run its adult literacy program effectively throughout the year.",
+    options: ["need to collect", "needs to collect", "need collecting", "No substitution"],
+    answer: 1,
+    explanation: "The singular subject 'center' takes the singular verb 'needs', which requires an infinitive complement ('needs to collect') to express necessity."
+  },
+  {
+    id: 60,
+    question: "I assure you that the developers can be able to complete the coding module within the next two working days without fail.",
+    options: ["will be able to complete", "can able to complete", "could be able to complete", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) is correct. Using 'can' and 'be able to' together is redundant because both express capability. 'Will be able to' correctly expresses future ability."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q${i+1}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

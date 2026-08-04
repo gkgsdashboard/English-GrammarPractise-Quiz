@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Subject Verb Agreement Practice Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "Only the quality of the products (a)/ and the efficiency of the service (b)/ doesn't determine (c)/ the company's overall reputation. (d)",
+    options: ["Only the quality of the products", "and the efficiency of the service", "doesn't determine", "the company's overall reputation."],
+    answer: 2,
+    explanation: "Correction: Use 'don't' instead of 'doesn't'. Two subjects ('the quality...' and 'the efficiency...') are connected by 'and', making the compound subject plural[cite: 8]."
+  },
+  {
+    id: 2,
+    question: "Aarav believes that (a)/ it don't make any difference (b)/ whether you succeed instantly (c)/ or achieve your goals after years of hard work. (d)",
+    options: ["Aarav believes that", "it don't make any difference", "whether you succeed instantly", "or achieve your goals after years..."],
+    answer: 1,
+    explanation: "Correction: Use 'doesn't' instead of 'don't'. The pronoun 'it' is singular and requires a singular verb[cite: 8]."
+  },
+  {
+    id: 3,
+    question: "Each and every student, (a)/ teacher and parent (b)/ were requested to attend (c)/ the annual function held in the auditorium. (d)",
+    options: ["Each and every student,", "teacher and parent", "were requested to attend", "the annual function held in..."],
+    answer: 2,
+    explanation: "Correction: Use 'was' instead of 'were'. When singular nouns are preceded by 'each' or 'every', they take a singular verb[cite: 8]."
+  },
+  {
+    id: 4,
+    question: "Neither the manager nor the employees (a)/ was willing to accept (b)/ the new working conditions (c)/ introduced by the company last month. (d)",
+    options: ["Neither the manager nor the employees", "was willing to accept", "the new working conditions", "introduced by the company last month."],
+    answer: 1,
+    explanation: "Correction: Use 'were' instead of 'was'. When two subjects are connected by 'neither... nor', the verb agrees with the closer subject ('the employees', which is plural)[cite: 8]."
+  },
+  {
+    id: 5,
+    question: "I don't think that (a)/ two miles are a long distance (b)/ to be covered on foot at your age. (c)/ No error (d)",
+    options: ["I don't think that", "two miles are a long distance", "to be covered on foot at your age.", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'is' instead of 'are'. Quantities or distances ('two miles') viewed as a singular collective unit take a singular verb[cite: 8]."
+  },
+  {
+    id: 6,
+    question: "Both the director of the company and his senior advisors (a)/ has emphasized (b)/ the need for transparency (c)/ in all the financial transactions. (d)",
+    options: ["Both the director of the company and", "his senior advisors", "has emphasized", "the need for transparency"],
+    answer: 2,
+    explanation: "Correction: Use 'have' instead of 'has'. The structure 'Both... and...' always creates a plural reference[cite: 8]."
+  },
+  {
+    id: 7,
+    question: "I know very well (a)/ that bread and butter (b)/ have been your favourite breakfast (c)/ since childhood. (d)",
+    options: ["I know very well", "that bread and butter", "have been your favourite breakfast", "since childhood."],
+    answer: 2,
+    explanation: "Correction: Use 'has' instead of 'have'. 'Bread and butter' represents a single, combined collective item (breakfast meal)[cite: 8]."
+  },
+  {
+    id: 8,
+    question: "The performance of the athletes, as (a)/ well as the coaches, in the (b)/ international sports meet (c)/ were appreciated by the whole country. (d)",
+    options: ["The performance of the athletes, as", "well as the coaches, in the", "international sports meet", "were appreciated by the whole country."],
+    answer: 3,
+    explanation: "Correction: Use 'was' instead of 'were'. When parenthetical elements like 'as well as' link nouns, the verb agrees exclusively with the primary singular head subject ('The performance')[cite: 8]."
+  },
+  {
+    id: 9,
+    question: "More than one applicant (a)/ have claimed (b)/ that the terms and conditions (c)/ mentioned in the contract were misleading. (d)",
+    options: ["More than one applicant", "have claimed", "that the terms and conditions", "mentioned in the contract..."],
+    answer: 1,
+    explanation: "Correction: Use 'has' instead of 'have'. The phrase 'More than one' followed by a singular noun takes a singular verb[cite: 8]."
+  },
+  {
+    id: 10,
+    question: "The committee members, (a)/ in addition to the chairman, (b)/ was invited to participate in the annual conference (c)/ held at the capital last week. (d)",
+    options: ["The committee members,", "in addition to the chairman,", "was invited to participate in...", "held at the capital last week."],
+    answer: 2,
+    explanation: "Correction: Use 'were' instead of 'was'. Extra strings starting with 'in addition to' do not override the principal plural subject ('The committee members')[cite: 8]."
+  },
+  {
+    id: 11,
+    question: "It is I who (a)/ has been trying for years (b)/ to bring peace between the two rival communities (c)/ divided by decades of mistrust and hatred. (d)",
+    options: ["It is I who", "has been trying for years", "to bring peace between the two", "rival communities divided by..."],
+    answer: 1,
+    explanation: "Correction: Use 'have' instead of 'has'. The relative pronoun 'who' points back to the antecedent personal subject 'I', which requires 'have'[cite: 8]."
+  },
+  {
+    id: 12,
+    question: "Children absorbs knowledge (a)/ not merely through books (b)/ but also from the behaviour (c)/ and values of adults around them. (d)",
+    options: ["Children absorbs knowledge", "not merely through books", "but also from the behaviour", "and values of adults around them."],
+    answer: 0,
+    explanation: "Correction: Use 'absorb' instead of 'absorbs' to agree with the plural subject 'Children'[cite: 8]."
+  },
+  {
+    id: 13,
+    question: "Many a visionary leader (a)/ believe that the essence of democracy (b)/ lies not in power but in the collective voice (c)/ of its enlightened citizens. (d)",
+    options: ["Many a visionary leader", "believe that the essence of...", "lies not in power but in...", "of its enlightened citizens."],
+    answer: 1,
+    explanation: "Correction: Use 'believes' instead of 'believe'. The idiomatic structure 'Many a' takes a singular noun and a singular verb[cite: 8]."
+  },
+  {
+    id: 14,
+    question: "The number of tourists (a)/ visiting historical monuments in India (b)/ have drastically declined (c)/ since the new travel restrictions were imposed. (d)",
+    options: ["The number of tourists", "visiting historical monuments...", "have drastically declined", "since the new travel restrictions..."],
+    answer: 2,
+    explanation: "Correction: Use 'has' instead of 'have'. The structure 'The number of' acts as a singular unit tracking mathematical size limits, unlike 'A number of'[cite: 8]."
+  },
+  {
+    id: 15,
+    question: "The oppressed (a)/ has finally found (b)/ the courage to raise their voice (c)/ against years of injustice. (d)",
+    options: ["The oppressed", "has finally found", "the courage to raise their voice", "against years of injustice."],
+    answer: 1,
+    explanation: "Correction: Use 'have' instead of 'has'. 'The + Adjective' ('The oppressed') functions as a collective plural noun representing a whole group class[cite: 8]."
+  },
+  {
+    id: 16,
+    question: "One of the books (a)/ that were carefully kept on the upper shelf of the large wooden cabinet (b)/ have disappeared mysteriously (c)/ from the library this morning... (d)",
+    options: ["One of the books", "that were carefully kept on...", "have disappeared mysteriously", "from the library this morning..."],
+    answer: 2,
+    explanation: "Correction: Use 'has' instead of 'have'. While the relative clause correctly uses 'were' for 'books', the main sentence subject is 'One', which is singular[cite: 8]."
+  },
+  {
+    id: 17,
+    question: "The jury has finally given (a)/ their verdict on the controversial corruption case (b)/ although the verdict was not unanimous (c)/ yet it was passed as it cleared the majority criteria. (d)",
+    options: ["The jury has finally given", "their verdict on the controversial...", "although the verdict was not unanimous", "yet it was passed as it cleared..."],
+    answer: 0,
+    explanation: "Correction: Replace 'has' with 'have'. Since the jury was split and not unanimous ('the verdict was not unanimous'), it acts as a plural group of distinct individuals[cite: 8]."
+  },
+  {
+    id: 18,
+    question: "Every man, woman, and child (a)/ were evacuated (b)/ safely from the flooded village (c)/ by the rescue team. (d)",
+    options: ["Every man, woman, and child", "were evacuated", "safely from the flooded village", "by the rescue team."],
+    answer: 1,
+    explanation: "Correction: Use 'was' instead of 'were'. Subjects preceded or distributed by 'Every' must be matched with singular verbs[cite: 8]."
+  },
+  {
+    id: 19,
+    question: "Someone among the large and restless (a)/ crowd were constantly shouting (b)/ loud and aggressive slogans (c)/ during the politician's speech at the public rally... (d)",
+    options: ["Someone among the large and restless", "crowd were constantly shouting", "loud and aggressive slogans", "during the politician's speech..."],
+    answer: 1,
+    explanation: "Correction: Use 'was' instead of 'were' to match the singular indefinite pronoun subject 'Someone'[cite: 8]."
+  },
+  {
+    id: 20,
+    question: "Mathematics have always (a)/ been a difficult subject for me (b)/ since childhood but this time (c)/ I hope to pass the exam. (d)",
+    options: ["Mathematics have always", "been a difficult subject for me", "since childhood but this time", "I hope to pass the exam."],
+    answer: 0,
+    explanation: "Correction: Use 'has' instead of 'have'. Subject names ending in '-ics' (Mathematics, Physics) are singular in usage[cite: 8]."
+  },
+  {
+    id: 21,
+    question: "The difference between the genetic structures of humans and chimpanzees (a)/ are so minimal (b)/ that scientists often describe them (c)/ as evolutionarily close species. (d)",
+    options: ["The difference between the genetic...", "are so minimal", "that scientists often describe them", "as evolutionarily close species."],
+    answer: 1,
+    explanation: "Correction: Use 'is' instead of 'are'. The structural main head noun is 'The difference', which is singular[cite: 8]."
+  },
+  {
+    id: 22,
+    question: "The company has launched several innovative gadgets (a)/ that is designed (b)/ to improve daily productivity (c)/ in both homes and offices. (d)",
+    options: ["The company has launched several", "that is designed", "to improve daily productivity", "in both homes and offices."],
+    answer: 1,
+    explanation: "Correction: Use 'are' instead of 'is'. The relative pronoun 'that' points back to the plural target noun 'gadgets'[cite: 8]."
+  },
+  {
+    id: 23,
+    question: "A Great many people (a)/ living in metropolitan cities (b)/ faces mental health issues (c)/ due to the pressure of constant competition. (d)",
+    options: ["A Great many people", "living in metropolitan cities", "faces mental health issues", "due to the pressure of constant..."],
+    answer: 2,
+    explanation: "Correction: Use 'face' instead of 'faces'. The phrase 'A great many' acts as a clear plural modifier[cite: 8]."
+  },
+  {
+    id: 24,
+    question: "Each tourist (a)/ visiting the remote island (b)/ require a special entry permit (c)/ issued by the local administration. (d)",
+    options: ["Each tourist", "visiting the remote island", "require a special entry permit", "issued by the local administration."],
+    answer: 2,
+    explanation: "Correction: Use 'requires' instead of 'require' to establish proper agreement with the singular phrase 'Each tourist'[cite: 8]."
+  },
+  {
+    id: 25,
+    question: "A mansion near the Hoogli river (a)/ which worth more than ten million dollars, (b)/ was recently purchased by a Hollywood actor. (c)/ no error (d)",
+    options: ["A mansion near the Hoogli river", "which worth more than ten million", "was recently purchased by a", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'is worth' instead of 'worth' to supply a functional main verb link within the relative clause[cite: 8]."
+  },
+  {
+    id: 26,
+    question: "Helping the underprivileged (a)/ during natural calamities (b)/ reflect the true spirit (c)/ of humanity and compassion. (d)",
+    options: ["Helping the underprivileged", "during natural calamities", "reflect the true spirit", "of humanity and compassion."],
+    answer: 2,
+    explanation: "Correction: Use 'reflects' instead of 'reflect'. The subject of the sentence is the singular gerund phrase 'Helping the underprivileged'[cite: 8]."
+  },
+  {
+    id: 27,
+    question: "Amitabh Bachchan, the legendary icon of Indian cinema (a)/ have inspired millions (b)/ through his discipline and dedication. (c)/ no error (d)",
+    options: ["Amitabh Bachchan, the legendary", "have inspired millions", "through his discipline and dedication.", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'has' instead of 'have' because the proper subject name 'Amitabh Bachchan' is singular[cite: 8]."
+  },
+  {
+    id: 28,
+    question: "\"The Fast and the Furious\" (a)/ have continued to dominate the global box office (b)/ for over two decades, establishing itself as one (c)/ of the most successful action franchises... (d)",
+    options: ["\"The Fast and the Furious\"", "have continued to dominate the", "for over two decades, establishing...", "of the most successful action..."],
+    answer: 1,
+    explanation: "Correction: Use 'has' instead of 'have'. Individual franchise names or book/movie titles are treated as singular titles[cite: 8]."
+  },
+  {
+    id: 29,
+    question: "A comprehensive study on the effects of social media consumption (a)/ show that prolonged screen time (b)/ has an adverse impact (c)/ on the cognitive performance of adolescents. (d)",
+    options: ["A comprehensive study on the effects", "show that prolonged screen time", "has an adverse impact", "on the cognitive performance of..."],
+    answer: 1,
+    explanation: "Correction: Use 'shows' instead of 'show' to match the core singular subject 'A comprehensive study'[cite: 8]."
+  },
+  {
+    id: 30,
+    question: "The news of the shocking incident (a)/ reported from R.G. Kar Medical College in Kolkata, (b)/ have shaken the conscience of the entire nation. (c)/ No error (d)",
+    options: ["The news of the shocking incident", "reported from R.G. Kar Medical...", "have shaken the conscience of...", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'has shaken' instead of 'have shaken'. 'News' is an uncountable singular noun form[cite: 8]."
+  },
+  {
+    id: 31,
+    question: "The investigators wanted to know (a)/ why the forest fire in the upper Himalayan region (b)/ spreading uncontrollably (c)/ despite several days of continuous rainfall. (d)",
+    options: ["The investigators wanted to know", "why the forest fire in the upper", "spreading uncontrollably", "despite several days of continuous..."],
+    answer: 2,
+    explanation: "Correction: Use 'was spreading' instead of 'spreading' to supply the mandatory past progressive auxiliary structure link[cite: 8]."
+  },
+  {
+    id: 32,
+    question: "There were a severe earthquake (a)/ in the northern region last winter (b)/ that caused widespread destruction (c)/ and left hundreds of families homeless for weeks. (d)",
+    options: ["There were a severe earthquake", "in the northern region last winter", "that caused widespread destruction", "and left hundreds of families..."],
+    answer: 0,
+    explanation: "Correction: Use introductory singular format 'There was' to agree with the inverted singular subject element 'a severe earthquake'[cite: 8]."
+  },
+  {
+    id: 33,
+    question: "Don't order more milk because (a)/ three fourths of the milk that we brought (b)/ have not been used yet (c)/ No error. (d)",
+    options: ["Don't order more milk because", "three fourths of the milk that...", "have not been used yet", "No error."],
+    answer: 2,
+    explanation: "Correction: Use 'has' instead of 'have'. Fractional metrics or parts tracking uncountable items ('the milk') default to singular tracking values[cite: 8]."
+  },
+  {
+    id: 34,
+    question: "Out of the entire rescue team, he was the only one (a)/ that remain inside the flooded cave (b)/ until all the trapped miners were safely evacuated. (c)/ No error. (d)",
+    options: ["Out of the entire rescue team,", "that remain inside the flooded cave", "until all the trapped miners were...", "No error."],
+    answer: 1,
+    explanation: "Correction: Use 'remained' instead of 'remain'. The sentence describes a completed past event ('was', 'were evacuated')[cite: 8]."
+  },
+  {
+    id: 35,
+    question: "Plenty of the news (a)/ circulating on social media platforms (b)/ are either fabricated (c)/ or exaggerated beyond reality. (d)",
+    options: ["Plenty of the news", "circulating on social media", "are either fabricated", "or exaggerated beyond reality."],
+    answer: 2,
+    explanation: "Correction: Use 'is' instead of 'are'. 'Plenty of' inherits its number value from the following uncountable material noun 'news'[cite: 8]."
+  },
+  {
+    id: 36,
+    question: "The journalist and the photographer (a)/ was arrested by the local police (b)/ while documenting illegal mining activities (c)/ near the border of the national reserve. (d)",
+    options: ["The journalist and the photographer", "was arrested by the local police", "while documenting illegal mining", "near the border of the national..."],
+    answer: 1,
+    explanation: "Correction: Use 'were' instead of 'was'. Two separate professionals marked by individual specific items are bound by 'and' to form a plural subject[cite: 8]."
+  },
+  {
+    id: 37,
+    question: "The whole cast of the new movie (a)/ were invited to the international film festival (b)/ for the special premiere night (c)/ along with the director. (d)",
+    options: ["The whole cast of the new movie", "were invited to the international", "for the special premiere night", "along with the director."],
+    answer: 1,
+    explanation: "Correction: Use 'was' instead of 'were'. The collective phrase 'The whole cast' acts here as a singular uniform group entity[cite: 8]."
+  },
+  {
+    id: 38,
+    question: "According to the experts, the rise of fuel prices (a)/ over the past six months have caused a sharp increase (b)/ in transportation costs and overall inflation. (c)/ No error (d)",
+    options: ["According to the experts, the rise", "over the past six months have caused", "in transportation costs and overall", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'has caused' instead of 'have caused'. The true head subject keyword is singular: 'the rise'[cite: 8]."
+  },
+  {
+    id: 39,
+    question: "The most practical way to tackle the issue of plastic pollution (a)/ are to adopt sustainable alternatives (b)/ and spread awareness about waste segregation and recycling. (c)/ No error. (d)",
+    options: ["The most practical way to tackle", "are to adopt sustainable alternatives", "and spread awareness about waste...", "No error."],
+    answer: 1,
+    explanation: "Correction: Use 'is' instead of 'are' to align correctly with the principal singular subject 'The most practical way'[cite: 8]."
+  },
+  {
+    id: 40,
+    question: "Everything that the municipality has planned (a)/ for the city's waste segregation system (b)/ are expected to make the recycling process more efficient (c)/... (d)",
+    options: ["Everything that the municipality", "for the city's waste segregation", "are expected to make the recycling", "and reduce landfill pressure."],
+    answer: 2,
+    explanation: "Correction: Use 'is' instead of 'are'. The singular core indefinite phrase 'Everything' demands singular verb forms[cite: 8]."
+  },
+  {
+    id: 41,
+    question: "Only one copy of the ancient manuscript, (a)/ believed to have been written by Buddhist scholars over two thousand years ago, (b)/ remain preserved in a climate-controlled chamber... (c)/ No error. (d)",
+    options: ["Only one copy of the ancient", "believed to have been written by...", "remain preserved in a climate-controlled", "No error."],
+    answer: 2,
+    explanation: "Correction: Use 'remains' instead of 'remain' to match the focal singular subject tracking count: 'Only one copy'[cite: 8]."
+  },
+  {
+    id: 42,
+    question: "Those who maintain transparency in their work (a)/ and communicate honestly with clients (b)/ is considered trustworthy (c)/ by their team leaders and superiors. (d)",
+    options: ["Those who maintain transparency", "and communicate honestly with", "is considered trustworthy", "by their team leaders and superiors."],
+    answer: 2,
+    explanation: "Correction: Use 'are' instead of 'is' to match the plural base demonstrative relative anchor 'Those'[cite: 8]."
+  },
+  {
+    id: 43,
+    question: "The principal and founder of St. (a)/ Joseph's International School were invited (b)/ to speak at the Global Educators Conference (c)/ held in Singapore last month. (d)",
+    options: ["The principal and founder of St.", "Joseph's International School were", "to speak at the Global Educators", "held in Singapore last month."],
+    answer: 1,
+    explanation: "Correction: Use 'was' instead of 'were'. The absence of a separate article before 'founder' indicates that the principal and founder are the exact same individual[cite: 8]."
+  },
+  {
+    id: 44,
+    question: "Law and order (a)/ are maintained strictly in this city (b)/ thanks to the efficient police force. (c)/ No error. (d)",
+    options: ["Law and order", "are maintained strictly in this", "thanks to the efficient police force.", "No error."],
+    answer: 1,
+    explanation: "Correction: Use 'is' instead of 'are'. 'Law and order' forms a single idiomatic compound concept, demanding a singular verb form[cite: 8]."
+  },
+  {
+    id: 45,
+    question: "Neither the police officer nor the suspect were telling the truth about what happened near the railway station.",
+    options: ["was telling the truth", "were telling truth", "are telling the truth", "had told the truth"],
+    answer: 0,
+    explanation: "Option (a) is correct. When singular subjects are connected by 'neither... nor', the verb must be singular ('was telling')[cite: 8]."
+  },
+  {
+    id: 46,
+    question: "The captain, as well as his teammates, are responsible for maintaining discipline on the field.",
+    options: ["is responsible", "has responsible", "were responsible", "are responsibility"],
+    answer: 0,
+    explanation: "Option (a) is correct. The verb matches the singular primary subject 'The captain' preceding the parenthetical phrase 'as well as'[cite: 8]."
+  },
+  {
+    id: 47,
+    question: "My father and I was discussing the importance of financial planning while driving to the office.",
+    options: ["have discussing", "was discussed", "are discussing", "were discussing"],
+    answer: 3,
+    explanation: "Option (d) is correct. A compound subject connected by 'and' ('My father and I') requires a plural verb ('were discussing')[cite: 8]."
+  },
+  {
+    id: 48,
+    question: "Many a brave soldier have sacrificed their life for the nation during the great wars of history.",
+    options: ["have sacrificed his life", "has sacrificed his life", "was sacrificed his life", "have sacrificed their lives"],
+    answer: 1,
+    explanation: "Option (b) is correct. 'Many a' takes a singular noun and singular tracking elements ('has sacrificed his life')[cite: 8]."
+  },
+  {
+    id: 49,
+    question: "The sound of heavy rain make me feels calm and sleepy whenever I sit near the window.",
+    options: ["makes me to feel calm and sleepy", "make me feeling calm and sleepy", "makes me feel calm and sleepy", "make me felt calm and sleepy"],
+    answer: 2,
+    explanation: "Option (c) is correct. The singular subject 'The sound' requires the singular verb 'makes', and the bare infinitive layout 'feel' follows the causative object link[cite: 8]."
+  },
+  {
+    id: 50,
+    question: "Either of the candidates have shown great leadership qualities during the election campaign across the state.",
+    options: ["has shown great leadership qualities during the election campaign", "have shown great leadership qualities in the election campaign", "were showing great leadership qualities during the election campaign", "had shown great leadership qualities during the election campaign"],
+    answer: 0,
+    explanation: "Option (a) is correct. 'Either of' acts as a singular distributive pronoun, which requires the singular verb choice 'has shown'[cite: 8]."
+  },
+  {
+    id: 51,
+    question: "The boy with his two friends were caught playing games on the school computer during class hours.",
+    options: ["are caught playing games on the school computer", "were caught playing games in the school computer", "had caught playing games on the school computer", "was caught playing games on the school computer"],
+    answer: 3,
+    explanation: "Option (d) is correct. Prepositional phrases starting with 'with' do not pluralize the singular main head subject unit 'The boy'[cite: 8]."
+  },
+  {
+    id: 52,
+    question: "Playing outdoor games in the evening improve both physical strength and mental focus among children.",
+    options: ["improves both physical strength and mental focus", "improve both physical strength as well as mental focus", "improving both physical strength and mental focus", "has improved both physical strength and mental focus"],
+    answer: 0,
+    explanation: "Option (a) is correct. The sentence subject is the singular gerund phrase action element 'Playing outdoor games', requiring 'improves'[cite: 8]."
+  },
+  {
+    id: 53,
+    question: "She, the victim of the recent kidnapping incident, were rescued safely by the police near the city border early this morning.",
+    options: ["was rescued safely by the police near the city border", "were rescuing safely by the police near the city border", "has rescued safely by the police near the city border", "had rescuing safely by the police near the city border"],
+    answer: 0,
+    explanation: "Option (a) is correct. The appositive description does not change the fact that the singular pronoun subject 'She' requires the singular verb form 'was rescued'[cite: 8]."
+  },
+  {
+    id: 54,
+    question: "The tension between the two rival gangs have intensified over the past few weeks after the murder incident in the city.",
+    options: ["have been intensified over the past few weeks", "have intensified since the past few weeks", "has intensify over the past few weeks", "has intensified over the past few weeks"],
+    answer: 3,
+    explanation: "Option (d) is correct. The true head noun subject of the sentence is the singular unit 'The tension', requiring 'has intensified'[cite: 8]."
+  },
+  {
+    id: 55,
+    question: "The chances of survival after the plane crash has improved because of quick rescue operations near the forest area.",
+    options: ["have improved because of quick rescue operations", "has improving because of quick rescue operations", "have improving because of quick rescue operations", "had improve because of quick rescue operations"],
+    answer: 0,
+    explanation: "Option (a) is correct. The head subject noun is 'The chances', which is plural and requires 'have improved'[cite: 8]."
+  },
+  {
+    id: 56,
+    question: "The Times of India were published from multiple cities across the country during the colonial period.",
+    options: ["has published", "were publishing", "have published", "was published"],
+    answer: 3,
+    explanation: "Option (d) is correct. 'The Times of India' is a single proper newspaper title name, demanding the singular passive verb configuration 'was published'[cite: 8]."
+  },
+  {
+    id: 57,
+    question: "Nothing but a few old memories remain in the deserted house after the terrible murder that happened years ago.",
+    options: ["have remained", "were remaining", "remains", "No improvement"],
+    answer: 2,
+    explanation: "Option (c) is correct. In sentences starting with 'Nothing but', the verb agrees with the singular concept 'Nothing', which requires 'remains'[cite: 8]."
+  },
+  {
+    id: 58,
+    question: "Not only the victim's family but also the police officers was searching for clues in the dense jungle after the murder.",
+    options: ["No improvement", "has searched for clues in the dense jungle", "are searching for clues in the dense jungle", "were searching for clues in the dense jungle"],
+    answer: 3,
+    explanation: "Option (d) is correct. Correlative conjunction pairs like 'Not only... but also' require the verb to agree with the closer plural subject phrase 'the police officers' ('were searching')[cite: 8]."
+  },
+  {
+    id: 59,
+    question: "None of the rescuers were willing to climb down into the collapsed mine because of the heavy smoke.",
+    options: ["were willing for climbing down into the collapsed mine", "was willing to climb down into the collapsed mine", "had willing to climb down into the collapsed mine", "No improvement"],
+    answer: 1,
+    explanation: "Option (b) is correct. In formal tracking rules, 'None of' taking plural countable nouns standardly adopts the singular verb choice 'was willing'[cite: 8]."
+  },
+  {
+    id: 60,
+    question: "Each flower and each leaf in the garden were shining beautifully after the morning rain when the sun appeared.",
+    options: ["were shined beautifully after the morning rain", "was shining beautifully after the morning rain", "was shining beautifully after morning rain", "No improvement"],
+    answer: 1,
+    explanation: "Option (b) is correct. Even if multiple singular items are connected by 'and', if they are preceded by 'Each', the verb must be singular ('was shining')[cite: 8]."
+  },
+  {
+    id: 61,
+    question: "Every of these paintings is displayed beautifully in the art exhibition near the city museum.",
+    options: ["Every of these paintings are displayed", "All of these paintings is displayed", "Each of these paintings are displayed", "Each of these paintings is displayed"],
+    answer: 3,
+    explanation: "Option (d) is correct. 'Every' cannot be used directly before an 'of' phrase because it is a determiner, not a pronoun. Replacing it with 'Each of' while keeping the singular verb 'is' fixes the sentence[cite: 8]."
+  },
+  {
+    id: 62,
+    question: "There has been several complaints about the poor condition of the city roads after the heavy rainfall last week.",
+    options: ["have being", "has being", "have been", "No improvement"],
+    answer: 2,
+    explanation: "Option (c) is correct. The introductory word 'There' takes a plural verb ('have been') to match the trailing plural subject 'several complaints'[cite: 8]."
+  },
+  {
+    id: 63,
+    question: "A number of vehicles was parked outside the stadium despite strict no-parking rules during the final match.",
+    options: ["No improvement", "has been parked", "were being parked", "were parked"],
+    answer: 3,
+    explanation: "Option (d) is correct. The multi-word modifier 'A number of' is a plural construction that requires the plural verb form 'were parked'[cite: 8]."
+  },
+  {
+    id: 64,
+    question: "One of the girls have been selected for the national-level dance performance after a tough audition.",
+    options: ["has been selected", "were selected", "have selected", "No improvement"],
+    answer: 0,
+    explanation: "Option (a) is correct. The true singular subject keyword is 'One' inside the structural pattern group 'One of the + plural noun'[cite: 8]."
+  },
+  {
+    id: 65,
+    question: "Near the riverbank were lying a beautiful wooden boat half-buried in the sand after the storm.",
+    options: ["has lying", "were laying", "was laying", "was lying"],
+    answer: 3,
+    explanation: "Option (d) is correct. In inverted structures, the verb matches the trailing singular noun subject 'a beautiful wooden boat', which requires 'was lying'[cite: 8]."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>${q.id}. ${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q${i+1}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

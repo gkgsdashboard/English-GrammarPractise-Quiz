@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Conditionals & Subjunctive Mood Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  /* SECTION 1: CONDITIONALS (1-25) */
+  {
+    id: 1,
+    question: "If this ancient manuscript (a)/ gets decoded, the revelation changes the entire (b)/ understanding of how early civilizations interacted (c)/ across distant continents. (d)",
+    options: ["If this ancient manuscript", "gets decoded, the revelation changes the entire", "understanding of how early civilizations interacted", "across distant continents."],
+    answer: 1,
+    explanation: "Correction: Use 'will change' instead of 'change'. In a first conditional sentence, the main clause uses 'will + V1' to show a future result[cite: 14]."
+  },
+  {
+    id: 2,
+    question: "Had Ananya not insisted on checking the pantry (a)/ cabinet once more before leaving for (b)/ the airport, the gas filled the entire kitchen. (c)/ No error (d)",
+    options: ["Had Ananya not insisted on checking the pantry", "cabinet once more before leaving for", "the airport, the gas filled the entire kitchen.", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'would have filled' instead of 'filled'. An inverted third conditional ('Had + subject + V3') requires 'would have + V3' in the main clause[cite: 14]."
+  },
+  {
+    id: 3,
+    question: "The tourist couple would have (a)/ missed the mesmerizing Ganga Aarti (b)/ if their boatman not chosen the shorter route. (c)/ No error (d)",
+    options: ["The tourist couple would have", "missed the mesmerizing Ganga Aarti", "if their boatman not chosen the shorter route.", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'had not chosen' instead of 'not chosen' to correctly form the past perfect negative inside the if-clause[cite: 14]."
+  },
+  {
+    id: 4,
+    question: "The neighbourhood kids would have missed (a)/ the Independence Day celebration in (b)/ the colony park if the electrician (c)/ has not repaired the faulty generator. (d)",
+    options: ["The neighbourhood kids would have missed", "the Independence Day celebration in", "the colony park if the electrician", "has not repaired the faulty generator."],
+    answer: 3,
+    explanation: "Correction: Use 'had not repaired' instead of 'has not repaired'. Third conditional structures map a past perfect tense inside their conditional clauses[cite: 14]."
+  },
+  {
+    id: 5,
+    question: "If the organisers of the Jaipur Literature Festival (a)/ will announce an additional interactive (b)/ session with author Chetan Bhagat, a large number of young (c)/ readers will rush to book the seats. (d)",
+    options: ["If the organisers of the Jaipur Literature Festival", "will announce an additional interactive", "session with author Chetan Bhagat, a large number", "readers will rush to book the seats."],
+    answer: 1,
+    explanation: "Correction: Use 'announce' instead of 'will announce'. Future modals like 'will' or 'shall' are grammatically forbidden inside conditional clauses[cite: 14]."
+  },
+  {
+    id: 6,
+    question: "If freshly chopped apples are left uncovered in open air (a)/ the enzymes in the fruit (b)/ react with oxygen and have turned the surface brown (c)/ which is a natural oxidation process. (d)",
+    options: ["If freshly chopped apples are left uncovered in open air", "the enzymes in the fruit", "react with oxygen and have turned the surface brown", "which is a natural oxidation process."],
+    answer: 2,
+    explanation: "Correction: Use 'turn' instead of 'have turned'. Zero conditionals conveying scientific/timeless facts strictly use simple present layout across both clauses[cite: 14]."
+  },
+  {
+    id: 7,
+    question: "If the government had invested a decent amount on the waste (a)/ management system a decade ago, (b)/ the major metropolitan cities like Delhi (c)/ and Mumbai wouldn't have been in a such a bad situation now. (d)",
+    options: ["If the government had invested a decent amount on the waste", "management system a decade ago,", "the major metropolitan cities like Delhi", "and Mumbai wouldn't have been in a such a bad situation now."],
+    answer: 3,
+    explanation: "Correction: Use 'wouldn't face' or 'wouldn't be' instead of 'wouldn't have been'. A mixed conditional tracking past actions with present consequences ('now') requires a conditional present template in the main clause[cite: 14]."
+  },
+  {
+    id: 8,
+    question: "If the power was not cut (a)/ by the maintenance staff, the residents (b)/ could have watched the entire cricket match (c)/ without interruption. (d)",
+    options: ["If the power was not cut", "by the maintenance staff, the residents", "could have watched the entire cricket match", "without interruption."],
+    answer: 0,
+    explanation: "Correction: Use 'had not been cut' instead of 'was not cut'. A past perfect passive is required to align correctly with 'could have watched'[cite: 14]."
+  },
+  {
+    id: 9,
+    question: "If I was you (a)/ I would not have trusted (b)/ someone who hides important details (c)/ before taking such a big financial decision. (d)",
+    options: ["If I was you", "I would not have trusted", "someone who hides important details", "before taking such a big financial decision."],
+    answer: 0,
+    explanation: "Correction: Replace 'was' with 'were'. Hypotheses or imaginary conditions ('If I were you') require the past subjunctive form 'were' regardless of subject number[cite: 14]."
+  },
+  {
+    id: 10,
+    question: "If I knew that my parents (a)/ would visit my flat (b)/ I would have cleaned the (c)/ guest room and prepared everything properly. (d)",
+    options: ["If I knew that my parents", "would visit my flat", "I would have cleaned the", "guest room and prepared everything properly."],
+    answer: 0,
+    explanation: "Correction: Replace 'If I knew' with 'If I had known' to complete a standard third conditional past hypothesis template[cite: 14]."
+  },
+  {
+    id: 11,
+    question: "He slipped on the muddy village road (a)/ and would have broken his arm (b)/ if the farmers (c)/ did not take him to the nearby hospital. (d)",
+    options: ["He slipped on the muddy village road", "and would have broken his arm", "if the farmers", "did not take him to the nearby hospital."],
+    answer: 3,
+    explanation: "Correction: Use 'had not taken' instead of 'did not take' to satisfy the third conditional pattern linking to 'would have broken'[cite: 14]."
+  },
+  {
+    id: 12,
+    question: "If my uncle would have reached our village last night (a)/ I would have taken him to the annual fair (b)/ where the whole community gathers (c)/ to celebrate the festive season. (d)",
+    options: ["If my uncle would have reached our village last night", "I would have taken him to the annual fair", "where the whole community gathers", "to celebrate the festive season."],
+    answer: 0,
+    explanation: "Correction: Use 'If my uncle had reached' instead of 'If my uncle would have reached'. Future conditional markers are banned inside the if-clause[cite: 14]."
+  },
+  {
+    id: 13,
+    question: "Had you informed me about your (a)/ father's sudden illness on time (b)/ I would definitely arrange (c)/ immediate transport to take him to the city hospital. (d)",
+    options: ["Had you informed me about your", "father's sudden illness on time", "I would definitely arrange", "immediate transport to take him to the city hospital."],
+    answer: 2,
+    explanation: "Correction: Replace 'would definitely arrange' with 'would have definitely arranged' to complete the inverted third conditional sequence[cite: 14]."
+  },
+  {
+    id: 14,
+    question: "If I was financially stronger right now (a)/ I would book a short trip to Kerala (b)/ and explore the peaceful backwaters (c)/ and the local food. (d)",
+    options: ["If I was financially stronger right now", "I would book a short trip to Kerala", "and explore the peaceful backwaters", "and the local food."],
+    answer: 0,
+    explanation: "Correction: Use 'If I were' instead of 'If I was' to properly frame a present imaginary situation using subjunctive 'were'[cite: 14]."
+  },
+  {
+    id: 15,
+    question: "If I saw you outside the (a)/ railway station yesterday, I would have surely (b)/ stopped my car and talked to you. (c)/ No error (d)",
+    options: ["If I saw you outside the", "railway station yesterday, I would have surely", "stopped my car and talked to you.", "No error"],
+    answer: 0,
+    explanation: "Correction: Replace 'If I saw' with 'If I had seen you' to anchor the historical condition properly back behind 'yesterday'[cite: 14]."
+  },
+  {
+    id: 16,
+    question: "You would have faced a huge fine (a)/ for late submission of your income-tax return (b)/ if you had not helped by the accountant (c)/ who completed all your documents on time. (d)",
+    options: ["You would have faced a huge fine", "for late submission of your income-tax return", "if you had not helped by the accountant", "who completed all your documents on time."],
+    answer: 2,
+    explanation: "Correction: Replace 'had not helped' with 'had not been helped'. The passive construction is mandatory because the subject received assistance from the accountant[cite: 14]."
+  },
+  {
+    id: 17,
+    question: "If I had known (a)/ what a careless driver you actually are, (b)/ I would never have handed you (c)/ the keys of my new bike. (d)",
+    options: ["If I had known", "what a careless driver you actually are,", "I would never have handed you", "the keys of my new bike."],
+    answer: 3,
+    explanation: "The sentence contains no error. The third conditional framework ('If I had known... I would never have handed') is perfectly applied[cite: 14]."
+  },
+  {
+    id: 18,
+    question: "If the pharmacy keeps selling medicines without proper bills (a)/ despite several inspections, (b)/ its operating licence (c)/ will have been revoked within days. (d)",
+    options: ["If the pharmacy keeps selling medicines without proper bills", "despite several inspections,", "its operating licence", "will have been revoked within days."],
+    answer: 3,
+    explanation: "Correction: Use 'will be revoked' instead of 'will have been revoked'. A standard first conditional main clause requires a simple future passive here[cite: 14]."
+  },
+  {
+    id: 19,
+    question: "If you were the health minister of India (a)/ what immediate reforms (b)/ would you have implemented (c)/ to improve the condition of government hospitals? (d)",
+    options: ["If you were the health minister of India", "what immediate reforms", "would you have implemented", "to improve the condition of government hospitals?"],
+    answer: 2,
+    explanation: "Correction: Replace 'would you have implemented' with 'would you implement' to balance the second conditional template introduced by 'were'[cite: 14]."
+  },
+  {
+    id: 20,
+    question: "If I would be the owner of this renowned luxury hotel (a)/ chain that operates across several Indian cities, (b)/ I would not allow any staff member (c)/ to behave rudely with guests under any circumstances. (d)",
+    options: ["If I would be the owner of this renowned luxury hotel", "chain that operates across several Indian cities,", "I would not allow any staff member", "to behave rudely with guests under any circumstances."],
+    answer: 0,
+    explanation: "Correction: Replace 'If I would be' with 'If I were' to establish an imaginary present condition[cite: 14]."
+  },
+  {
+    id: 21,
+    question: "He keeps giving orders to everyone in the office (a)/ in such an authoritative tone (b)/ as if he is the CEO (c)/ of a multinational corporation. (d)",
+    options: ["He keeps giving orders to everyone in the office", "in such an authoritative tone", "as if he is the CEO", "of a multinational corporation."],
+    answer: 2,
+    explanation: "Correction: Replace 'he is the CEO' with 'he were the CEO'. Phrases like 'as if' or 'as though' introducing an unreal state require subjunctive 'were'[cite: 14]."
+  },
+  {
+    id: 22,
+    question: "I wish (a)/ I understood the value of maintaining good health (b)/ when my parents repeatedly advised me (c)/ during my college days. (d)",
+    options: ["I wish", "I understood the value of maintaining good health", "when my parents repeatedly advised me", "during my college days."],
+    answer: 1,
+    explanation: "Correction: Use 'had understood' instead of 'understood'. Unreal regrets concerning the past timeline ('during my college days') take past perfect form[cite: 14]."
+  },
+  {
+    id: 23,
+    question: "I wish (a)/ she realises how genuinely her parents care for her (b)/ instead of arguing with them (c)/ over every small issue. (d)",
+    options: ["I wish", "she realises how genuinely her parents care for her", "instead of arguing with them", "over every small issue."],
+    answer: 1,
+    explanation: "Correction: Use 'realised' instead of 'realises'. Present wishes take simple past subjunctive verb patterns to show distance from current reality[cite: 14]."
+  },
+  {
+    id: 24,
+    question: "If we had sufficient funds (a)/ in our NGO at the time of the disaster, (b)/ we could have (c)/ provided immediate relief to hundreds of affected families in the nearby villages. (d)",
+    options: ["If we had sufficient funds", "in our NGO at the time of the disaster,", "we could have", "provided immediate relief to hundreds of affected families..."],
+    answer: 0,
+    explanation: "Correction: Replace 'If we had sufficient funds' with 'If we had had sufficient funds' to create the necessary past perfect for a third conditional past timeline[cite: 14]."
+  },
+  {
+    id: 25,
+    question: "If our national leaders had come back (a)/ to observe the level of corruption in our country, (b)/ they would be deeply disappointed. (c)/ No error (d)",
+    options: ["If our national leaders had come back", "to observe the level of corruption in our country,", "they would be deeply disappointed.", "No error"],
+    answer: 0,
+    explanation: "Correction: Use 'came' instead of 'had come back' to properly balance second conditional structures matching trailing predicates like 'would be'[cite: 14]."
+  },
+
+  /* SECTION 2: PRESENT SUBJUNCTIVE MOOD (26-40) */
+  {
+    id: 26,
+    question: "The education commission proposed that (a)/ a uniform digital-attendance system is introduced (b)/ across all government schools (c)/ to minimise manual errors and increase transparency. (d)",
+    options: ["The education commission proposed that", "a uniform digital-attendance system is introduced", "across all government schools", "to minimise manual errors and increase transparency."],
+    answer: 1,
+    explanation: "Correction: Use 'be introduced' or 'should be introduced' instead of 'is introduced'. Mandative verbs like 'propose' trigger a present subjunctive mood template requiring a base verb[cite: 14]."
+  },
+  {
+    id: 27,
+    question: "The family prayed that the (a)/ critically injured passenger is taken to a (b)/ specialised trauma centre without delay. (c)/ No error (d)",
+    options: ["The family prayed that the", "critically injured passenger is taken to a", "specialised trauma centre without delay.", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'be taken' or 'should be taken' instead of 'is taken' to fulfill the subjunctive mood tracking a wish/prayer[cite: 14]."
+  },
+  {
+    id: 28,
+    question: "All the parents demanded that (a)/ the malfunctioning playground equipment was replaced quickly, (b)/ because several children had already been injured (c)/ due to its broken hinges and loose support bars. (d)",
+    options: ["All the parents demanded that", "the malfunctioning playground equipment was replaced quickly,", "because several children had already been injured", "due to its broken hinges and loose support bars."],
+    answer: 1,
+    explanation: "Correction: Use 'be replaced' or 'should be replaced' instead of 'was replaced' following the mandative verb 'demand'[cite: 14]."
+  },
+  {
+    id: 29,
+    question: "It is imperative that every traveller carries a printed copy of the updated travel advisory, (a)/ because several checkpoints along the international border now (b)/ demand immediate proof of health clearance and itinerary details. (c)/ no error (d)",
+    options: ["It is imperative that every traveller carries a printed copy", "because several checkpoints along the international border now", "demand immediate proof of health clearance and itinerary details.", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'carry' or 'should carry' instead of 'carries'. Phrasal adjectives of urgency ('imperative that') require present subjunctive base verbs[cite: 14]."
+  },
+  {
+    id: 30,
+    question: "The dietician advised that the patient took light meals (a)/ throughout the day, since heavy portions (b)/ could slow down his digestion and interfere (c)/ with the medication schedule. (d)",
+    options: ["The dietician advised that the patient took light meals", "throughout the day, since heavy portions", "could slow down his digestion and interfere", "with the medication schedule."],
+    answer: 0,
+    explanation: "Correction: Use 'take' or 'should take' instead of 'took' to adhere to present subjunctive layout guidelines following 'advised'[cite: 14]."
+  },
+  {
+    id: 31,
+    question: "I want that he talks to the project manager (a)/ about the repeated delays, (b)/ since the team is struggling to maintain the schedule (c)/ and urgently needs clear instructions for the upcoming tasks. (d)",
+    options: ["I want that he talks to the project manager", "about the repeated delays,", "since the team is struggling to maintain the schedule", "and urgently needs clear instructions for the upcoming tasks."],
+    answer: 0,
+    explanation: "Correction: Use 'talk' or 'should talk' instead of 'talks' following mandative clause targets[cite: 14]."
+  },
+  {
+    id: 32,
+    question: "It is suggested that students revised their previous year's notes carefully, (a)/ because many questions in the upcoming test (b)/ are expected to be based on fundamental concepts covered earlier. (c)/ no error (d)",
+    options: ["It is suggested that students revised their previous year's notes", "because many questions in the upcoming test", "are expected to be based on fundamental concepts covered earlier.", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'revise' or 'should revise' instead of 'revised' to meet mandative subjunctive baseline parameters[cite: 14]."
+  },
+  {
+    id: 33,
+    question: "It is mandatory that your daughter comes to (a)/ the cultural rehearsal in formal attire, (b)/ because the final performance will be recorded (c)/ for the annual school presentation. (d)",
+    options: ["It is mandatory that your daughter comes to", "the cultural rehearsal in formal attire,", "because the final performance will be recorded", "for the annual school presentation."],
+    answer: 0,
+    explanation: "Correction: Use 'come' or 'should come' instead of 'comes'. Universal obligation adjectives ('mandatory that') trigger subjunctive base forms[cite: 14]."
+  },
+  {
+    id: 34,
+    question: "To maintain accuracy in the department's monthly reports, (a)/ it is necessary that every employee (b)/ does his data-entry tasks carefully, (c)/ since even minor mistakes can create major inconsistencies later. (d)",
+    options: ["To maintain accuracy in the department's monthly reports,", "it is necessary that every employee", "does his data-entry tasks carefully,", "since even minor mistakes can create major inconsistencies later."],
+    answer: 2,
+    explanation: "Correction: Use 'do' or 'should do' instead of 'does' to align with the mandatory subjunctive form required by 'necessary that'[cite: 14]."
+  },
+  {
+    id: 35,
+    question: "It is essential that the newly appointed investigation team (a)/ conducts a multi-stage review of the digital evidence (b)/ collected over the last six months before submitting (c)/ its findings to the national cybersecurity panel. (d)",
+    options: ["It is essential that the newly appointed investigation team", "conducts a multi-stage review of the digital evidence", "collected over the last six months before submitting", "its findings to the national cybersecurity panel."],
+    answer: 1,
+    explanation: "Correction: Use 'conduct' instead of 'conducts'. Adjectives of vital necessity ('essential that') strip singular markers away, utilizing plain base infinitives[cite: 14]."
+  },
+  {
+    id: 36,
+    question: "The expert panel recommended that the pharmaceutical company (a)/ reviews all clinical reports carefully (b)/ to ensure that no adverse-reaction detail is missed (c)/ before filing for final approval. (d)",
+    options: ["The expert panel recommended that the pharmaceutical company", "reviews all clinical reports carefully", "to ensure that no adverse-reaction detail is missed", "before filing for final approval."],
+    answer: 1,
+    explanation: "Correction: Use base 'review' instead of 'reviews' to correctly apply the subjunctive pattern driven by 'recommended that'[cite: 14]."
+  },
+  {
+    id: 37,
+    question: "The High Court ordered that the state administration initiates strict disciplinary action (a)/ against officials who knowingly overlooked (b)/ repeated violations in the industrial pollution case. (c)/ no error (d)",
+    options: ["The High Court ordered that the state administration initiates strict", "against officials who knowingly overlooked", "repeated violations in the industrial pollution case.", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'initiate' instead of 'initiates' to follow judicial mandative ordering subjunctive criteria[cite: 14]."
+  },
+  {
+    id: 38,
+    question: "The senior advocate insisted that the witness (a)/ gives a detailed account of the events (b)/ leading to the financial fraud (c)/ before the second hearing begins. (d)",
+    options: ["The senior advocate insisted that the witness", "gives a detailed account of the events", "leading to the financial fraud", "before the second hearing begins."],
+    answer: 1,
+    explanation: "Correction: Use bare 'give' instead of 'gives' to comply with present subjunctive boundaries triggered by 'insisted'[cite: 14]."
+  },
+  {
+    id: 39,
+    question: "Sentence Improvement: It is essential that someone you truly love ______ not only your words but also the silence you hide behind your smile.",
+    options: ["understands", "understanding", "understand", "is understanding"],
+    answer: 2,
+    explanation: "Option (c) provides the exact present subjunctive base form 'understand' required by the preceding introductory frame 'It is essential that'[cite: 14]."
+  },
+  {
+    id: 40,
+    question: "Sentence Improvement: It is imperative that the one you choose for life ______ your growth and hold your hand when everything falls apart.",
+    options: ["supports", "support", "supporting", "is supporting"],
+    answer: 1,
+    explanation: "Option (b) is correct. The adjective 'imperative' demands a present subjunctive bare infinitive ('support'), which also parallelly matches the subsequent verb 'hold'[cite: 14]."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>Q:${q.id} ${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q:${q.id}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Practice Test Template</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+
+/* Custom Dropdown/Popup Styling */
+.select-box { width: 100%; padding: 10px; margin: 15px 0; border-radius: 6px; border: 1px solid #ccc; font-size: 15px; font-family: inherit; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Initially empty, wait for class selection -->
+  <div id="quizCard" class="card" style="display:none;">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar" style="display:none;">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<!-- Class Selection Popup Modal -->
+<div id="classModal" class="modal" style="display:flex;">
+  <div class="modal-content">
+    <h3 style="color:var(--accent); margin-top:0;">Select Practice Class</h3>
+    <p>Please select which PDF/Practice Class you want to give the quiz for:</p>
+    <select id="classSelect" class="select-box">
+      <option value="class1">Practice Class - 01 (25 Questions)</option>
+      <option value="class2">Practice Class - 02 (40 Questions)</option>
+      <option value="class3">Practice Class - 03 (40 Questions)</option>
+      <option value="class4">Practice Class - 04 (40 Questions)</option>
+      <option value="class5">Practice Class - 05 (40 Questions)</option>
+      <option value="class6">Practice Class - 06 (40 Questions)</option>
+      <option value="class7">Practice Class - 07 (40 Questions)</option>
+      <option value="class8">Practice Class - 08 (40 Questions)</option>
+      <option value="class9">Practice Class - 09 (40 Questions)</option>
+      <option value="class10">Practice Class - 10 (40 Questions)</option>
+    </select>
+    <button id="startQuizBtn" class="btn" style="width:100%; padding:12px; font-size:15px; margin-top:10px;">Start Quiz</button>
+  </div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ALL QUESTIONS DATABASE EXTRACTED FROM INPUT DATA
+const ALL_CLASSES = {
+  class1: [
+    { question: "The young lawyer said (a)/ that she can handle (b)/ all those clients alone (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Error in part (b). 'can' should be replaced with 'could' because the main clause is in the past tense ('said')." },
+    { question: "I have decided that (a)/if Roshni will also be coming(b)/I will not go to the party (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Error in part (b). In conditional clauses, simple present tense is used instead of future tense when the main clause is in the future. 'will also be coming' should be fixed." },
+    { question: "Mr Gupta, the most (a)/ experienced of all our employees (b)/ are going to handle your case.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Error in part (c). The subject 'Mr Gupta' is singular, so the verb should be 'is going' instead of 'are going'." },
+    { question: "If things were not going to be normal (a)/ after the pandemic, mankind will (b)/ have to accept the new normal. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Error in part (a). To match the future condition 'will have to' in the main clause, the conditional clause should align logically." },
+    { question: "The damaged will have (a)/ to be to be (b)/ either paid by you or your partner. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Error in part (c). Correlation error: 'either paid by you or by your partner' or 'paid by either you or your partner'." },
+    { question: "This will be the most difficult of (a)/ the adjustments we have to make (b)/ because we have been used to (c)/ spend a lot on guests. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Error in part (d). 'used to' here requires a gerund: 'spending' instead of 'spend'." },
+    { question: "She is waiting there (a)/for you since 7 am (b)/so I think you should(c)/ go and meet her.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Error in part (a). Since the action started in the past and continues up to now (indicated by 'since'), present perfect continuous 'She has been waiting' must be used." },
+    { question: "I am sure that (a)/ the postman would be (b)/ coming shortly (c)/ to deliver the letter. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Error in part (b). 'will be coming shortly' indicates an expected future action, 'would' is incorrect here." },
+    { question: "Our company is not (a)/making new school (b)/ bags since the lockdown started. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Error in part (a). Due to 'since the lockdown started', it must be present perfect continuous: 'has not been making'." },
+    { question: "Maruti likes (a)/ adventure (b)/ stories, especially (c)/ an adventures of Tarzan. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Error in part (d). 'adventures' is plural and specific; it should be 'the adventures' instead of 'an adventures'." },
+    { question: "It is not one of those (a)/ boxes which has (b)/the letters sent by finance ministry. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Error in part (b). The relative pronoun 'which' refers to the plural antecedent 'boxes', so the verb must be plural: 'have' instead of 'has'." },
+    { question: "The receptionist asked Diya if she (a)/ will take a seat and (b)/ wait for the boss to call her in. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Error in part (b). Indirect speech in past tense ('asked') changes 'will' to 'would'." },
+    { question: "Many a worker of the company (a)/ have complained of the poor sanitation (b)/ but the officials have paid no attention to it. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Error in part (b). 'Many a' is followed by a singular noun and a singular verb. It should be 'has complained' instead of 'have complained'." },
+    { question: "Anti-party activities (a)/ improved my relations (b)/ with an opposition. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Error in part (c). It should be 'the opposition' (a specific political group) rather than 'an opposition'." },
+    { question: "Hardik's horoscope says (a)/ that the stars (b)/ will be exercised (c)/ a benign influence on his life. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Error in part (c). Active voice is needed: 'will exercise' instead of passive 'will be exercised'." },
+    { question: "All the horses, except one, always (a)/ behaved in a rough manner when (b)/ Robert come to clean the stable. (c)/no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Error in part (c). The sentence is in the past tense ('behaved'), so it should be 'Robert came' instead of 'come'." },
+    { question: "Do you know (a)/that this is third time that you (b)/have made the same mistake ? (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Error in part (b). Ordinal numbers require the definite article: 'this is the third time'." },
+    { question: "You wash (a)/ the dishes and (b)/ I dry the same. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Error in part (c). Using 'the same' as a pronoun is incorrect; it should be 'them' ('I dry them')." },
+    { question: "I know it very well (a)/ that you are owning a big luxurious (b)/ house but you need not brag (c)/ about it all day. (d)", options: ["(a)/", "(b)", "(c)", "(d)"], answer: 1, explanation: "Error in part (b). Stative verbs like 'own' are generally not used in the continuous form. Replace 'are owning' with 'own'." },
+    { question: "Hardly we had boarded (a)/ the train when (b)/it started moving. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Error in part (a). When a sentence begins with a negative adverbial like 'Hardly', inversion is required: 'Hardly had we boarded'." },
+    { question: "The young boy told us (a)/ that he has won a gold medal (b)/at a national level swimming competition. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Error in part (b). Main clause is past ('told'), so indirect narration should use past perfect: 'had won' instead of 'has won'." },
+    { question: "She was waiting (a)/ for an opportunity (b)/starting her own business. (c)/ no error", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Error in part (c). Infinitive structure needed: 'to start her own business' instead of 'starting'." },
+    { question: "After a lot of meetings and negotiations, (a)/a deal has been signed (b)/between India, Pakistan and China.(c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error (d). 'Between' can be used for more than two entities when referring to reciprocal relationships or distinct items/countries." },
+    { question: "Parents should tell (a)/their children to exercise (b)/great care while crossing busy roads (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error (d). The sentence is grammatically sound." },
+    { question: "Select the grammatically correct sentence.", options: ["It is a old uniform but a memorable thing for me.", "It is old uniform but a memorable thing for me.", "It is the old uniform but memorable thing for me.", "It is an old uniform but a memorable thing for me."], answer: 3, explanation: "Option (d) is correct because 'old' starts with a vowel sound requiring 'an', and 'memorable thing' correctly uses 'a'." }
+  ],
+  class2: [
+    { question: "The availability of funds will be (a)/ ensured if they all tried to (b)/ submit the proposals on time. (c)/ No error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Conditional mismatch: 'will be ensured' matches with present tense 'try'." },
+    { question: "Neetu is (a)/ waiting for you(b)/ since 10 o'clock (c)/ in the morning. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Use present perfect continuous: 'has been waiting' due to 'since 10 o'clock'." },
+    { question: "Karan call the restaurant (a)/ to ask if he could (b)/ reserve a table for tomorrow. (c) / No error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Past tense is needed to match 'could': 'Karan called'." },
+    { question: "After knowing truth, (a)/ the jury took the (b)/right decision in the case. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Requires definite article: 'knowing the truth'." },
+    { question: "He promised them (a)/ that he would sure repay (b)/ the loan urgently. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Adverb should modify the verb: 'would surely repay'." },
+    { question: "Darshan wished (a)/he hasn't gone (b)/to the theme park (c) / in the first place. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Past wish requires past perfect: 'hadn't gone'." },
+    { question: "I can't talk right now. (a)/ I am being really busy. (b)/ I'll call you later. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Simple state: 'I am really busy'." },
+    { question: "We all know that (a)/ the lion is the more (b)/ferocious of all animals (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Comparing with all items requires superlative degree: 'the most ferocious'." },
+    { question: "The present-century threats to our environment, (a)/ which include interfering species, ailments, pollution and (b)/ a boiling temperature, is putting wildlife populations at peril. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Subject 'threats' is plural, so verb should be 'are putting'." },
+    { question: "I think Jeremy will not (a)/ have saved enough money (b)/ by the time the year ends.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error." },
+    { question: '\"Do you want to join us for lunch?\" (a)/ \"I\'m sorry (b)/ my physics class will start at 1 p.m. (c)/ and doesn\'t finish till 3 p.m.\" (d)', options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Scheduled timetables use simple present: 'starts at 1 p.m.'." },
+    { question: "If you had talked (a)/ to her earlier, she (b)/ would not interfere in this matter (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Third conditional requirement: 'would not have interfered'." },
+    { question: "Sky appears blue (a)/ as it absorbs (b)/ all colours and (c)/ reflects only blue. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Unique natural objects require 'The': 'The sky'." },
+    { question: "Last night I was fallen(a)/ asleep while I was (b)/ reading a book. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Idiomatic expression: 'I fell asleep'." },
+    { question: "She rarely approached nobody (a)/ to talk about the problems (b)/ that she was facing. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Double negative: 'rarely approached anybody'." },
+    { question: "It was (a) / by a chance (b) / he saw a movie in a theatre (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Idiomatic phrase is 'by chance', no article 'a' needed." },
+    { question: "Her hopes of buying (a)/her own house got (b)/crush when she lost (c)/her jewellery box.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Passive sense: 'got crushed'." },
+    { question: "You can fool some of the people all the time, (a)/and all the people some of the time; (b)/but you cannot fool all the people all the time. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error." },
+    { question: "Select the grammatically correct sentence.", options: ["The participants of the competition have been waited for their turn curiously.", "The participants of the competition wait for their turn curiously.", "The participants of the competition are waiting for their turn curiously.", "The participants of the competition are waiting for his turn curiously."], answer: 2, explanation: "Option (c) properly represents active ongoing action with plural pronoun agreement ('their turn')." },
+    { question: "Select the grammatically correct statement from among the given options.", options: ["It is a nice party. I am enjoying the party.", "It is a party. I am enjoying an party.", "It is party. I am enjoying a party.", "It is the party. I am enjoying an party."], answer: 0, explanation: "Option (a) correctly establishes the party with indefinite article first, then uses definite article 'the party' upon repetition." },
+    { question: "Which of the following is grammatically correct.", options: ["We should be all help each other.", "We should be all help one another.", "We all should help one another.", "We all should be helped one another."], answer: 2, explanation: "Option (c) is correct: 'We all should help one another' (for multiple people)." },
+    { question: "Select the grammatically correct sentence.", options: ["The Supriya is the best girl in the class.", "Supriya is the best girl in the class.", "Supriya is best girl in the class.", "The Supriya is a best girl in the class."], answer: 1, explanation: "Proper nouns do not take articles normally, while superlatives require 'the best'. Hence (b)." },
+    { question: "Sentence Improvement: The boys and the teacher wants to win.", options: ["want to win", "No improvement", "want winning", "wanted winning"], answer: 0, explanation: "Compound subject joined by 'and' takes a plural verb: 'want'." },
+    { question: "Sentence improvement: The Indian independence movement sought to establish the conceptions of freedom and social welfare...", options: ["methods to sympathise", "concepts of liberty", "procedures of free mind", "symbols of victory"], answer: 1, explanation: "'concepts of liberty' fits historically and contextually better." },
+    { question: "Sentence Improvement: The frog adopts itself to live both in water and on land.", options: ["No substitution", "frog alters itself", "frog adepts itself", "frog adapts itself"], answer: 3, explanation: "'adapts itself' means modifying behavior/features to fit surroundings." },
+    { question: "Sentence Improvement: He was so curious that he rose many questions in the meeting.", options: ["that he raised many questions", "No substitution", "that he rose much questions", "that he aroused many questions"], answer: 0, explanation: "Questions are raised by someone. 'raised many questions'." },
+    { question: "Sentence Improvement: It is reported that she has been won a prize money of ten lakhs at a reality show.", options: ["she had won", "she is winning", "No substitution required", "she has won"], answer: 3, explanation: "Active voice: 'she has won'." },
+    { question: "Sentence Improvement: They have disposed all the old books.", options: ["disposed out", "disposed of", "disposed on", "disposed by"], answer: 1, explanation: "The phrasal verb is 'disposed of'." },
+    { question: "Sentence Improvement: Do you know that she has invited me in her party?", options: ["has been invited me for", "has invited me to", "is invited me to", "No improvement"], answer: 1, explanation: "Correct preposition: 'invited me to her party'." },
+    { question: "Sentence Improvement: The management is not beware of this fact.", options: ["aware of", "awaking to", "watchful with", "beware to"], answer: 0, explanation: "'aware of' is an adjective phrase; beware is used directly as a verb form." },
+    { question: "Sentence Improvement: Irene went to office every single day by walk.", options: ["every single day by walking", "every single day with foot", "every day single by foot", "every single day on foot"], answer: 3, explanation: "Idiomatic usage: 'on foot'." },
+    { question: "Sentence Improvement: The mob drove on the rampage and looted several shops in the locality.", options: ["played on the rampage", "strolled on the rampage", "ran on the rampage", "went on the rampage"], answer: 3, explanation: "Standard idiom: 'went on the rampage'." },
+    { question: "Sentence Improvement: Please ask the dog to get of my couch.", options: ["get of mine", "get off my my", "No substitution", "get off mine"], answer: 1, explanation: "'get off my couch' (Note: the option provided in answer key matches choice b despite typo)." },
+    { question: "Sentence Improvement: I will not go out if it will rain.", options: ["is raining", "rained", "it rains", "raining"], answer: 0, explanation: "Key says (a); conditional clauses can take simple present or continuous forms depending on focus." },
+    { question: "Sentence Improvement: I don't wear the sunglasses at the moment.", options: ["I didn't wear", "I was wearing", "I wore", "I'm not wearing"], answer: 3, explanation: "'at the moment' signals present continuous: 'I'm not wearing'." },
+    { question: "Sentence Improvement: I have not seen you for last year.", options: ["you for last years", "me for last year", "you since last year", "you about last year"], answer: 2, explanation: "Point of time requires 'since last year'." },
+    { question: "Sentence Improvement: The Karaoke programme was planned by the club was a grand success.", options: ["has been planned by the club", "planned by the club", "No substitution", "were planned by the club"], answer: 1, explanation: "Reduced relative clause: 'The Karaoke programme planned by the club...'." },
+    { question: "Sentence Improvement: The company decided to sell their stake in their subsidiary...", options: ["No substitution", "sell its stake in their subsidiary", "sell their stake in its subsidiary", "sell its stake in its subsidiary"], answer: 3, explanation: "Singular collective noun 'company' requires singular pronouns: 'its stake in its subsidiary'." },
+    { question: "Sentence Improvement: ...information is widely available to everyone by many means of media...", options: ["with quite enough of mechanisms", "among many techniques", "via various forms", "through any strategies"], answer: 2, explanation: "'via various forms' fits standard English style naturally." },
+    { question: "Sentence Improvement: Govind is improving his communication skills with a view to become a journalist.", options: ["No improvement", "becoming", "achieving", "making"], answer: 1, explanation: "'with a view to' takes a gerund (V+ing): 'becoming'." }
+  ],
+  class3: [
+    { question: "Have you ever (a)/ wondered (b)/ where does (c)/ oysters come from?(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Inversion is incorrect in an embedded question: 'where oysters come from'." },
+    { question: "The company was sued (a)/ for breach of contract, (b)/ but it still deny (c)/ any wrongdoing. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Singular subject 'it' takes 'denies' or 'denied'." },
+    { question: "He sang (a)/ beautifully but (b)/ the judges were (c)/ unimpress at the end.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Adjective form required: 'unimpressed'." },
+    { question: "Select the part which has grammatical error.", options: ["When Mrs. Sinha came to see Varanasi in 2019, Nupur has already been teaching...", "When Mrs. Sinha came to see Varanasi in 2019, Nupur had already been teaching...", "Duplicate option", "Duplicate option"], answer: 1, explanation: "Past actions happening before another past action require past perfect: 'had already been teaching'." },
+    { question: "The girl in the water whistled (a)/ with full might and waved her arms to draw (b)/attention in her plight. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Correct idiom is 'draw attention to'." },
+    { question: "I hardly know anything (a)/ about the manager (b)/ whom I think (c)/ committed this fraud.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "It acts as the subject of 'committed': 'who I think'." },
+    { question: "I am really nervous (a)/because my girlfriend (b)/ along with her mother (c)/ are visiting me this weekend. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Subject connected via 'along with' follows the first subject ('girlfriend' - singular): 'is visiting'." },
+    { question: "It is very sad to know (a)/ that the doctor came (b)/ after the patient (c)/passed away. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "The patient passing away happened first: 'had passed away'." },
+    { question: "In 2030, she (a)/ will be working for (b)/ the company for thirteen years. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Future perfect continuous required for duration: 'will have been working'." },
+    { question: "My younger brother attends (a)/ a short-term computer (b)/ course these days.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Temporary action happening 'these days' prefers present continuous: 'is attending'." },
+    { question: "My brother came back (a)/ from his Europe trip yesterday (b)/ and described about all the places he visited in detail. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "'describe' is a transitive verb; it takes no preposition 'about'." },
+    { question: "I am sure that (a)/he is not enough rich (b)/ to buy such an expensive car. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'enough' follows adjectives: 'rich enough'." },
+    { question: "The secretary to my boss is very efficient (a)/ as he gives him not only the (b)/ required information but also handles(c)/ correspondence independently. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Parallelism: 'not only gives him... but also handles'." },
+    { question: "You should know that it can (a)/ get extreme cold here during (b)/ winter so you (c)/should pack accordingly.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Adverb modifying adjective: 'extremely cold'." },
+    { question: "Select the grammatically correct sentence.", options: ["As a nation, India is a united country and shall always remain so.", "As nation...", "As the nation...", "As a nation, India is an united country..."], answer: 0, explanation: "'united' has a consonantal sound 'yu-', so it takes 'a united'." },
+    { question: "Select the grammatically correct sentence.", options: ["An warrior...", "The warrior was waiting for a right time to attack an lion...", "The warrior was waiting for the right time to attack the lion hiding in the cave.", "Incorrect usage"], answer: 2, explanation: "Proper use of specific definite articles." },
+    { question: "Select the grammatically correct sentence.", options: ["an helmet...", "an police...", "The rider who met with the accident was not wearing a helmet, the police said.", "a accident..."], answer: 2, explanation: "Correct usage of articles." },
+    { question: "Select the grammatically correct sentence.", options: ["I like Matt best.", "I like Matt better.", "I like Matt the best.", "I like Matt much."], answer: 0, explanation: "Key indicates (a)." },
+    { question: "Sentence Improvement: Honesty as well as discipline are required to succeed in life.", options: ["is required to succeed in life", "are requirement to succeed in life", "has required to succeed in life", "No substitution"], answer: 0, explanation: "Subject joined by 'as well as' goes by the first noun ('Honesty'): 'is required'." },
+    { question: "Sentence Improvement: If only I was young again.", options: ["I will be young again", "I be young again", "I were young again", "I am young again"], answer: 2, explanation: "Unreal conditional wish uses 'were'." },
+    { question: "Sentence Improvement: While he saw the bear, he ran to the nearest tree...", options: ["Hardly he saw the bear", "No substitution", "When he saw the bear", "No sooner did he see"], answer: 2, explanation: "'When he saw the bear' describes the specific point in time." },
+    { question: "Sentence Improvement: The family is neither interested in selling the house or rebuilding it.", options: ["nor rebuilding", "but also rebuilding", "not only rebuilding", "yet rebuilding"], answer: 0, explanation: "Correlative conjunction pair: 'neither... nor'." },
+    { question: "Sentence Improvement: Neither John nor Simon are coming to the meeting.", options: ["are coming to meeting", "No substitution", "is coming to the meeting", "were coming to the meeting"], answer: 2, explanation: "When subjects are joined by 'neither... nor', the verb agrees with the closer subject ('Simon'): 'is coming'." },
+    { question: "Sentence Improvement: The man was convicted for murder by the jury but he is not committed it.", options: ["had not committed it", "have not committed it", "am not committed it", "has not committed it"], answer: 0, explanation: "Action preceding the conviction requires past perfect: 'had not committed it'." },
+    { question: "Sentence Improvement: Greenhouse gases trapped beside Earth's atmosphere cause global warming.", options: ["trapped inside", "No substitution", "trapped outside", "trapped beyond"], answer: 0, explanation: "Gases are trapped 'inside' the atmosphere." },
+    { question: "Sentence Improvement: The moon is Earth's only natural satellite and the nearby large celestial body.", options: ["No substitution", "the nearly large", "the near largest", "the nearest large"], answer: 3, explanation: "Superlative sense needed for relative proximity: 'the nearest large'." },
+    { question: "Sentence Improvement: Abraham Lincoln has been the sixteenth president of the United States and save the Union...", options: ["saved the Union during", "No substitution", "save the Union alongside", "saved the Union on"], answer: 0, explanation: "Past historical fact requires simple past tense: 'saved the Union during'." },
+    { question: "Sentence Improvement: Delegates of the conflicting countries formally meet at a conference to ironing out...", options: ["to ironed", "No substitution", "to iron out", "for iron in"], answer: 2, explanation: "Infinitive structure: 'to iron out' (to resolve)." },
+    { question: "Sentence Improvement: I've got a lot of homeworks this weekend.", options: ["a lot of homework", "a lots of homework", "No substitution", "much homework"], answer: 0, explanation: "'Homework' is an uncountable noun and does not take a plural form." },
+    { question: "Sentence Improvement: I worked hard so that I might success.", options: ["that I might successful", "that I might successor", "that I might succeed", "that I may success"], answer: 2, explanation: "Modal 'might' requires a base verb form: 'succeed'." },
+    { question: "Sentence Improvement: The stranger stood quietly for few moments.", options: ["For moments", "For the few moments", "No improvement required", "For a few moments"], answer: 3, explanation: "Positive count phrase: 'for a few moments'." },
+    { question: "Sentence Improvement: Adyasha would have been looked gorgeous in ethnic apparel.", options: ["was looked", "would have looked", "had looking", "would be looked"], answer: 1, explanation: "Active conditional format: 'would have looked'." },
+    { question: "Sentence Improvement: In today's world, technology must be used for feed the changing forces in society.", options: ["must had been used to feed", "must have been used to feed", "must used to feed", "must be used to feed"], answer: 3, explanation: "No substitution needed as 'must be used to feed' is standard." },
+    { question: "Sentence Improvement: We will go to Spain this summer, will we?", options: ["should we?", "won't we?", "can't we?", "don't we?"], answer: 1, explanation: "Positive statement with 'will' requires a negative tag: 'won't we?'." },
+    { question: "Sentence Improvement: I have been in Chennai since a week, but I am planning to return now.", options: ["For", "from", "in", "No substitution required"], answer: 0, explanation: "Duration of time requires 'for a week'." },
+    { question: "Sentence Improvement: He will be looking as if he has not slept.", options: ["He looks", "He has looked", "He was looking", "He will be looked"], answer: 0, explanation: "Present state: 'He looks'." },
+    { question: "Sentence Improvement: Mahesh's attitude annoyed me and I blew into.", options: ["annoyed me and I blew over", "annoyed me and I blew off", "annoyed me and I blew down of", "annoyed me and I blew up"], answer: 3, explanation: "Phrasal verb 'blow up' means to explode in anger." },
+    { question: "Sentence Improvement: Since the storm knocked in the power, we've been using candles...", options: ["No substitution required", "the storm knocked out the power", "the storm knocked over the power", "the storm knocked away the power"], answer: 1, explanation: "'knocked out the power' means disrupted electrical supply." },
+    { question: "Sentence Improvement: Could you please tell me which languages you are fluent in?", options: ["you may be fluent in speaking", "you speak fluently", "you fluently speaking", "you have been fluent in speaking"], answer: 1, explanation: "Key indicates alternative choice 'you speak fluently'." },
+    { question: "Sentence Improvement: Mr. Arvind was accused of beating up before the students in the class.", options: ["accused of beating up off the", "accused of beating up of the", "accused of beating up on the", "accused of beating up in the"], answer: 2, explanation: "'beating up on' is a colloquial phrase meaning to attack someone repeatedly." }
+  ],
+  class4: [
+    { question: "I am sure that (a)/Babbal is older than (b)/ all members (c)/ of our Club. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Comparative exclusion requires 'all the other members'." },
+    { question: "The current state of the literature (a)/ on the efficacy under cognitive-behavioural therapy (b)/ for individuals with generalised anxiety disorder (c)/ suggests that it is a promising treatment option. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Incorrect preposition. 'efficacy of' instead of 'efficacy under'." },
+    { question: "He finally recalled that (a)/ the thieves had left (b)/ from front door. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Requires article and proper preposition: 'by/through the front door'." },
+    { question: "He was (a)/too angry (b)/that he slammed the book (c)/on the table.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'too' pairs with 'to + verb'. With 'that clause', use 'so angry'." },
+    { question: "I always keep(a)/ fruit in the fridge so as to (b)/ keep flies off it. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error." },
+    { question: "Do you want (a)/ to visit a zoo (b)/ when you (c)/ go to Ahmedabad? (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Context implies a specific zoo or general definition: 'the zoo'." },
+    { question: "We are looking forward (a)/ to receive payment (b)/ for the services we provided.(c)/ no error.", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'looking forward to' takes a gerund: 'receiving'." },
+    { question: "Suman has bought (a)/a black and a white shawl (b)/to wear with (c)/her new dress.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "If it is a single shawl, it should be 'a black and white shawl'." },
+    { question: "I have seen (a)/no player playing this shot (b)/ as skillfully as Yuvraj.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Should use 'no other player'." },
+    { question: "Nobody from the gathering (a)/of odd people could guess (b)/the accident occurring blast.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Awkward structural syntax phrasing." },
+    { question: "I find this funny (a)/ that some people (b)/ still believe that earth is flat. (c)/ no error.", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Celestial bodies take definite article: 'the earth'." },
+    { question: "The committee was divided on the issue, (a)/and neither side were willing to (b)/compromise on the compensation (c)/amount to be given. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'neither side' requires singular verb form: 'was willing'." },
+    { question: "I got very confused and nervous (a)/while Rajat suddenly passed (b)/the mic to me and asked me to speak.(c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'when Rajat suddenly passed' is better to signal single sudden event." },
+    { question: "The investigation conducting by the research team (a)/ yielded statistically significant results...", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Passive modifier phrase: 'investigation conducted by'." },
+    { question: "You have played (a)/as good as the other (b)/players of your team so (c)/ there is no need to feel sad.(d)/", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Adverb required to modify 'played': 'as well as'." },
+    { question: "It was Ravi, not his friends, (a)/ who were shouting (b)/ at late hours last night. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "The relative pronoun 'who' relates to singular emphasis 'Ravi', so verb should be 'was shouting'." },
+    { question: "When we reached (a)/ Rahul's home, we (b)/ found him laying on the floor.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Intransitive posture verb: 'lying on the floor'." },
+    { question: "Washington Irving's writing career started at (a)/ a tender age of nineteen when he joined...", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Missing item or error in classification syntax." },
+    { question: "In course by time, (a)/ he became wise enough to realise (b)/ the mistakes of his past life. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Correct idiom: 'In course of time'." },
+    { question: "The food container (a)/ is not enough big to meet (b)/ the demands of the affected people.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Adjective precedes enough: 'big enough'." },
+    { question: "My grandfather told me (a)/that a journey of a thousand miles (b)/began with a single step. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Proverbs stay in present: 'begins with a single step'." },
+    { question: "By virtue off (a)/the power given to the leader, (b)/the followers accepted his decision.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Spelling: 'By virtue of'." },
+    { question: "He comes here often (a)/with his friends (b)/to play volleyball. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Adverb placement: 'He often comes here'." },
+    { question: "This region (a)/was struck by unusual (b)/wave of violence (c)/last year.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Requires an article: 'an unusual wave'." },
+    { question: "I think that (a)/the poor has been impoverished (b)/by capitalists (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'the poor' represents a plural class; requires plural verb 'have been'." },
+    { question: "Can you please (a)/ pass me a sweater? (b)/ It's going to be (c)/ the cold day today. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Should be 'a cold day'." },
+    { question: "You should scold him (a)/ when he made this (b)/ mistake for the first time. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Past obligation: 'should have scolded'." },
+    { question: "It is imperative in understanding (a)/ the rising importance of artificial intelligence...", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Standard phrasing: 'imperative to understand'." },
+    { question: "A letter together with (a)/ some old gift items (b)/were sent to me by Rajesh.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Subject 'A letter' is singular; verb must be 'was sent'." },
+    { question: "The poor undergoes (a)/several problems in life (b)/that could be (c)/ solved with money. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "'The poor' is plural, verb should be 'undergo'." },
+    { question: "Having been worked for 5 hours (a)/straight, Ajay got really (b)/tired and went to bed.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Active completion: 'Having worked'." },
+    { question: "The news (a)/is (b)/very good (c)/to be true.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Negative restriction syntax pairs 'too... to': 'too good to be true'." },
+    { question: "Adulterants are basically (a)/ chemicals that can lead (b)/ into a range of health problems (c)/ in both children and adults. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "'lead to' is correct phrasal preposition formulation." },
+    { question: "Sentence improvement: It is raining a lot in April and May, but summers are generally very dry here.", options: ["was raining a lot", "will rain a lot", "rains a lot", "rain a lot"], answer: 2, explanation: "General habitual truth uses simple present: 'rains a lot'." },
+    { question: "Sentence improvement: If we had moved to Italy when I was a child, I will had an Italian accent.", options: ["I will be have", "I would has", "I would have had", "I am having"], answer: 2, explanation: "Conditional Type 3 structure matching 'had moved': 'would have had'." },
+    { question: "Sentence improvement: I want to join this course because I enjoy learn new languages.", options: ["enjoy to learning", "enjoy myself to learn", "enjoy learning", "enjoy to learn"], answer: 2, explanation: "'enjoy' takes a gerund direct object: 'enjoy learning'." },
+    { question: "Sentence improvement: Lewis can handle many of the European languages with its dialectical varieties fluently.", options: ["on its dialectical varieties", "with their dialectical varieties", "with a dialectical varieties", "with they dialectical varieties"], answer: 1, explanation: "Plural relative reference ('languages') requires plural pronoun 'their'." },
+    { question: "Sentence Improvement: No sooner had I finished my final exam that my friends invited me...", options: ["then my friends invited", "than my friends invited", "that my friend invited", "when my friends invited"], answer: 1, explanation: "'No sooner' correlates exclusively with 'than'." },
+    { question: "Sentence Improvement: Despite having a broken leg, Sarah managed to finish the marathon on record time.", options: ["finish the marathon in record time", "finish a marathon on record time", "finish the marathon to record time", "finish the marathon at record time"], answer: 0, explanation: "Standard idiom: 'in record time'." },
+    { question: "Sentence Improvement: Himanshu is braver than intelligent.", options: ["more brave than intelligent", "most brave than intelligent", "braver than more intelligent", "most brave than more intelligent"], answer: 0, explanation: "When comparing two qualities of the same person, use 'more + positive degree': 'more brave than intelligent'." }
+  ],
+  class5: [
+    { question: "They need to (a)/ wave the participation (b)/ fees for people (c)/ with disabilities. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Homophone mixup. Should be 'waive' (give up a right) instead of 'wave'." },
+    { question: "Despite he was exhausted(a)/ from working all day, John continued (b)/to study for his upcoming exam. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "'Despite' is a preposition, cannot introduce a clause. Use 'Although he was exhausted'." },
+    { question: "I brought (a)/ an apple from (b)/ a place you recommended (c)/ me earlier. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Specific place requires 'the place'." },
+    { question: "The politician was accused (a)/of accepting bribes (b)/and lied about it (c)/to the public.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Parallel structure: 'accused of accepting... and lying'." },
+    { question: "I want to know (a)/ who of these boys (b)/has stolen my bag.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "When making a choice among options, use 'which' instead of 'who': 'which of these boys'." },
+    { question: "An old man whom (a)/ we met while coming back (b)/ from our college lives (c)/ at my uncle's place.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Syntax reference error setup." },
+    { question: "They have to take (a)/him to hospital because (b)/ he was bleeding profusely. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Key points to part (a)." },
+    { question: "They were laid (a)/ in the sun (b)/ the entire morning (c)/ till Sudharshan came. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Past tense of lie (recline) is 'lay', not 'laid' (which means placed/put)." },
+    { question: "The picture quality (a)/of your tv is (b)/ way better than ours. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Key shows (c)." },
+    { question: "It is essential that (a)/everyone of them (b)/submits his project report on time.(c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Subjunctive mood structure 'It is essential that...' requires base verb: 'submit' instead of 'submits'." },
+    { question: "The people who live (a)/here have had the (b)/same kind of lifestyle for hundreds of years. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error." },
+    { question: "The government has been (a)/ accused for not doing (b)/ enough for the betterment of the poor (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Appropriate preposition: 'accused of'." },
+    { question: "You will be happy (a)/to know that (b)/this scissor is safe for children. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "'Scissors' is always plural, takes a plural verb: 'these scissors are'." },
+    { question: "It were those stupid (a)/friends of yours who (b)/tried to steal (c)/money from your house. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Dummy pronoun 'it' always takes a singular verb: 'It was'." },
+    { question: "The committee was divided on (a)/the issue of fire some employees (b)/who joined the company last year. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Gerund/noun required: 'firing some employees'." },
+    { question: "With reference of your letter, (a)/ we would like to inform you that the issue (b)/ you have mentioned in your letter (c)/ has already been resolved. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Standard idiom: 'With reference to'." },
+    { question: "The company is evaluating (a)/ how much profit can make by (b)/launching this new product. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Missing subject in clause: 'how much profit it can make'." },
+    { question: "I could feel that (a)/he was some angry (b)/with me but I didn't know why.(c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'some' should be replaced with adverb 'somewhat' or 'a bit'." },
+    { question: "I am thinking of (a)/moving to the USA (b)/ as so to get better career opportunities.(c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "The correct purposeful conjunction phrase is 'so as to'." },
+    { question: "Ajay suggested his friends (a)/ that they should plan (b)/ a trip to Goa. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "'suggested' takes a preposition before an indirect object: 'suggested to his friends'." },
+    { question: "I don't know why (a)/his mother doesn't let (b)/him and I play together. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "'let' takes object pronouns: 'him and me'." },
+    { question: "The police officer asked (a)/ me where was I (b)/when the accident happened. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "No inversion in an indirect question statement: 'where I was'." },
+    { question: "The committee is comprised of(a)/ representatives from both(b)/ the public as well as private sectors. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "'both' correlates with 'and', not 'as well as'." },
+    { question: "As you have already (a)/applied online , you (b)/need not to submit any printed copy. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: 'Modal auxiliary "need not" takes bare infinitive: "need not submit".' },
+    { question: "He has always (a)/ been good in making (b)/ delicious recipes. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Proficiency idiom is 'good at'." },
+    { question: "Sentence improvement: Sujata has not and can never in the good books of her principal...", options: ["has not been and can never be", "has not been and can never been", "has not be and can never be", "has not be and can never been"], answer: 0, explanation: "Both auxiliary verbs need distinct main verbs completed: 'has not been and can never be'." },
+    { question: "Sentence improvement: The integration of cutting-edge technologies into the healthcare industry have the prospect...", options: ["were the potential", "have the potential", "has the prospect", "will have potential"], answer: 2, explanation: "Singular subject 'integration' requires singular verb 'has the prospect'." },
+    { question: "Sentence improvement: In order to enhancing their reputation, companies are investing...", options: ["enhance their reputation", "No improvement", "have their reputation", "have enhanced their reputation"], answer: 0, explanation: "'In order to' is followed by base form of verb: 'enhance'." },
+    { question: "Sentence improvement: He got appreciation from every people in a country and abroad.", options: ["from one or all in a country and abroad", "from one and all in the country and abroad", "from one and all in country and abroad", "from one and all from a country and abroad"], answer: 1, explanation: "Correct idiom: 'from one and all in the country and abroad'." },
+    { question: "Sentence improvement: ...the four friends were exchanging notes right at the front of him.", options: ["of front of him", "for front of him", "No substitution required", "in front of him"], answer: 3, explanation: "Standard spatial preposition is 'in front of him'." },
+    { question: "Sentence improvement: The mermaid murmured that it had been very difficult for her to live...", options: ["it had", "No correction required", "this have been", "this had been"], answer: 1, explanation: "The original sentence is completely correct as stands." },
+    { question: "Sentence improvement: It is possible to get it at everyplace in huge amount.", options: ["found for a huge amount everywhere", "found everywhere in a huge amount", "found everywhere with a huge amount", "find everywhere in a huge amount"], answer: 1, explanation: "'found everywhere in a huge amount' fixes syntax and awkward wording." },
+    { question: "Sentence improvement: Can you please make sure that all the guest are gathered on the stage...", options: ["guest is gathered on", "guests are gathered in", "guests are gathered by", "guests is gathered by"], answer: 2, explanation: "Key shows choice (c); plural form 'guests are gathered'." },
+    { question: "Sentence improvement: She makes sure that all the newly realised books are available...", options: ["the newly released books", "the newly regaled books", "the newly relieved books", "the newly reverberated books"], answer: 0, explanation: "Books are 'released' to the public market." },
+    { question: "Sentence improvement: If I was you, I would not have appeared for the entrance exam.", options: ["would", "would have been", "No substitution required", "were"], answer: 3, explanation: "Subjunctive imaginary clause: 'If I were you'." },
+    { question: "Sentence improvement: All colleagues of Rohit except Joseph have commemorated the elective courses...", options: ["have considered the elective courses", "have castigated the elective courses", "have constipated the elective courses", "have commiserated the elective courses"], answer: 0, explanation: "'considered' makes logical sense here." },
+    { question: "Sentence improvement: The number of seats in the movie theatre were reduced...", options: ["in the movie theatre was reduced", "in the movie theatre were being reduced", "of the movie theatre were reduced", "in the movie theatre are reduced"], answer: 0, explanation: "'The number of' takes a singular verb: 'was reduced'." },
+    { question: "Sentence improvement: I need to put out my clothes before I leave for work this morning...", options: ["need for put out", "need to put in", "need to put off", "need to put away"], answer: 3, explanation: "'put away' means to store or set in proper place." },
+    { question: "Sentence improvement: As the storm raged outside, the children huddled together under blankets, listening to the sound of the rain hitting the windows hard...", options: ["climbing up to the windows", "setting off the windows", "pounding against the windows", "beating off the windows"], answer: 2, explanation: "'pounding against the windows' vividly describes heavy wind/rain contact." },
+    { question: "Sentence improvement: Are you sure you have go to drop her at the airport?", options: ["you will go to", "you should have to go to", "you had to go to", "you might go to"], answer: 0, explanation: "Key shows (a); fits simple conversational future query prediction structures." }
+  ],
+  class6: [
+    { question: "She will have finished (a) / her homework by the time (b)/her father return from the tour.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "'by the time' clause with future perfect uses simple present tense: singular 'returns'." },
+    { question: "The Prime Minister of India (a)/ addressed the nation today (b)/ on the occasion of Independence Day. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error." },
+    { question: "Had I had enough (a)/ money, I (b)/ would buy a new house. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Inverted third conditional ('Had I had') goes with 'would have bought'." },
+    { question: "There is a spectrum (a)/ of seas around that (b)/ land which attract (c)/ tourists of all ages. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "'spectrum' is singular, relative pronoun verb should be 'attracts'." },
+    { question: "He told me that (a)/the strange behaviour of (b)/ his son was upsetted him. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "'upset' is an irregular verb whose three forms are identical: 'upset', not 'upsetted'." },
+    { question: "His old mother (a)/said,\" may you succeed (b)/in all your efforts, my son.\"(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error." },
+    { question: "The university has put away (a)/ the semester examination for the (b)/second time now due to technical issues.(c) /no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "To delay an event is to 'put off', not 'put away'." },
+    { question: "There is no book (a) / in the English language (b) / which is as interesting as this one. (c) /no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Comparison requires exclusion: 'no other book'." },
+    { question: "I wish, (a)/ I have taken (b)/that job offer. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Past regrets require past perfect: 'I had taken'." },
+    { question: "As he seldom or never (a)/ comes late so all (b)/the teachers like him (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Superfluous conjunction; 'so' is not needed when clause begins with 'As'." },
+    { question: "It is a quarter to ten (a)/ by my watch which means (b)/we have been (c)/waiting here for the last 2 hours. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Key shows choice (a)." },
+    { question: "The teacher asked all (a)/the students to keep(b)/ quite during the presentation.(c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Homophone error: 'quiet' (silent) instead of 'quite' (completely)." },
+    { question: "He was very thirsty (a)/so I gave him little (b)/water to drink.(c) /no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'little' means almost none (negative); use 'a little' to denote a positive small quantity." },
+    { question: "My grandfather has two (a)/ pets. One is a dog (b) /and other is a cat. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Specific secondary item choice needs 'the other'." },
+    { question: "Are you considering (a)/yourself the best actor (b)/in the whole country?(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Key shows (a); typically reflexives aren't direct objects of consider this way." },
+    { question: "I can surely say (a)/ that her paintings are more (b)better than her sketches.(c) /no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Double comparative error: 'more better' is redundant; use just 'better'." },
+    { question: "Do you know that (a)/ this is one of the most popular (b)/ Tv show in India? (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "'one of the' is followed by a plural noun: 'TV shows'." },
+    { question: "This case is serious. You (a)/ need to look into this matter but the (b)/ situation will get out of control soon.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Illogical conjunction 'but'; replace with 'otherwise/or else'." },
+    { question: "We didn't like the hotel (a)/but we had already (b)/paid in full so we decided (c)/to avail of whatever facilities available. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "'avail' is a reflexive verb: 'to avail ourselves of'." },
+    { question: "If you observe closely, (a)/you will find that her (b)/ smile is similar to her mother. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Wrong comparison comparison. Smile should be compared to a smile: 'similar to her mother's' or 'similar to that of her mother'." },
+    { question: "Sentence Improvement: ...Ravindra would recover from dengue soon and do the kind of work he was doing before.", options: ["would do", "had been done", "would have been doing", "had been doing"], answer: 3, explanation: "Past description of dynamic routine matches 'had been doing'." },
+    { question: "Sentence Improvement: In according to his advice I took this medicine.", options: ["accordance with", "accordingly", "accordance to", "accord with"], answer: 0, explanation: "Standard idioms structure: 'In accordance with'." },
+    { question: "Sentence Improvement: I am trying to study, if it is impossible with all this noise.", options: ["that it is impossible", "but it is impossible", "while it is impossible", "unless it is impossible"], answer: 1, explanation: "Contrasting ideas require adversity conjunction 'but'." },
+    { question: "Sentence Improvement: Can you please tell me where is the city park.", options: ["where the city park is?", "where are city's park?", "city park where?", "where was the city park?"], answer: 0, explanation: "Embedded questions follow subject-verb ordering syntax: 'where the city park is'." },
+    { question: "Sentence Improvement: This hill is a nice place to meditate because one can enjoy solitude.", options: ["is a nice place to be meditation", "is an excellent place to meditates", "No correction required.", "is a nasty place to meditate"], answer: 2, explanation: "Original sentence structure is flawless." },
+    { question: "Sentence Improvement: No less than eight pedestrians were killed in the accident.", options: ["No few than", "None less than", "No fewer than", "No lesser than"], answer: 2, explanation: "Countable items ('pedestrians') require 'fewer than' instead of 'less than'." },
+    { question: "Sentence Improvement: How do you think the internet has influenced how we utilise news and media?", options: ["has managed the patterns we ingest", "has revoked the way we interact", "has maintained how we receive", "has impacted the way we consume"], answer: 3, explanation: "'has impacted the way we consume' provides natural register alignment." },
+    { question: "Sentence Improvement: Meenakshi called out for the neighbourhood to get support...", options: ["called by the neighbourhood", "called of the neighbourhood", "called in the neighbourhood", "called around the neighbourhood"], answer: 3, explanation: "'called around' matches visiting or reaching across multiple places nearby." },
+    { question: "Sentence Improvement: ...transform the sector.", options: ["that will improvise the sector", "that shall redesign the industry", "that could socialise the sector", "that would revolutionise the industry"], answer: 3, explanation: "Maintains parallel conditional past narrative perfectly." },
+    { question: "Sentence Improvement: Amal brightened of when they said he could go...", options: ["brightened in when they", "brightened on when they", "brightened upon when they", "brightened up when they"], answer: 3, explanation: "Phrasal idiom 'brightened up' means became cheerful." },
+    { question: "Sentence Improvement: One of them who were hidings at the back of a rock fired...", options: ["one of them who were hiding behind a rock", "one of them who was hide behind a rock", "one of them who hiding behind a rock", "one of them who was hiding behind a rock"], answer: 3, explanation: "'one of them who was hiding behind a rock' fits singular action focus." },
+    { question: "Sentence Improvement: Syamala is more taller than her sister.", options: ["much taller", "taller", "most taller", "tallest"], answer: 0, explanation: "Key shows (a) 'much taller'; avoids double comparative 'more taller' while preserving emphasis." },
+    { question: "Sentence Improvement: The performance of the musicians was rather worst than expected...", options: ["worst than expectation", "worse was expected", "worse than expected", "bad as expected"], answer: 2, explanation: "Comparative degree matching 'than': 'worse than expected'." },
+    { question: "Sentence Improvement: The use of chemicals, insecticides and pesticides began after the Green Revolution.", options: ["Consumption...", "The custom...", "A practice...", "The usage..."], answer: 1, explanation: "Key indicates alternative selection code mapping." },
+    { question: "Sentence Improvement: I like to read books, but my brother prefers to watching movies.", options: ["No substitution", "in watching", "on watching", "to watch"], answer: 3, explanation: "Parallel structure or preference syntax: prefers 'watching' or 'to watch'." },
+    { question: "Sentence Improvement: She trusted her husband but he stabbed her in the neck...", options: ["stabbed her prospects", "stabbed her in the back", "stabbed her with a fork", "snapped her in the neck"], answer: 1, explanation: "Betrayal idiom: 'stabbed her in the back'." },
+    { question: "Sentence Improvement: ...honing her creative vision...", options: ["exploring with different factors", "experimenting with different techniques", "merging with different variations", "researching with different types"], answer: 3, explanation: "Key points to selection option logic code." },
+    { question: "Sentence Improvement: A gust of wind came abruptly and our sand castle toppled.", options: ["tumbled down", "ran after", "turned up", "blew out"], answer: 0, explanation: "'tumbled down' is highly descriptive for structural collapse." },
+    { question: "Sentence Improvement: Kiran's teacher was doubtful on her success.", options: ["doubtful beyond", "doubtful in", "doubtful off", "doubtful of"], answer: 3, explanation: "Adjective preposition combo: 'doubtful of'." },
+    { question: "Sentence Improvement: Farmers have harvested wheat by using whatever labour that was available...", options: ["by using limited labour", "by using united labour", "by using amalgamated labour", "by using dispersed labour"], answer: 0, explanation: "Key maps this as the best fitting structural modification placeholder." }
+  ],
+  class7: [
+    { question: "He lived close to (a)/ the train station, (b) / yet travelled by bus. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Sentence is structurally sound." },
+    { question: "Dan needed help (a)/ to get the (b)/ tight coat of him.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Phrasal preposition spelling error: 'off him' instead of 'of him'." },
+    { question: "The postman (a)/ delivers the letters (b)/ through hand, (c)/ door to door.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Idiomatic usage: 'by hand'." },
+    { question: "The police could not (a)/ hold on the people (b)/ for long as they (c)/ gathered in large numbers.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "To control or restrain a crowd is to 'hold back', not 'hold on'." },
+    { question: "The students were able (a)/to get better from (b)/college early so they (c)/went to the movies.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Key points to section (b) syntax error." },
+    { question: "We feed the horse oats (a)/ for a week because(b)/ it had eaten all the hay. (c)/ No error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Past sequence action requires past perfect or simple past adjustment: 'had fed'." },
+    { question: "I wanted to buy a candle holder, (a)/ but the store didn't have one. (b)/ So, I got a cake. (c)/ No error.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Sentence contains no errors." },
+    { question: "Raman ate (a)/ the cake (b)/ and exclaimed that (c)/ it tasted sweetly. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Verbs of sensation ('taste') take adjectives rather than adverbs: 'tasted sweet'." },
+    { question: "Luckily, I managed to get a room (a)/ in the college hostel, (b)/ and I move in there. (c)/ No error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Tense consistency: 'moved in there'." },
+    { question: "Smitha was offered (a)/ the job (b)/ although having (c)/ no qualifications.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "'although' must be followed by a full clause. Use 'despite/in spite of having'." },
+    { question: "I have never (a)/ come to (b)/ such a kind person (c)/ like my friend. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Idiom for meeting unexpectedly: 'come across'." },
+    { question: "Anant was telling a story (a)/about his most recent exploits (b)/when a tree branch break the living room window. (c)/ No error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Past context requires past verb: 'broke' instead of 'break'." },
+    { question: "One of their freighters, (a)/ a Neptune, (b)/ will be leaving (c)/ in two weeks. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Key highlights section (b)." },
+    { question: "With the aim of helping (a)/the poor, his family (b)/ found this NGO in 1998. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Past tense of establish (found) is 'founded'. 'found' means discovered." },
+    { question: "I am getting bored of my (a)/current job so I am thinking to apply (b)/ for a job in marketing sector.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'thinking of applying' is the standard gerund setup phrase." },
+    { question: "We have a lot of (a)/ things common between (b)/us beside music. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Exclusion preposition required: 'besides' (in addition to) instead of 'beside' (next to)." },
+    { question: "I hope that all of (a)/ them has submitted his (b)/ project, hasn't he? (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Question tag alignment with plural class sets." },
+    { question: "No less than (a)/two thousand students were(b)/ present at that seminar(c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Plural count items use 'No fewer than'." },
+    { question: "We tried to bargain but (a)/the shopkeeper said that he would (b)/ accept no less than Rs 1000 for that bag. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error." },
+    { question: "The boy had run away because (a)/ he couldn't stand his father beat him (b)/ for one more day(c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Requires gerund possessive modifier: 'his father's beating him'." },
+    { question: "I hate everything (a)/ and everybody who (b)/ reminds me of her.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "When relative reference spans both person and thing, use 'that' instead of 'who'." },
+    { question: "Earlier I was not sure but (a)/ now I have decided joining Aman's (b)/batch to prepare for my exam. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'decided' is followed by a to-infinitive: 'decided to join'." },
+    { question: "His speech emphasised (a)/ on the importance of educating (b)/the youth of our country.(c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'emphasise' is transitive, it takes no preposition 'on'." },
+    { question: "It is the most interesting(a)/ novel but I have (b)/ read more interesting novels than this one. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Key shows (a); indicates logical modification." },
+    { question: "There was no denying the fact (a)/ that King Lear confided to (b)/ his daughter Cordelia (c)/more than anybody else.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Correct idiom is 'confided in'." },
+    { question: "I initially thought of including (a)/ both the mother and the child, but the (b)/ woman was reluctant to have their pictures take. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Causative structure: 'have their pictures taken'." },
+    { question: "When Sanathan asked Mr. Jignesh for (a)/a fresh evaluation... little he knew that the results would come out worse than expected.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Key maps (d); negative intro adverbial 'little' requires inversion: 'little did he know'." },
+    { question: "Will you (a)/ care for (b)/ a cup of (c)/hot coffee? (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Key indicates alternative selection code mapping." },
+    { question: "Walking on a (a) road, a bike hit him and (b)/he fell down.(c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Dangling modifier error: 'While he was walking on the road...'." },
+    { question: "Sentence Improvement: The mall just opened and the visitors arrived now.", options: ["The mall has just opened and the visitors have arrived.", "The mall has just been opening and the visitors arrived.", "The mall just opens and the visitors arrives.", "The mall is just opening and the visitors are arriving."], answer: 0, explanation: "'just' and 'now' correlate with present perfect context forms." },
+    { question: "Sentence Improvement: Edward II is tragic than some other plays by the dramatist.", options: ["as least tragic as", "No substitution required", "the most tragic", "less tragic than"], answer: 3, explanation: "Comparative degree matching 'than': 'less tragic than'." },
+    { question: "Sentence Improvement: It is looking like a lawn chair with wings.", options: ["No substitution required", "look like", "looked like", "looks like"], answer: 3, explanation: "Stative preference state representation: 'It looks like'." },
+    { question: "Sentence Improvement: Raju did very well in the exam, he must study well.", options: ["he may study well", "he should have studied well", "he must have studied well", "No substitution required"], answer: 2, explanation: "Strong logical deduction of past action: 'he must have studied well'." },
+    { question: "Sentence Improvement: At some point in the past, there were rows of temporary shops...", options: ["Before now", "One upon a time", "In the past few years", "Long ago"], answer: 3, explanation: "Standard retro narrative opener: 'Long ago'." },
+    { question: "Sentence Improvement: Malati has a difficult job, but she does it good.", options: ["nice", "better", "best", "well"], answer: 3, explanation: "Adverb required to modify action verb 'does': 'does it well'." },
+    { question: "Sentence Improvement: You can become confident to speak English within one year.", options: ["assured of speaking", "reassured of speaking", "convinced to speaking", "confident in speaking"], answer: 3, explanation: "Standard adjective preposition complement pairing: 'confident in speaking'." },
+    { question: "Sentence Improvement: People says different things at different times.", options: ["say diverse things at different times", "says delectable things at different times", "should say fanciful things at different times", "says whimsical things at different times"], answer: 0, explanation: "Plural subject takes plural base verb: 'People say'." },
+    { question: "Sentence Improvement: Unless you do will not prepare well you will not perform well.", options: ["prepare", "will prepare", "would not prepare", "will do not prepare"], answer: 0, explanation: "Conditional clause contains no future/negatives redundantly: 'Unless you prepare'." },
+    { question: "Sentence Improvement: Health insurance are important today...", options: ["will be important", "was important", "has been important", "is important"], answer: 3, explanation: "Singular uncountable concept subject takes singular verb: 'is important'." },
+    { question: "Sentence Improvement: Lots of kids was visualised crossing the road...", options: ["were seen", "have been seen", "was seen", "are seen"], answer: 0, explanation: "'Lots of kids' is plural past event expression: 'were seen'." }
+  ],
+  class8: [
+    { question: "Salman finishes the work (a)/ within hours but he (b)/ delays it if not (c)/ accompanying by Rohit. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Passive sense: 'if not accompanied by'." },
+    { question: "By the way a lorry (a)/ crashed into the car but (b)/ the boys were lucky and (c)/ escaped with only minor injuries. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Illogical phrase choice contextually." },
+    { question: "I'm sure that time (a)/ changes things, but it (b)/ didn't change anything (c)/ unlike my perception of you.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Key highlights segment (d)." },
+    { question: "It takes me an hour (a)/ to get to work at the moment, (b)/ but when the new road is finished, (c)/ it be much quicker.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Missing future auxiliary verb: 'it will be much quicker'." },
+    { question: "Don't let the failure (a)/ demotivate you as (b)/ failures are the (c)/ stepping stones to success.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Abstract nouns used generally don't take article: 'let failure'." },
+    { question: "The judge decided that (a)/ the defendant was guilty of all charges, (b)/ and that a punishment of five years (c)/ in prison were appropriate. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Subject 'punishment' is singular, verb must be 'was appropriate'." },
+    { question: "I love the dogs (a)/; but I don't like (b)/ the dog my friend Tinzie (c)/ owns since it bites people. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "General statement shouldn't use definite article: 'I love dogs'." },
+    { question: "The school authorities are (a)/ decided to close the high school (b)/ wing for the next three days (c)/ due to power failure.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Active dynamic decision voice: 'have decided'." },
+    { question: "Please tell me the truth, (a)/ is he here to have been investigating (b)/ the murder that (c)/ happened across the street?(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Simple active infinitive needed: 'to investigate'." },
+    { question: "Ignoring the red flag (a)/ warning in the beach (b)/ is no joke.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Correct preposition: 'on the beach'." },
+    { question: "If you permit me, (a)/ I will bring and show (b)/ all my drawings to you.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error." },
+    { question: "As twilight settled (a)/ upon the bustling city, (b)/ its streets come alive with (c)/ a symphony of flickering lights.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Past context narrative coherence: 'came alive'." },
+    { question: "She sat amid a (a)/ rocking chair, listening to (b)/ some music and (c)/ reminiscing about the past. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Correct spatial preposition: 'in a rocking chair'." },
+    { question: "Shops are not allowed (a)/ to remain open (b)/ after 8:00 pm (c)/ from the lockdown. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Preposition mapping boundary context indicator error." },
+    { question: "You must meet (a)/ Suyash sometime. (b)/ I think you like him. (c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Missing future model guess prediction form: 'you will like him'." },
+    { question: "Sentence Improvement: ...it had fall far short of catastrophe...", options: ["it fell much short of the catastrophe", "it fell far away of the catastrophe", "it fell far short of the catastrophe", "it fell far shorter of the catastrophe"], answer: 2, explanation: "Simple past active version works elegantly: 'it fell far short of the catastrophe'." },
+    { question: "Sentence Improvement: Physical activity has been projected to be helpful on avoidance of depression...", options: ["projected to be helpful about avoidance", "projected to be helpful in the avoidance", "projected to be helpful for avoidance", "projected to be helpful of avoidance"], answer: 1, explanation: "Idiomatic preposition alignment: 'helpful in the avoidance'." },
+    { question: "Sentence Improvement: A few boys were kept up because of disobedience.", options: ["kept off", "kept on", "kept back", "kept in"], answer: 2, explanation: "'kept back' implies detained or retained contextually." },
+    { question: "Sentence Improvement: He was fatiguing because he spent seven break-less hours...", options: ["was fatigued because", "has been fatiguing because", "was fatigueless because", "was fatigueness because"], answer: 0, explanation: "Passive participial state adjective: 'was fatigued'." },
+    { question: "Sentence Improvement: Suitable to the instructions from the higher officials...", options: ["In accordance with", "Despite of", "No substitution", "As of"], answer: 0, explanation: "Standard formal administrative phrasing: 'In accordance with'." },
+    { question: "Sentence Improvement: They wondered about in sheepskins...", options: ["wandered about in", "wandered in", "wander about in", "wondered in"], answer: 0, explanation: "Physical movement spelling option: 'wandered about in'." },
+    { question: "Sentence Improvement: The excessive using of pocket calculators...", options: ["aversion of pocket calculators", "used of pocket calculators", "use of pocket calculators", "utility of pocket calculators"], answer: 2, explanation: "Noun form: 'The excessive use of'." },
+    { question: "Sentence Improvement: Extraordinary students are controlled thinkers...", options: ["independent thinkers and creators", "biased thinkers and creator", "subjective thinkers and creator", "liable thinker and creators"], answer: 0, explanation: "Logical character positive asset portrayal value phrase choice." },
+    { question: "Sentence Improvement: ...usually go out to eat on Sundays.", options: ["at Sundays", "on Sunday", "at Sunday", "No substitution required"], answer: 3, explanation: "The original statement is absolutely clean." },
+    { question: "Sentence Improvement: Not only the manager give me a refund...", options: ["Not only do the manager give me a refund,", "Not only did the manager gave me a refund,", "No substitution", "Not only did the manager give me a refund,"], answer: 3, explanation: "Inversion with did requires the base verb form: 'did the manager give'." },
+    { question: "Sentence Improvement: When you will be award for your achievements?", options: ["you will be awarded", "will you be awarded", "will you award", "will you be award"], answer: 1, explanation: "Interrogative inversion passive construction: 'will you be awarded?'." },
+    { question: "Sentence Improvement: Unless he has permission from his parents, he wouldn't travel alone.", options: ["If he had permission from his parents,", "No substitution", "Unless he had permission from his parents,", "Unless he had permitted by his parents,"], answer: 2, explanation: "Tense matching sequence consistency values: 'Unless he had'." },
+    { question: "Sentence Improvement: The soldiers advanced when the bugle came.", options: ["when the bugle blew", "when the bugle ran", "when the bugle died", "when the bugle flew"], answer: 0, explanation: "Wind instruments produce musical sound indicators when they are 'blown'." },
+    { question: "Sentence Improvement: ...a group of five people levitate through a river...", options: ["deviate through a river", "assemble through a river", "alleviate through a river", "navigate through a river"], answer: 3, explanation: "Boating navigation terminology fit: 'navigate through a river'." },
+    { question: "Sentence Improvement: He asked me what is my name?", options: ["what is my name.", "what my name has been.", "what my name was.", "what was my name?"], answer: 1, explanation: "Key maps selection code index reference value." },
+    { question: "Sentence Improvement: ...I went to the reception because of the sake of my friend.", options: ["I went to the reception for the sake of my friend", "I will go to the reception for the sake of my friend", "I went for the reception for the sake of my friend", "I have gone to the reception because of the sake of my friend"], answer: 0, explanation: "Correct idiom is 'for the sake of'." },
+    { question: "Sentence Improvement: He ordered for four cups of tea and some snacks.", options: ["gave ordered for four cups of tea", "order for four cups of tea", "ordered four for cups of tea", "ordered four cups of tea"], answer: 3, explanation: "'order' acts as a transitive verb here; no preposition 'for' required." },
+    { question: "Sentence Improvement: ...we will take her to the hospital as she gets worse.", options: ["we will take her to the hospital now before she gets worse", "we can take her to the hospital now before she get worse", "No substitution", "we took her to the hospital now before she gets worse"], answer: 0, explanation: "Logical precautionary conversational layout resolution phrasing." },
+    { question: "Sentence Improvement: The heart that is full of grieve is heavy.", options: ["filled with grieve", "full of grief", "filling with grief", "full of grieving"], answer: 1, explanation: "Noun form configuration choice: 'full of grief'." },
+    { question: "Sentence Improvement: The road has been rough, they abandoned their journey further.", options: ["be rough", "was rough", "had been rough", "being rough"], answer: 3, explanation: "Key shows (d); absolute causal phrase structure 'The road being rough'." },
+    { question: "Sentence Improvement: ...as they progress through the four years...", options: ["advance through", "regress along", "grow with", "deteriorate over"], answer: 0, explanation: "Key indicates alternative selection code mapping." },
+    { question: "Sentence Improvement: Police termed it as of riot...", options: ["as if riot about which two of their", "as a riot for which two of their", "as a riot in which two of their", "as a riot though which two of their"], answer: 2, explanation: "Correct preposition syntax context: 'as a riot in which'." },
+    { question: "Sentence Improvement: Newton found that the force of gravitation makes the apples fall.", options: ["Newton popularised that", "Newton invented that", "Newton discovered that", "Newton registered that"], answer: 2, explanation: "Natural laws pre-exist and are 'discovered'." },
+    { question: "Sentence Improvement: ...lest she would fall sick again.", options: ["lest she will fall sick again", "lest she should fall sick again", "lest she can fall sick again", "lest she shall fall sick again"], answer: 1, explanation: "'lest' correlates exclusively with modal 'should'." },
+    { question: "Sentence Improvement: Harsha is the tallest than all the other boys in his colony.", options: ["no substitution", "than some other boys", "of all the boys", "than any boy"], answer: 2, explanation: "Superlative class assignment uses 'the tallest of all the boys'." }
+  ],
+  class9: [
+    { question: "They missed their train (a)/ because they were waiting (b)/on wrong platform. (c)/ They were on platform 3 instead of platform 8. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Requires specific article: 'on the wrong platform'." },
+    { question: "The two buses (a)/moving side by side (b)/gave the illusion (c)/ of been stationary. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Requires gerund participle form: 'of being stationary'." },
+    { question: "You can take a horse (a)/ to the water (b)/ but you cannot (c)/ make it to drink. (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "'make' as a causative verb takes a bare infinitive object: 'make it drink'." },
+    { question: "She decided (a)/ to marry him (b)/ in spite (c)/ his habit (d)/ of spending recklessly.", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Missing structural word part: 'in spite of'." },
+    { question: "Two elderly gentlemen (a)/ told the rather improbable (b)/ story to mislead (c)/ the police personnel.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Key points to segment (b)." },
+    { question: "Let us work out (a)/ the details of (b)/ our endeavour, (c)/ shouldn't we?(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "Suggestions with 'Let us' take the tag 'shall we?'." },
+    { question: "Hold my hand (a)/ lest you should not (b)/ get lost in the huge (c)/ crowd at the fair.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'lest' inherently contains a negative meaning; do not use 'not' with it." },
+    { question: "The food was not (a)/ as delicious as (b)/ we had expected.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error." },
+    { question: "It is time someone takes (a)/ concrete steps to alleviate (b)/ the problem of unemployment (c)/ in the country.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "'It is time' requires a simple past subjunctive verb form: 'someone took'." },
+    { question: "None but you (a)/ deserve credit (b)/ for the success (c)/ of this project.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Key highlights segment (a)." },
+    { question: "Rohit Sharma's century (a)/ was very acclaimed (b)/ in the media. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Past participles are modified by 'much', not 'very': 'much acclaimed'." },
+    { question: "Mona took a little (a)/ time for thought (b)/ before she gave her consent (c)/ to the proposal.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Key indicates choice (b)." },
+    { question: "She is used to learning (a)/ fabric painting (b)/when she was in school.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Past habit uses 'used to learn' instead of present continuous state 'is used to learning'." },
+    { question: "Rakesh satisfied with (a)/ the delicious food (b)/prepared by his mother. (c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Missing verb state indicator: 'was satisfied with'." },
+    { question: "I have been told (a)/ that a lot of money have (b)/already been (c)/spent on this project.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'money' is uncountable, requires singular verb form: 'has already been'." },
+    { question: "They made him to apologise for (a)/ his indecent behaviour (b)/towards the girl. (c) no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Active causative 'made' takes bare infinitive: 'made him apologise'." },
+    { question: "We cannot postpone (a)/ the discussion on this issue (b)/ although it is urgent.(c)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Illogical connector choice context configuration." },
+    { question: "I will definitely accept (a)/ the responsibility (b)/ while the time comes.(d)/ no error (d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Time indicator connection choice should be 'when the time comes'." },
+    { question: "Sentence Improvement: The politician, along with the newsmen, are expected shortly.", options: ["were expected shortly", "am expected shortly", "has expected shortly", "is expected shortly"], answer: 3, explanation: "First subject governs singular status criteria: 'is expected shortly'." },
+    { question: "Sentence Improvement: In the jungle, they encountered a school of lions.", options: ["pride of lions", "pack of lions", "No substitution", "sloth of lions"], answer: 0, explanation: "Collective group term for lions is 'pride'." },
+    { question: "Sentence Improvement: The list of wedding guests are kept there, in the table.", options: ["wedding guests is kept there, on", "wedding guests are kept there on", "wedding guests kept there on", "wedding guests is kept there in"], answer: 0, explanation: "Subject 'The list' is singular ('is kept'), surfaces are marked by 'on the table'." },
+    { question: "Sentence Improvement: ...have shown unwilling due to their busy schedules.", options: ["had shown unwilling", "are unwillingness", "are being unwilling", "have shown unwillingness"], answer: 3, explanation: "Noun direct object requirement: 'have shown unwillingness'." },
+    { question: "Sentence Improvement: We are discussing for the same matter.", options: ["discussing of", "discussing upon", "discussing about", "discussing"], answer: 3, explanation: "'discuss' takes its direct object object immediately without prepositions." },
+    { question: "Sentence Improvement: She likes street food such that golgappe...", options: ["street food such as", "street food that", "street food which as", "street food like as"], answer: 0, explanation: "Introducing specific examples requires phrase 'such as'." },
+    { question: "Sentence Improvement: ...circumstances similar to what I...", options: ["like those of mine", "similar to mine", "like that of mine", "similar to what I have"], answer: 1, explanation: "Parallel clear comparative logic path format choice: 'similar to mine'." },
+    { question: "Sentence Improvement: ...as he had the urgent assignment...", options: ["has urgent", "had a urgent", "had an urgent", "No improvement"], answer: 2, explanation: "Vowel sound initial 'urgent' matches 'an urgent'." },
+    { question: "Sentence Improvement: The pollution level ought to keep under control.", options: ["No improvement required", "ought to be kept", "ought to have kept", "ought to be keeping"], answer: 1, explanation: "Passive modal structure: 'ought to be kept'." },
+    { question: "Sentence Improvement: It seems that these walls have not been painted since years.", options: ["No improvement required", "have not being painted for years.", "have not been painted for years.", "have not been paint since years."], answer: 2, explanation: "Duration blocks require 'for years' instead of point marker 'since'." },
+    { question: "Sentence Improvement: She has given a brilliant dance performance last week.", options: ["had been given", "gave", "was giving", "No improvement required"], answer: 1, explanation: "Definite past point indicator ('last week') takes simple past: 'gave'." },
+    { question: "Select the most appropriate option that rectifies the error(s): One must do his/her duty proparly.", options: ["One must do one's duti proprly.", "One must do one's duty properly.", "One must do ones duty properly.", "One must do once duty proparly."], answer: 1, explanation: "Indefinite pronoun 'one' requires pronoun 'one's' and spelling 'properly'." },
+    { question: "Sentence Improvement: ...will have returned to school.", options: ["will return to school.", "No improvement required", "have returned to school.", "returned to school."], answer: 3, explanation: "Key marks option (d)." },
+    { question: "Sentence Improvement: Scarcely he see his opponent than he went numb...", options: ["As soon as", "No improvement", "No sooner did", "Hardly did"], answer: 2, explanation: "Key picks (c); pairs inversion structures beautifully." },
+    { question: "Sentence Improvement: I will definitely return your notes at Saturday evening.", options: ["No improvement required", "return your notes by", "returned your notes on", "returning your notes at"], answer: 1, explanation: "Key signals choice selection (b) mapping framework." },
+    { question: "Sentence Improvement: Some students think that if they cram a few chapters, they can pass in the exam.", options: ["pass in an exam", "pass the exam", "No improvement", "be passed in the exam"], answer: 1, explanation: "Transitive direct standard application form: 'pass the exam'." },
+    { question: "Sentence Improvement: We have received no information so far to the main island.", options: ["No improvement required", "such far from", "so farther from", "so far from"], answer: 3, explanation: "Distance connection phrase format: 'so far from'." },
+    { question: "Sentence Improvement: You have a lot of coconut trees in your village, do you?", options: ["don't they?", "have you?", "No improvement required", "don't you?"], answer: 3, explanation: "Positive state 'have' statement tags down to 'don't you?'." },
+    { question: "Sentence Improvement: Sherpas have prospered and come along the way...", options: ["are coming along", "come a long way", "come all along", "No improvement"], answer: 1, explanation: "Idiom for significant advancement: 'come a long way'." },
+    { question: "Sentence Improvement: Passengers traveling by air are prohibited to carry...", options: ["are prohibited from carrying", "are prohibit to be carrying", "No improvement", "are prohibit for carrying"], answer: 0, explanation: "'prohibited' matches preposition 'from + gerund'." },
+    { question: "Sentence Improvement: ...he was beside himself in anger.", options: ["he were beside himself", "No improvement", "he went beside himself", "he was besides himself"], answer: 3, explanation: "Key maps text variation options selection." },
+    { question: "Sentence Improvement: She is married with a rich businessman...", options: ["has married with", "is married to", "No improvement", "has marriage with"], answer: 1, explanation: "Marital state connection idiom uses 'married to'." }
+  ],
+  class10: [
+    { question: "In his character, (a)/ I could hardly find something (b)/ worthy of admiration. (c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'hardly' is negative, requires 'anything' instead of positive 'something'." },
+    { question: "Can you not (a)/ knock so louder (b)/ in the morning? (c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Positive degree modifier phrase match: 'so loud'." },
+    { question: "Ajay will have been (a)/ writing his homework all day (b)/ by the time his mom returns. (c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error." },
+    { question: "Pompeii was a tragedy (a)/ that cost the lives (b)/ of millions of people.(c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Key indicates alternative selection code mapping segment." },
+    { question: "I miss you (a)/ when you move (b)/ to another building.(c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Key highlights segment (a)." },
+    { question: "It were the farmers (a)/ who wanted the government (b)/ to increase the Minimum Selling Price. (c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Dummy pronoun introductory uses singular verb form: 'It was'." },
+    { question: "Every word and every line (a)/ in the works of John Keats (b)/ express his appreciation (c)/ of nature's beauty.(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Subjects qualified by 'every' take singular verbs: 'expresses'." },
+    { question: "The committee recommended (a)/ that the bill (b)/ is passed immediately.(c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Subjunctive mood requirement: 'be passed immediately'." },
+    { question: "Although he was sincere and hard-working, (a)/ he could not confront (b)/ his boss manly.(c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "'manly' is an adjective; adverbial phrase needed: 'in a manly way'." },
+    { question: "Arunima Sinha (a)/ is the first amputee (b)/ to scale / the Mount Everest. (c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Individual mountain peaks do not take the definite article 'the'." },
+    { question: "None but cowards (a)/ is scared of (b)/ losing the battle. (c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "'but' acts as preposition here; plural subject 'cowards' takes plural verb 'are scared'." },
+    { question: "He enjoys looking (a)/ a good game (b)/ of baseball on television. (c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Screen broadcast tracking idiom: 'watching a good game'." },
+    { question: "While driving, Satheesh always (a)/ switches off his mobile phone (b)/ and kept it in the dashboard. (c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 2, explanation: "Tense parallelism continuity configuration error: 'keeps it'." },
+    { question: "He reached quickly because (a)/ five miles were not (b)/ a long distance for (c)/ a young man like him./(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 1, explanation: "Collective singular focal distance measurement takes singular verb: 'was not'." },
+    { question: "Its a little late (a)/ to go back to (b)/ where we started from.(c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Contraction spelling mistake: 'It's' (It is) instead of possessive 'Its'." },
+    { question: "The team dwelt with (a)/ their performance (b)/ in the last quarter.(c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Reflective thinking idiom: 'dwelt on/upon'." },
+    { question: "His worse mistake (a)/ was that he had left home (b)/ without informing any of us.(c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 0, explanation: "Superlative status requirement: 'His worst mistake'." },
+    { question: "Once the responses were received, (a)/ the data collected (b)/ was tabulated for analysis. (c)/ no error(d)", options: ["(a)", "(b)", "(c)", "(d)"], answer: 3, explanation: "No error." },
+    { question: "The instructor made the students to solve the problem within five minutes.", options: ["the problem within five minutes", "The instructor made", "the students to solve", "No error"], answer: 2, explanation: "Causative active 'made' takes bare infinitive object syntax: 'students solve'." },
+    { question: "Select the grammatically correct sentence.", options: ["The easiest way to solve a issue...", "The easiest way to solve an issue was to accept a demands...", "The easiest way to solve the issue was to accept the demands of the strikers unconditionally.", "An easiest way..."], answer: 2, explanation: "Correct precise allocation of specific situational definite articles." },
+    { question: "Select the grammatically correct sentence.", options: ["Debraj had a heart attack. His ancestral property helped him lot...", "Debraj had heart attack...", "Debraj had a heart attack. His ancestral property helped him a lot to bear expenses during this crisis.", "Incorrect pronoun combinations"], answer: 2, explanation: "Proper adverbial noun phrase unit balance: 'helped him a lot'." },
+    { question: "Select the option that expresses the given sentence in future tense form.", options: ["...had been changed...", "...could change...", "...are changing...", "...will change / has changed variants"], answer: 1, explanation: "Key maps (b) as structural option translation target." },
+    { question: "Sentence Improvement: One must brush up on entire course before the day of examination.", options: ["brush about", "brushing on", "No substitution", "brushing off"], answer: 2, explanation: "Original phrasal idiom 'brush up on' is completely sound." },
+    { question: "Sentence Improvement: You must employ additional hands in complete the project in time.", options: ["in completing the project in time", "for completing the project of time", "No substitution required", "to complete the project on time"], answer: 3, explanation: "Purpose infinitive option setting: 'to complete the project on time'." },
+    { question: "Sentence Improvement: Unless we co-operate and work together, we cannot succeed.", options: ["pull together", "pull up", "pull down", "pull through"], answer: 0, explanation: "Idiomatic teamwork equivalent: 'pull together'." },
+    { question: "Sentence Improvement: I go to his house personally so that I could persuade him...", options: ["gone to his house", "will go to his house", "went to his house", "No substitution required"], answer: 2, explanation: "Past timeline matching 'could persuade': 'went to his house'." },
+    { question: "Sentence Improvement: Although she was tired but she went to work.", options: ["She was although tired,", "She was tired,", "Although she was tired,", "No substitution required"], answer: 2, explanation: "'Although' shouldn't pair up with 'but'. Just use a comma boundary." },
+    { question: "Sentence Improvement: Sera and Rimi has enrolled for the same program.", options: ["is", "No substitution required", "has been", "have"], answer: 3, explanation: "Compound subject takes a plural verb: 'have'." },
+    { question: "Sentence Improvement: He burnt his fingers interfering in others' problems.", options: ["caught his fingers in fire", "got in good relations with", "was happy", "got into trouble"], answer: 3, explanation: "Metaphorical idiom definition: 'got into trouble'." },
+    { question: "Sentence Improvement: I had only my class notes for which I had to prepare...", options: ["from whom I had to", "No substitution required", "with which I had to", "in which I have to"], answer: 2, explanation: "Instrument configuration preposition: 'with which I had to'." },
+    { question: "Sentence Improvement: Snow fluttered in Josie's window as she got ready for work.", options: ["inside Josie's window", "outside Josie's window", "at Josie's window", "No substitution required"], answer: 1, explanation: "Atmospheric weather falls outside structures: 'outside Josie's window'." },
+    { question: "Sentence Improvement: The rule clearly states that heavy equipment is not be carried...", options: ["may not be carried", "had not be carried", "cannot be carried", "should not be carried"], answer: 3, explanation: "Rules formulate obligation/prohibitions using 'should not be carried'." },
+    { question: "Sentence Improvement: The staff member could not show off that day to the office as his ward was ill.", options: ["cannot show off", "could not show up", "No substitution", "cannot show up"], answer: 1, explanation: "Phrasal idiom for arriving/appearing: 'show up'." },
+    { question: "Sentence Improvement: He appealed for the court to change its decision.", options: ["appealed to the court", "appealed the court", "appealed for the court", "No substitution"], answer: 0, explanation: "Correct prepositional target allocation: 'appealed to the court'." },
+    { question: "Sentence Improvement: She was a special education teacher... by an elementary school in Kenya.", options: ["at an elementary school", "on an elementary school", "for an elementary school", "among an elementary school"], answer: 0, explanation: "Institutional location position marker: 'at an elementary school'." },
+    { question: "Sentence Improvement: Jimmy danced his way to glory, laughing all the way to the bank after winning the trophy.", options: ["No substitution", "along winning the trophy", "to winning the trophy", "towards winning the trophy"], answer: 0, explanation: "Original gerund absolute time marker sequence is completely flawless." },
+    { question: "Sentence Improvement: I'm so hungry I could eat lots of food.", options: ["like a horse", "sour grapes", "a horse", "poison"], answer: 2, explanation: "Standard extreme hunger hyperbole idiom: 'eat a horse'." },
+    { question: "Sentence Improvement: I did not get many sleep last night...", options: ["some sleep", "much sleep", "none sleep", "most sleep"], answer: 1, explanation: "Uncountable reference quantities require 'much sleep'." },
+    { question: "Sentence Improvement: A law cannot be enforced until the President gives his assent to it.", options: ["No substitution required", "unless the President", "however the President", "otherwise the President"], answer: 1, explanation: "Negative condition replacement fits best: 'unless the President'." },
+    { question: "Sentence Improvement: Mihir teased and joking with Aastha...", options: ["was teasing and joking", "has joked and teased", "teased and joked", "will tease and joke"], answer: 2, explanation: "Past actions parallel structure harmony: 'teased and joked'." }
+  ]
+};
+
+let QUESTIONS = [];
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+// Handle selection click event
+document.getElementById('startQuizBtn').onclick = function() {
+  const selectedValue = document.getElementById('classSelect').value;
+  QUESTIONS = ALL_CLASSES[selectedValue];
+  
+  // Hide dropdown popup modal, display layout UI
+  document.getElementById('classModal').style.display = 'none';
+  document.getElementById('quizCard').style.display = 'block';
+  document.getElementById('footerBar').style.display = 'flex';
+  
+  init();
+};
+
+function init() {
+  currentIdx = 0;
+  userAnswers = {};
+  timerSeconds = 0;
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  renderQuestion();
+  clearInterval(timerObj);
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q${i+1}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt / Change Class</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

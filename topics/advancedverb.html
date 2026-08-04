@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Advance Verb Practice Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "Having been finished his early-morning workout routine and meditation session, (a)/ he enjoyed a healthy breakfast (b)/ and left for his office. (c)/ no error (d)",
+    options: ["Having been finished his early-morning", "he enjoyed a healthy breakfast", "and left for his office.", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'Having finished' instead of 'Having been finished'. The active perfect participle is required since the subject ('he') completed the action themselves[cite: 12]."
+  },
+  {
+    id: 2,
+    question: "She felt deeply ashamed for interrupt (a)/ the speaker during the serious discussion (b)/ as she didn't realize the importance of the topic (c)/ and spoke without thinking about the consequences. (d)",
+    options: ["She felt deeply ashamed for interrupt", "the speaker during the serious discussion", "as she didn't realize the importance", "and spoke without thinking about..."],
+    answer: 0,
+    explanation: "Correction: Use 'for interrupting' instead of 'for interrupt'. Prepositions must be followed by a gerund form[cite: 12]."
+  },
+  {
+    id: 3,
+    question: "The security team remained alert while checked the identities of the visitors (a)/ entering the research facility, to ensure no unauthorized individual (b)/ entered the restricted area. (c)/ no error (d)",
+    options: ["The security team remained alert while checked", "entering the research facility, to ensure", "entered the restricted area.", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'while checking' instead of 'while checked'. The active continuous action is needed to match the time frame of remaining alert[cite: 12]."
+  },
+  {
+    id: 4,
+    question: "Do you recall (a)/ to meet Arjun and his startup team at the tech summit in Bengaluru last month, (b)/ where they were explaining their AI-based flood-prediction system? (c)/ no error (d)",
+    options: ["Do you recall", "to meet Arjun and his startup team", "where they were explaining their AI-based...", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'meeting' instead of 'to meet'. The verb 'recall' takes a gerund when referring to past memories[cite: 12]."
+  },
+  {
+    id: 5,
+    question: "Regular morning meditation helps (a)/ students improving their concentration and memory, (b)/ especially when they are preparing for demanding competitive exams like SSC and UPSC. (c)/ no error (d)",
+    options: ["Regular morning meditation helps", "students improving their concentration and memory,", "especially when they are preparing for...", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'improve' or 'to improve' instead of 'improving'. The verb 'help' takes a bare infinitive or a to-infinitive[cite: 12]."
+  },
+  {
+    id: 6,
+    question: "The professor entered the classroom (a)/ hold a stack of research papers and (b)/ a cup of black coffee in his hand. (c)/ no error (d)",
+    options: ["The professor entered the classroom", "hold a stack of research papers and", "a cup of black coffee in his hand.", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'holding' instead of 'hold'. A present participle is required here to show the simultaneous state or action of the professor[cite: 12]."
+  },
+  {
+    id: 7,
+    question: "The old railway bridge needs to repair immediately (a)/ before any major accident occurs, (b)/ as the recent inspection report highlighted multiple cracks in its structure. (c)/ no error (d)",
+    options: ["The old railway bridge needs to repair immediately", "before any major accident occurs,", "as the recent inspection report highlighted...", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'needs to be repaired' or 'needs repairing' instead of 'needs to repair'. The bridge receives the action, so a passive construction or a gerund complement is necessary[cite: 12]."
+  },
+  {
+    id: 8,
+    question: "Walking through the crowded metro station, (a)/ my wallet was stolen from my bag, (b)/ and I had to report the incident immediately to the security officer. (c)/ no error (d)",
+    options: ["Walking through the crowded metro station,", "my wallet was stolen from my bag,", "and I had to report the incident immediately", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'While I was walking' instead of 'Walking'. Otherwise, it creates a dangling participle where 'my wallet' incorrectly looks like the entity that was walking[cite: 12]."
+  },
+  {
+    id: 9,
+    question: "At the community feast organized by the local temple, (a)/ many children asked for a second helping (b)/ of the sweet rice pudding prepared especially for the festival. (c)/ no error (d)",
+    options: ["At the community feast organized by the local temple,", "many children asked for a second helping", "of the sweet rice pudding prepared especially...", "no error"],
+    answer: 3,
+    explanation: "The sentence contains no error. 'Second helping' is a perfectly accurate idiomatic expression meaning a second serving of food[cite: 12]."
+  },
+  {
+    id: 10,
+    question: "The principal instructed the students (a)/ to completing the group project by the end of the week (b)/ and submit the report to their class mentors for evaluation. (c)/ no error (d)",
+    options: ["The principal instructed the students", "to completing the group project by the end", "and submit the report to their class mentors", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'to complete' instead of 'to completing' to build a standard infinitive construction following 'instructed'[cite: 12]."
+  },
+  {
+    id: 11,
+    question: "Being a rainy evening with heavy traffic on the main road, (a)/ Riya decided to cancel her dinner plans, (b)/ and stay home with her family. (c)/ no error (d)",
+    options: ["Being a rainy evening with heavy traffic", "Riya decided to cancel her dinner plans,", "and stay home with her family.", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'It being a rainy evening' instead of 'Being a rainy evening'. An independent introductory phrase requires its own dummy subject 'It' to avoid a dangling modifier error[cite: 12]."
+  },
+  {
+    id: 12,
+    question: "Our boss does nothing (a)/ but to find faults in every proposal (b)/ presented by us in the weekly business meetings. (c)/ No error (d)",
+    options: ["Our boss does nothing", "but to find faults in every proposal", "presented by us in the weekly business meetings.", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'but find faults' instead of 'but to find faults'. The idiomatic structure 'does nothing but' requires a bare infinitive[cite: 12]."
+  },
+  {
+    id: 13,
+    question: "As per the new safety regulations (a)/ introduced by the government, only vaccinating employees (b)/ are allowed to enter the corporate building. (c)/ no error (d)",
+    options: ["As per the new safety regulations", "introduced by the government, only vaccinating employees", "are allowed to enter the corporate building.", "no error"],
+    answer: 1,
+    explanation: "Correction: Use the past participle 'vaccinated' instead of the active participle 'vaccinating'. The employees received the vaccination[cite: 12]."
+  },
+  {
+    id: 14,
+    question: "At the community gathering, several relatives (a)/ suggested that Mr. Sinha should marry his eldest son again, (b)/ as he had been living alone for years after his wife's death in an accident. (c)/ no error (d)",
+    options: ["At the community gathering, several relatives", "suggested that Mr. Sinha should marry his eldest son again,", "as he had been living alone for years after...", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'get his eldest son married again' instead of 'marry his eldest son again' to avoid suggesting that Mr. Sinha himself is marrying his own son[cite: 12]."
+  },
+  {
+    id: 15,
+    question: "Although Sarah has learned the basics of photography, (a)/ she does not know to use professional cameras with manual settings, (b)/ which limits her ability to capture high-quality images in various lighting conditions. (c)/ no error (d)",
+    options: ["Although Sarah has learned the basics", "she does not know to use professional cameras", "which limits her ability to capture high-quality", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'know how to use' instead of 'know to use'. The verb 'know' requires a wh-adverb link before an infinitive showing skills[cite: 12]."
+  },
+  {
+    id: 16,
+    question: "The doctor suggested (a)/ him to avoid eating fried food regularly (b)/ as it was worsening his cholesterol level and overall health. (c)/ no error (d)",
+    options: ["The doctor suggested", "him to avoid eating fried food regularly", "as it was worsening his cholesterol level", "no error"],
+    answer: 1,
+    explanation: "Correction: Suggest does not take a direct personal object followed by an infinitive. Use 'that he should avoid' or 'avoiding' instead of 'him to avoid'[cite: 12]."
+  },
+  {
+    id: 17,
+    question: "Ravi was in such a hurry to catch the early morning flight (a)/ that he completely forgot switching off the ac (b)/ which later resulted in a short circuit. (c)/ no error (d)",
+    options: ["Ravi was in such a hurry to catch", "that he completely forgot switching off the ac", "which later resulted in a short circuit.", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'forgot to switch off' instead of 'switching off'. 'Forget + to-infinitive' indicates failing to perform an intended task[cite: 12]."
+  },
+  {
+    id: 18,
+    question: "After retirement, Mr. Sharma spends most of his mornings (a)/ read newspapers and gardening in his backyard (b)/ which keep him both physically and mentally active. (c)/ no error (d)",
+    options: ["After retirement, Mr. Sharma spends most", "read newspapers and gardening in his backyard", "which keep him both physically and mentally active.", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'reading' instead of 'read' to maintain strict parallel structures with the coordinated gerund 'gardening'[cite: 12]."
+  },
+  {
+    id: 19,
+    question: "The government launched a new online portal (a)/ assisting farmers with real-time weather updates and digital crop advisory (b)/ so that they could plan their harvest more effectively. (c)/ no error (d)",
+    options: ["The government launched a new online portal", "assisting farmers with real-time weather updates", "so that they could plan their harvest more", "no error"],
+    answer: 1,
+    explanation: "Correction: Use the purpose infinitive 'to assist' instead of the active participle 'assisting'[cite: 12]."
+  },
+  {
+    id: 20,
+    question: "After been criticized by the media for poor maintenance of roads, (a)/ the municipal corporation finally (b)/ started the repair work across the city to avoid further backlash. (c)/ no error (d)",
+    options: ["After been criticized by the media for poor", "the municipal corporation finally", "started the repair work across the city", "no error"],
+    answer: 0,
+    explanation: "Correction: Use the passive perfect structure 'After being criticized' instead of 'After been criticized'[cite: 12]."
+  },
+  {
+    id: 21,
+    question: "As the audience stood up (a)/ to applaud the young pianist, his mother (b)/ sitting in the front row couldn't help cry out of pride and joy. (c)/ no error (d)",
+    options: ["As the audience stood up", "to applaud the young pianist, his mother", "sitting in the front row couldn't help cry out", "no error"],
+    answer: 2,
+    explanation: "Correction: Use 'couldn't help crying' instead of 'couldn't help cry'. The phrase 'cannot help' is idioms-matched with a gerund complement[cite: 12]."
+  },
+  {
+    id: 22,
+    question: "The CEO claims to submit (a)/ the complete set of financial disclosures to the regulatory authority last week (b)/ while the audit team is saying that several critical documents are still missing from the official record. (c)/ no error (d)",
+    options: ["The CEO claims to submit", "the complete set of financial disclosures to...", "while the audit team is saying that several", "no error"],
+    answer: 0,
+    explanation: "Correction: Use a perfect infinitive 'to have submitted' instead of 'to submit' since the action relates completely to an explicit past timeline ('last week')[cite: 12]."
+  },
+  {
+    id: 23,
+    question: "The anti-narcotics unit in Goa (a)/ submitted a detailed report to the court (b)/ accusing a well-known nightclub owner of supply banned substances to tourists in late-night parties. (c)/ no error (d)",
+    options: ["The anti-narcotics unit in Goa", "submitted a detailed report to the court", "accusing a well-known nightclub owner of supply", "no error"],
+    answer: 2,
+    explanation: "Correction: Use 'of supplying' instead of 'of supply'. Prepositions must be followed by their corresponding gerund verbal noun forms[cite: 12]."
+  },
+  {
+    id: 24,
+    question: "After finishing their final briefing at the Border Security Camp near Tawang, (a)/ the young officers said that they would be ready leaving for the high-altitude patrol route (b)/ as soon as the weather department issued a green signal. (c)/ no error (d)",
+    options: ["After finishing their final briefing at the", "the young officers said that they would be ready leaving", "as soon as the weather department issued a green", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'ready to leave' instead of 'ready leaving'. The adjective 'ready' takes an infinitive target modifier[cite: 12]."
+  },
+  {
+    id: 25,
+    question: "Aarav's family is planning for moving back to their hometown in Dehradun (a)/ as his father wants to start organic farming (b)/ after retiring from his job. (c)/ no error (d)",
+    options: ["Aarav's family is planning for moving back", "as his father wants to start organic farming", "after retiring from his job.", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'is planning to move' instead of 'is planning for moving'[cite: 12]."
+  },
+  {
+    id: 26,
+    question: "Many parents nowadays (a)/ want all school-related information, (b)/ including exam schedules and fee reminders, to be providing to them directly on their WhatsApp. (c)/ No error (d)",
+    options: ["Many parents nowadays", "want all school-related information,", "including exam schedules and fee reminders, to be providing", "No error"],
+    answer: 2,
+    explanation: "Correction: Use the passive infinitive 'to be provided' instead of active continuous 'to be providing'[cite: 12]."
+  },
+  {
+    id: 27,
+    question: "Rahul had planned a late-night trek near the India-Nepal border, (a)/ but the local guide warned him that he had better not to walk alone (b)/ because wild animals often roam in that forest area. (c)/ no error (d)",
+    options: ["Rahul had planned a late-night trek near", "but the local guide warned him that he had better not to walk", "because wild animals often roam in that forest", "no error"],
+    answer: 1,
+    explanation: "Correction: Remove 'to' from 'not to walk alone'. The modal phrase idiom 'had better' is strictly followed by a bare infinitive layout[cite: 12]."
+  },
+  {
+    id: 28,
+    question: "As very heavy rainfall is expected this year, (a)/ villagers in Assam have to rebuilt the damaged embankments (b)/ before the next spell of floods threatens their homes again. (c)/ no error (d)",
+    options: ["As very heavy rainfall is expected this year,", "villagers in Assam have to rebuilt the damaged", "before the next spell of floods threatens their", "no error"],
+    answer: 1,
+    explanation: "Correction: Use the base form 'have to rebuild' instead of the past participle form 'rebuilt' after the infinitive link particle 'to'[cite: 12]."
+  },
+  {
+    id: 29,
+    question: "While visiting the emergency (a)/ ward of AIIMS Delhi, Rohan watched the (b)/ paramedics to revive an unconscious accident victim (c)/ no error (d)",
+    options: ["While visiting the emergency", "ward of AIIMS Delhi, Rohan watched the", "paramedics to revive an unconscious accident victim", "no error"],
+    answer: 2,
+    explanation: "Correction: Use 'revive' or 'reviving' instead of 'to revive'. Verbs of perception like 'watch' take a bare infinitive or a participle[cite: 12]."
+  },
+  {
+    id: 30,
+    question: "At the annual harvest festival in the village, (a)/ the children enjoyed to dance around the bonfire (b)/ while their elders narrated folk stories. (c)/ no error (d)",
+    options: ["At the annual harvest festival in the village,", "the children enjoyed to dance around the bonfire", "while their elders narrated folk stories.", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'enjoyed dancing' instead of 'enjoyed to dance'. The verb 'enjoy' takes a gerund object complement[cite: 12]."
+  },
+  {
+    id: 31,
+    question: "Dr. Nisha did not let her (a)/ interns to operate the newly-calibrated laser instrument (b)/ without wearing high-density protective gear. (c)/ no error (d)",
+    options: ["Dr. Nisha did not let her", "interns to operate the newly-calibrated laser", "without wearing high-density protective gear.", "no error"],
+    answer: 1,
+    explanation: "Correction: Remove 'to' from the phrase. The causative verb 'let' strictly takes a bare infinitive configuration[cite: 12]."
+  },
+  {
+    id: 32,
+    question: "Principal Meenakshi stated (a)/ that modern digital labs are necessary in schools (b)/ for complex scientific concepts to absorb easily by students. (c)/ No error (d)",
+    options: ["Principal Meenakshi stated", "that modern digital labs are necessary in schools", "for complex scientific concepts to absorb easily by students.", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'to be absorbed' instead of 'to absorb'. The concepts undergo the action, so a passive construction is required[cite: 12]."
+  },
+  {
+    id: 33,
+    question: "The scholarship announced by the education ministry (a)/ brought immense hope to students living in remote tribal areas (b)/ where facilities provide by the government schools (c)/ were insufficient for higher studies. (d)",
+    options: ["The scholarship announced by the education ministry", "brought immense hope to students living in remote", "where facilities provide by the government schools", "were insufficient for higher studies."],
+    answer: 2,
+    explanation: "Correction: Use the past participle 'provided' instead of 'provide' to function as a reduced relative passive modifier clause[cite: 12]."
+  },
+  {
+    id: 34,
+    question: "Our entire marketing team is looking (a)/ forward to attend the three-day workshop (b)/ where industry leaders will share modern branding techniques (c)/ that can significantly improve customer engagement. (d)",
+    options: ["Our entire marketing team is looking", "forward to attend the three-day workshop", "where industry leaders will share modern branding", "that can significantly improve customer engagement."],
+    answer: 1,
+    explanation: "Correction: Use 'to attending' instead of 'to attend'. In the phrase 'look forward to', 'to' acts as a preposition requiring a trailing gerund[cite: 12]."
+  },
+  {
+    id: 35,
+    question: "Running to catch the morning metro, (a)/ my headphones slipped out of my backpack (b)/ and got stuck between the sliding doors. (c)/ No error (d)",
+    options: ["Running to catch the morning metro,", "my headphones slipped out of my backpack", "and got stuck between the sliding doors.", "No error"],
+    answer: 0,
+    explanation: "Correction: Use 'While I was running' instead of 'Running' to fix a dangling participle issue where 'my headphones' incorrectly appears as the entity running[cite: 12]."
+  },
+  {
+    id: 36,
+    question: "Tanisha, being extremely anxious about missing her metro, (a)/ she rushed past the security check (b)/ without noticing that her bag's zip was open. (c)/ No error (d)",
+    options: ["Tanisha, being extremely anxious about missing her", "she rushed past the security check", "without noticing that her bag's zip was open.", "No error"],
+    answer: 1,
+    explanation: "Correction: Remove 'she' from part (b) because the primary subject anchor 'Tanisha' is already supplied at the start[cite: 12]."
+  },
+  {
+    id: 37,
+    question: "Having her lunch, (a)/ Priya started her work again in the balcony (b)/ as she had to submit the final report by next Monday. (c)/ No error (d)",
+    options: ["Having her lunch,", "Priya started her work again in the balcony", "as she had to submit the final report by next Monday.", "No error"],
+    answer: 0,
+    explanation: "Correction: Use 'Having had her lunch' or 'After having her lunch' instead of 'Having her lunch' to show the completion of eating before resuming work[cite: 12]."
+  },
+  {
+    id: 38,
+    question: "As soon as we entered the hotel (a)/ the waiter brought (b)/ a steamed cup of tea (c)/ and some biscuits for all of us. (d)",
+    options: ["As soon as we entered the hotel", "the waiter brought", "a steamed cup of tea", "and some biscuits for all of us."],
+    answer: 2,
+    explanation: "Correction: Use 'a steaming cup of tea' instead of 'steamed'. A present participle is needed to describe the active, ongoing state of emitting steam[cite: 12]."
+  },
+  {
+    id: 39,
+    question: "Anshika proposed to joining a library (a)/ so that she and her friends could study (b)/ peacefully for their first-year exams and score well. (c)/ No error (d)",
+    options: ["Anshika proposed to joining a library", "so that she and her friends could study", "peacefully for their first-year exams and score well.", "No error"],
+    answer: 0,
+    explanation: "Correction: Use 'proposed joining' instead of 'to joining'. The verb 'propose' takes a direct gerund complement when presenting ideas[cite: 12]."
+  },
+  {
+    id: 40,
+    question: "As the groom's family approached the entrance, (a)/ the bandmaster bade (b)/ his musicians to play the special ceremonial tune (c)/ which had been rehearsed for weeks to make the moment grand. (d)",
+    options: ["As the groom's family approached the entrance,", "the bandmaster bade", "his musicians to play the special ceremonial tune", "which had been rehearsed for weeks to make..."],
+    answer: 2,
+    explanation: "Correction: Use bare form 'play' instead of 'to play'. The past tense layout 'bade' forces a bare infinitive matching pattern[cite: 12]."
+  },
+  {
+    id: 41,
+    question: "Both Kunal and Ajay have told me (a)/ that they are not averse to end this online fight (b)/ and they are ready to work with each other peacefully (c)/ No error (d)",
+    options: ["Both Kunal and Ajay have told me", "that they are not averse to end this online fight", "and they are ready to work with each other peacefully", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'to ending' instead of 'to end'. In the adjective phrase 'averse to', 'to' behaves as a preposition and requires a gerund form[cite: 12]."
+  },
+  {
+    id: 42,
+    question: "You should not risk to carry your expensive camera (a)/ while boarding a heavily crowded local train (b)/ during the festive season. (c)/ no error (d)",
+    options: ["You should not risk to carry your expensive camera", "while boarding a heavily crowded local train", "during the festive season.", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'carrying' instead of 'to carry'. The verb 'risk' requires a gerund direct object complement[cite: 12]."
+  },
+  {
+    id: 43,
+    question: "It is healthier to wake up early for a morning walk (a)/ than to lie in bed scrolling (b)/ through pointless videos for hours. (c)/ No error (d)",
+    options: ["It is healthier to wake up early for a morning walk", "than to lie in bed scrolling", "through pointless videos for hours.", "No error"],
+    answer: 1,
+    explanation: "Correction: Replace 'to lie' with bare root 'lie' to properly balance parallel infinitive weights matching the layout after 'than'[cite: 12]."
+  },
+  {
+    id: 44,
+    question: "Sentence Improvement: Shaken by the sudden death of his father, he stopped talking to anyone.",
+    options: ["Shaking", "Being shaking", "no improvement", "Having shaken"],
+    answer: 2,
+    explanation: "The original sentence requires no improvement. The past participle adjective modifier phrase 'Shaken by...' perfectly registers emotional shock state consequences[cite: 12]."
+  },
+  {
+    id: 45,
+    question: "Sentence Improvement: The doctor repeatedly insists on reduce the patient's screen time, especially because excessive usage was worsening his sleep cycle and affecting his concentration during the day.",
+    options: ["insisting of reducing", "insisted on reducing", "insisted to reduce", "have insist to reduce"],
+    answer: 1,
+    explanation: "Option (b) is correct. The preposition 'on' requires a following gerund form ('reducing') to follow past historical instances smoothly[cite: 12]."
+  },
+  {
+    id: 46,
+    question: "Sentence Improvement: The hikers packed enough food and emergency supplies before set out on their long journey through the dense forest.",
+    options: ["before setting over", "before setting out", "before sets out to", "before set to out"],
+    answer: 1,
+    explanation: "Option (b) is correct. The temporal item 'before' takes a gerund layout, and the phrasal combination for starting trips is 'setting out'[cite: 12]."
+  },
+  {
+    id: 47,
+    question: "Sentence Improvement: One of the essential steps in organising a large cultural event is to arranging the seating plan properly so that every guest has a clear view of the stage.",
+    options: ["in organising a large cultural event is to be arranging", "into organising a large cultural event is arrange", "in organising a large cultural event is to arrange", "in organising a large cultural event is to be arranged"],
+    answer: 2,
+    explanation: "Option (c) applies the correct plain target infinitive form 'to arrange' to complete the core copular complement mapping smoothly[cite: 12]."
+  },
+  {
+    id: 48,
+    question: "Sentence Improvement: The students were busy to prepare for their upcoming annual exhibition as they had to arrange charts, models, and presentations.",
+    options: ["for preparing", "to be preparing", "preparing", "no improvement"],
+    answer: 2,
+    explanation: "Option (c) is correct. The adjective 'busy' is idiomatic-paired directly with a bare gerund form: 'busy preparing'[cite: 12]."
+  },
+  {
+    id: 49,
+    question: "Sentence Improvement: The incharge made the technicians to work overnight so that the power supply could be restored before the city woke up in the morning.",
+    options: ["made the technicians working", "makes the technicians to work", "made the technicians work", "made the technician to works"],
+    answer: 2,
+    explanation: "Option (c) is correct. Active constructions featuring the causative verb 'make' strictly reject 'to' and demand bare infinitive forms ('work')[cite: 12]."
+  },
+  {
+    id: 50,
+    question: "Sentence Improvement: Do you mind me to staying here until I find a good house to rent?",
+    options: ["mind me staying", "mind me to stay", "mind my staying", "mind me to being"],
+    answer: 2,
+    explanation: "Option (c) is correct. Formal rules indicate that a gerund direct object target ('staying') takes a possessive modifier description ('my staying')[cite: 12]."
+  },
+  {
+    id: 51,
+    question: "Sentence Improvement: We watched the workers to be unloading heavy wooden crates from the truck.",
+    options: ["unloads", "unload", "to be unload", "to unload"],
+    answer: 1,
+    explanation: "Option (b) is correct. Verbs of sensory perception ('watched') map directly to plain bare infinitive actions ('unload')[cite: 12]."
+  },
+  {
+    id: 52,
+    question: "Sentence Improvement: Read books every day helps a person develop deeper understanding, better vocabulary, and stronger imagination over time.",
+    options: ["To reading books", "Reading book", "Reading books", "No substitution"],
+    answer: 2,
+    explanation: "Option (c) is correct. A plural gerund subject phrase template ('Reading books') serves as a functional singular noun concept mapping to the singular verb 'helps'[cite: 12]."
+  },
+  {
+    id: 53,
+    question: "Sentence Improvement: As been a doctor, she understood the seriousness of the patient's condition even before the reports came.",
+    options: ["Being a doctor", "As he be doctor", "No substitution", "Been doctor"],
+    answer: 0,
+    explanation: "Option (a) introduces the accurate present participle clause structure layout 'Being a doctor' to establish cause context clearly[cite: 12]."
+  },
+  {
+    id: 54,
+    question: "Sentence Improvement: Since rest of the employees have already left, let we lock the office carefully and leave the building.",
+    options: ["No substitution", "let ours lock", "let us lock", "let our locking"],
+    answer: 2,
+    explanation: "Option (c) is correct. The imperative starter verb 'let' requires an objective case pronoun form ('us') followed by a bare verb[cite: 12]."
+  },
+  {
+    id: 55,
+    question: "Sentence Improvement: Even after they were shown the cctv footage, the students repeatedly denied to break any classroom equipment during the lunch break.",
+    options: ["denied for breaking", "denied from breaking", "denied breaking", "No substitution required"],
+    answer: 2,
+    explanation: "Option (c) is correct. The verb 'deny' requires a gerund direct object complement ('denied breaking')[cite: 12]."
+  },
+  {
+    id: 56,
+    question: "Sentence Improvement: Have completed the registration, the volunteers immediately moved to the main hall to get the detailed instructions for the event.",
+    options: ["Have been completing the registration", "Having completing the registration", "No substitution required", "Having completed the registration"],
+    answer: 3,
+    explanation: "Option (d) is correct. The perfect active participle syntax layout format is 'Having completed'[cite: 12]."
+  },
+  {
+    id: 57,
+    question: "Sentence Improvement: She was deeply disappointed to be rejected in the final round of the interview even after performing exceptionally well in all the earlier stages of the selection process.",
+    options: ["disappointed to rejected", "disappointed at being rejected", "disappointed for being rejected", "No improvement"],
+    answer: 1,
+    explanation: "Option (b) is correct. The emotional adjective 'disappointed' takes the fixed preposition 'at' followed by a passive gerund clause ('being rejected')[cite: 12]."
+  },
+  {
+    id: 58,
+    question: "Sentence Improvement: He was disappointed to be missed the his train to Delhi.",
+    options: ["disappointed at missing", "disappointed for missing", "disappointed to have missed", "No improvement"],
+    answer: 2,
+    explanation: "Option (c) is correct. The structure 'disappointed to have missed' accurately employs the perfect infinitive format to reflect past regret over an unfulfilled occurrence[cite: 12]."
+  },
+  {
+    id: 59,
+    question: "Sentence Improvement: Be responsible and disciplined will significantly help you achieve long-term success in any professional.",
+    options: ["Being responsible and disciplined", "By being responsible and disciplined", "For being responsible and disciplined", "No improvement"],
+    answer: 0,
+    explanation: "Option (a) correctly establishes a gerund phrase subject template ('Being responsible...') to manage the singular predicate verb 'will help' smoothly[cite: 12]."
+  },
+  {
+    id: 60,
+    question: "Sentence Improvement: When the old video of their childhood trip unexpectedly appeared on the big screen, everyone in the hall could not help but crying remembering those unforgettable moments.",
+    options: ["could not help cry", "could not help but cry", "could not helping cry", "could not help but crying"],
+    answer: 1,
+    explanation: "Option (b) is correct. The complete negative idiom layout 'cannot help but' must be followed directly by a clean bare infinitive form ('cry')[cite: 12]."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>Q:${q.id} ${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q:${q.id}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

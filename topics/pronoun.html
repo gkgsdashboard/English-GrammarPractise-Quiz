@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Pronoun Practice Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "Each of the researchers who were assigned to the international climate project were asked to submit his findings by the end of the quarter.",
+    options: ["Each of the researchers", "who was assigned to the international climate project", "were asked to submit", "his findings by the end of the quarter"],
+    answer: 2,
+    explanation: "Replace 'were' with 'was' in option (c). The subject of the sentence is 'Each', which is singular and takes a singular verb."
+  },
+  {
+    id: 2,
+    question: "I am indebted to my friends for the large sum of money what they gave me during my days of need.",
+    options: ["what they gave me", "during my days of need", "indebted to my friends", "for the large sum"],
+    answer: 0,
+    explanation: "Replace 'what' with 'that'. The relative pronoun 'that' should be used after the definite antecedent 'the large sum of money'."
+  },
+  {
+    id: 3,
+    question: "He is among those rare individuals who not only dedicates himself but also inspire others to excel.",
+    options: ["He is among those", "rare individuals who", "not only dedicates himself", "but also inspire others to excel"],
+    answer: 2,
+    explanation: "Replace 'dedicates himself' with 'dedicate themselves' because the relative pronoun 'who' refers back to 'rare individuals' (plural)."
+  },
+  {
+    id: 4,
+    question: "He has never disobeyed (a)/ his master that is (b)/ a mark of a great disciple. (c)/ no error(d)",
+    options: ["He has never disobeyed", "his master that is", "a mark of a great disciple.", "no error"],
+    answer: 1,
+    explanation: "Use 'which' instead of 'that' to refer to the entire previous clause as a relative description."
+  },
+  {
+    id: 5,
+    question: "It's wise to be conscious of time and it's ripple effect on money.",
+    options: ["It's wise to be conscious", "of time and it's ripple", "effect on money", "No error"],
+    answer: 1,
+    explanation: "Replace 'it's' (it is) with the possessive pronoun 'its'."
+  },
+  {
+    id: 6,
+    question: "Children can injure himself (a)/ in the blink of an eye so the parents (b)/ should always be cautious. (c)/ No error.(d)",
+    options: ["Children can injure himself", "in the blink of an eye so the parents", "should always be cautious.", "No error."],
+    answer: 0,
+    explanation: "Replace 'himself' with the plural reflexive pronoun 'themselves' to agree with 'Children'."
+  },
+  {
+    id: 7,
+    question: "The 63rd edition of the Grammys was historic for Beyonce, which is now the female artist with the most trophies.",
+    options: ["which is now the female", "historic for Beyonce", "The 63rd edition of the Grammys was", "artist with the most trophies"],
+    answer: 0,
+    explanation: "Replace 'which' with 'who' since it refers to a person (Beyonce)."
+  },
+  {
+    id: 8,
+    question: "Neither of the two candidates who were interviewed extensively by the board have submitted his verification documents.",
+    options: ["Neither of the two candidates", "who were interviewed extensively by the board", "have submitted", "his verification documents"],
+    answer: 2,
+    explanation: "Replace 'have' with 'has' because 'Neither' takes a singular verb."
+  },
+  {
+    id: 9,
+    question: "Now its referring to the same big lug who met his fate thanks to David's slingshot.",
+    options: ["No error", "thanks to David's slingshot", "big lug who met his fate", "Now its referring to the same"],
+    answer: 3,
+    explanation: "Replace 'its' with 'it's' (it is) to form a proper continuous tense structure."
+  },
+  {
+    id: 10,
+    question: "She is the professor (a)/ whom research students often admire her (b)/ because all her publications have been internationally recognized. (c)/ no error (d)",
+    options: ["She is the professor", "whom research students often admire her", "because all her publications have been internationally recognized.", "no error"],
+    answer: 1,
+    explanation: "Use 'whose' instead of 'whom' to denote possession ('whose research'), and remove 'her' because it is redundant."
+  },
+  {
+    id: 11,
+    question: "A man who has been accused of fraud in an earlier job, he will never be welcomed in any other organisation.",
+    options: ["No error", "welcome in any other organisation", "A man who has been accused of fraud", "in an earlier job, he will never be"],
+    answer: 3,
+    explanation: "Remove the pronoun 'he'. The noun phrase 'A man' is already the subject of the main verb 'will never be welcomed'."
+  },
+  {
+    id: 12,
+    question: "He is (a)/ the same man (b)/ which I saw with your sister (c)/ yesterday at the gate.(d)",
+    options: ["He is", "the same man", "which I saw with your sister", "yesterday at the gate."],
+    answer: 2,
+    explanation: "Use 'that' instead of 'which' because 'the same' requires 'that' as its relative pronoun."
+  },
+  {
+    id: 13,
+    question: "She rarely approached nobody to talk about the problems that she was facing.",
+    options: ["No error", "that she was facing", "She rarely approached nobody", "to talk about the problems"],
+    answer: 2,
+    explanation: "Replace 'nobody' with 'anybody' to avoid a double negative with the adverb 'rarely'."
+  },
+  {
+    id: 14,
+    question: "The matter, which you and him have been discussing for days, needs to be escalated to the management for the final decision.",
+    options: ["The matter, which you and him", "have been discussing for days", "needs to be escalated to the management", "for a final decision"],
+    answer: 0,
+    explanation: "Replace 'him' with 'he' because it serves as part of the compound subject executing the action 'have been discussing'."
+  },
+  {
+    id: 15,
+    question: "He can become a scientist or a teacher, (a)/ this requires long hours in a lab, (b)/ and that requires most of the day in a classroom. (c)/ no error (d)",
+    options: ["He can become a scientist or a teacher,", "this requires long hours in a lab,", "and that requires most of the day in a classroom.", "no error"],
+    answer: 0,
+    explanation: "Rearrange the professions to align accurately with the demonstrative pronouns: change to 'a teacher or a scientist' so 'this' refers closely to the scientist in the lab and 'that' refers back to the teacher."
+  },
+  {
+    id: 16,
+    question: "After a long and fun-filled day, the children slept themselves peacefully.",
+    options: ["a long and fun-filled day", "slept themselves peacefully", "the children", "After"],
+    answer: 1,
+    explanation: "Remove 'themselves'. The verb 'sleep' is intransitive and does not take a reflexive pronoun object."
+  },
+  {
+    id: 17,
+    question: "The woman, whom I assumed / was a guest lecturer / turned out to be the dean / of the University.",
+    options: ["The woman, whom I assumed", "was a guest lecturer", "turned out to be the dean", "of the University."],
+    answer: 0,
+    explanation: "Replace 'whom' with 'who' because it acts as the subject of the verb phrase 'was a guest lecturer'."
+  },
+  {
+    id: 18,
+    question: "I remember a friend of me buying several pairs of shoes from this shop.",
+    options: ["a friend to me", "buying several pairs", "of shoes from this shop", "I remember"],
+    answer: 0,
+    explanation: "Replace 'a friend of me' with 'a friend of mine' using the double possessive standard."
+  },
+  {
+    id: 19,
+    question: "Do you know their are numerous street food stalls outside our school premises?",
+    options: ["outside our school premises.", "numerous street food stalls", "Do you know their are", "No error"],
+    answer: 2,
+    explanation: "Replace 'their' with the introductory adverb 'there'."
+  },
+  {
+    id: 20,
+    question: "Each customer who enters the store (a) / is greeted by the staff, offered assistance (b) / and often asked to fill out your details in a feedback form. (c) / no error (d)",
+    options: ["Each customer who enters the store", "is greeted by the staff, offered assistance", "and often asked to fill out your details in a feedback form.", "no error"],
+    answer: 2,
+    explanation: "Replace 'your' with 'his or her' (or 'his') to agree properly with the singular antecedent 'Each customer'."
+  },
+  {
+    id: 21,
+    question: "The engineers working at our headquarters in San Francisco (a)/ have contributed significantly more to the product design and innovation process (b)/ than the office in our Tokyo branch (c)/ no error (d)",
+    options: ["The engineers working at our headquarters in San Francisco", "have contributed significantly more to the product design and innovation process", "than the office in our Tokyo branch", "no error"],
+    answer: 2,
+    explanation: "To correct a faulty parallel comparison, add 'those at' after 'than' so you compare engineers with engineers, not with an office structure."
+  },
+  {
+    id: 22,
+    question: "We believed (a) / there would be beneficial (b) / to expand the business internationally (c) / after analyzing the market trends carefully. (d)",
+    options: ["We believed", "there would be beneficial", "to expand the business internationally", "after analyzing the market trends carefully."],
+    answer: 1,
+    explanation: "Use the dummy pronoun 'it' in place of 'there' ('it would be beneficial')."
+  },
+  {
+    id: 23,
+    question: "The director asked whether it was me who had taken the final call on approving the budget.",
+    options: ["The director asked", "whether it was me", "who had taken the final call", "on approving the budget"],
+    answer: 1,
+    explanation: "Replace the objective pronoun 'me' with the subjective pronoun 'I' following the linking verb 'was'."
+  },
+  {
+    id: 24,
+    question: "He, you and I (a)/ need to prepare the final report (b)/ before the meeting scheduled next Monday morning. (c)/ No error (d)",
+    options: ["He, you and I", "need to prepare the final report", "before the meeting scheduled next Monday morning.", "No error"],
+    answer: 0,
+    explanation: "For standard positive expressions, the pronoun sequence must follow the 231 order rule: 'You, he and I'."
+  },
+  {
+    id: 25,
+    question: "They who are in this room (a)/ should not move from the place (b)/ where they are standing, said the (c)/ leader of the criminals. (d)",
+    options: ["They who are in this room", "should not move from the place", "where they are standing, said the", "leader of the criminals."],
+    answer: 0,
+    explanation: "Replace 'They' with 'Those' when pointing out specific individuals followed by a restrictive relative clause."
+  },
+  {
+    id: 26,
+    question: "She asked me (a)/ why did the marketing team decide(b)/ to change the entire campaign strategy (c)/ without consulting the sales department first. (d)",
+    options: ["She asked me", "why did the marketing team decide", "to change the entire campaign strategy", "without consulting the sales department first."],
+    answer: 1,
+    explanation: "Change the indirect question clause from inverted question order into assertive clause structure: 'why the marketing team decided'."
+  },
+  {
+    id: 27,
+    question: "The team leader (a)/ complained about (b) / us leaving the meeting early(c) / No error. (d)",
+    options: ["The team leader", "complained about", "us leaving the meeting early", "No error."],
+    answer: 2,
+    explanation: "Use the possessive determiner 'our' preceding the gerund ('our leaving') instead of the objective form 'us'."
+  },
+  {
+    id: 28,
+    question: "The teacher, along with two senior students who volunteered during the event, were given an award for his commitment and leadership.",
+    options: ["The teacher, along with two senior students", "who volunteered during the event", "were given an award for", "his commitment and leadership"],
+    answer: 2,
+    explanation: "Replace 'were' with 'was'. Words joined to a singular subject by 'along with' do not change the subject's singular status."
+  },
+  {
+    id: 29,
+    question: "Banks that do not meet its priority sector targets are required to pay high penalties.",
+    options: ["targets are required", "Banks that do not meet", "its priority sector", "to pay high penalties"],
+    answer: 2,
+    explanation: "Replace 'its' with 'their' to match the plural subject noun 'Banks'."
+  },
+  {
+    id: 30,
+    question: "My colleagues and myself have decided to conduct a thorough review of the policies that were implemented last year by the former management.",
+    options: ["My colleagues and myself", "have decided to conduct a thorough review", "of the policies that were implemented last year", "by the former management"],
+    answer: 0,
+    explanation: "Replace 'myself' with the subjective form 'I' in the compound subject slot."
+  },
+  {
+    id: 31,
+    question: "Let they decide whether or not they wish to continue working under the current team leader.",
+    options: ["Let they", "decide whether or not", "they wish to continue working", "under the current team leader"],
+    answer: 0,
+    explanation: "The verb 'let' is followed by pronouns in the objective case; change 'they' to 'them'."
+  },
+  {
+    id: 32,
+    question: "The team leads, all of who had extensive experience managing remote teams, were tasked with training the new recruits.",
+    options: ["The team leads, all of who", "had extensive experience managing remote teams", "were tasked with training", "the new recruits"],
+    answer: 0,
+    explanation: "Replace 'who' with 'whom' since it functions as the object of the preposition 'of'."
+  },
+  {
+    id: 33,
+    question: "Don't worry I will (a)/ provide anything what you (b)/ need for your higher studies. (c) No error (d)",
+    options: ["Don't worry I will", "provide anything what you", "need for your higher studies.", "No error"],
+    answer: 1,
+    explanation: "Use 'that' instead of 'what' following indefinite words like 'anything'."
+  },
+  {
+    id: 34,
+    question: "The applicant, whom the committee believed to have the required credentials and experience, was asked to resubmit their documents with additional proof.",
+    options: ["The applicant, whom the committee believed", "to have the required credentials and experience", "was asked to resubmit", "their documents with additional proof"],
+    answer: 3,
+    explanation: "Replace 'their' with a singular possessive option like 'his or her' to match the singular antecedent 'The applicant'."
+  },
+  {
+    id: 35,
+    question: "Agricultural experts warn that those are precisely the challenges unpredictable climate patterns, declining soil fertility, and water scarcity.",
+    options: ["Agricultural experts warn", "unpredictable climate patterns", "those are", "water scarcity"],
+    answer: 2,
+    explanation: "Replace 'Those' with 'These' to properly present and introduce an immediately upcoming list of direct items."
+  },
+  {
+    id: 36,
+    question: "Sentence Improvement: Can you guess that of this vessels can hold the least amount of water?",
+    options: ["which of this vessels can hold", "No improvement", "which vessels can hold", "which of these vessels can hold"],
+    answer: 3,
+    explanation: "Option (d) is correct because 'which' choice requires the plural adjective 'these' before the plural noun 'vessels'."
+  },
+  {
+    id: 37,
+    question: "Sentence Improvement: This is one of the boldest economic reform which have ever been introduced.",
+    options: ["Economic reforms that has ever", "Economic reform that has ever", "Economic reforms that have ever", "No substitution"],
+    answer: 2,
+    explanation: "Option (c) applies because the structure 'one of the + plural noun' needs 'economic reforms', and the relative pronoun 'that' points to the plural noun requiring the plural verb 'have'."
+  },
+  {
+    id: 38,
+    question: "Sentence Improvement: Many employees struggle to adopt to the changing work environment in the digital age.",
+    options: ["to adapt themselves", "to adopt themselves", "to adapt themselves with", "to adopt themselves with"],
+    answer: 0,
+    explanation: "Option (a) uses the correct contextual word 'adapt' (to adjust) and integrates its required reflexive pronoun form paired with 'to'."
+  },
+  {
+    id: 39,
+    question: "Sentence Improvement: I asked the two students if anyone of them had completed the assignment.",
+    options: ["anyone of them", "all of them", "neither of them", "no one of them"],
+    answer: 2,
+    explanation: "Option (c) correctly utilizes 'neither' to match comparisons or conditions involving exactly two individual units."
+  },
+  {
+    id: 40,
+    question: "Sentence Improvement: After spending an hour at the beach, we finally got out and dried us.",
+    options: ["Went out and dried us.", "came out and dried us", "Got out and dried ourselves", "No improvement"],
+    answer: 2,
+    explanation: "Option (c) is correct. The reflexive pronoun 'ourselves' must be used because the subject 'we' is performing the action upon itself."
+  },
+  {
+    id: 41,
+    question: "Fill in the blank: When one devotes all ______ time and energy to a particular goal, success becomes almost inevitable.",
+    options: ["his", "their", "one's", "your"],
+    answer: 2,
+    explanation: "Option (c) preserves uniform pronoun continuity by matching the indeterminate personal subject 'one' with its possessive form 'one's'."
+  },
+  {
+    id: 42,
+    question: "Sentence Improvement: People like she and Rohan should be encouraged to participate in the debate competition.",
+    options: ["like she and Rohan", "like her and Rohan", "like hers and Rohan", "No improvement"],
+    answer: 1,
+    explanation: "Option (b) is required because 'like' acts as a preposition here and must take objective pronouns ('her')."
+  },
+  {
+    id: 43,
+    question: "Sentence Improvement: He spent all which he has in order to perfect his invention.",
+    options: ["which he have", "what he is having", "that he had", "No Improvement"],
+    answer: 2,
+    explanation: "Option (c) is correct. 'All' demands the relative pronoun 'that' instead of 'which', and past tense continuity dictates 'had'."
+  },
+  {
+    id: 44,
+    question: "Sentence Improvement: Whomever is responsible for this financial loss to the company must be held accountable.",
+    options: ["Whoever", "Whomsoever", "He who", "No improvement"],
+    answer: 0,
+    explanation: "Option (a) fits because it serves as the dynamic subject performing the action inside the clause ('is responsible')."
+  },
+  {
+    id: 45,
+    question: "Sentence Improvement: It is yourself who will decide your future.",
+    options: ["you", "yourself", "yourselves", "No improvement"],
+    answer: 0,
+    explanation: "Option (a) uses the correct personal subjective case pronoun 'you' directly emphasizing an explicit state after 'It is'."
+  },
+  {
+    id: 46,
+    question: "Sentence Improvement: During the interview, she asked me how many languages do I speak fluently.",
+    options: ["how many languages did I speak", "how many languages does I speak", "how many languages I speak", "No substitution required"],
+    answer: 1,
+    explanation: "Option (c) changes the clause into direct statement order instead of retaining a question's helping verb layout within an embedded sentence."
+  },
+  {
+    id: 47,
+    question: "Sentence Improvement: This book is more interesting than either of the three novels I read last month.",
+    options: ["more interesting than either to", "more interesting than any of", "more interesting than either from", "No error"],
+    answer: 1,
+    explanation: "Option (b) correctly replaces 'either' with 'any' since the total selection quantity involves more than two specific choices ('three novels')."
+  },
+  {
+    id: 48,
+    question: "Sentence Improvement: When Riya saw Ankit holding a jacket just like her's, she thought he had borrowed it without asking.",
+    options: ["her's", "her", "hers", "No improvement"],
+    answer: 2,
+    explanation: "Option (c) provides the accurate absolute possessive pronoun spelling 'hers' without any incorrect apostrophe mark."
+  },
+  {
+    id: 49,
+    question: "Sentence Improvement: The two rival companies have finally decided to cooperate with one another to overcome the financial crisis caused by the recent market slump.",
+    options: ["each other", "one another", "the other", "No improvement"],
+    answer: 0,
+    explanation: "Option (a) uses 'each other' which is historically and strictly designated for exactly two interacting entities."
+  },
+  {
+    id: 50,
+    question: "Sentence Improvement: The employees blamed no one but ______ for the failure of the project, acknowledging that they had ignored critical warnings.",
+    options: ["them", "themselves", "theirselves", "themself"],
+    answer: 1,
+    explanation: "Option (b) correctly positions 'themselves' as a reflexive pronoun echoing back to the plural subject group 'The employees'."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q${i+1}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

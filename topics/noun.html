@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Noun Practice Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "The child started crying (a)/ because he couldn't stand (b)/ his mother scold him (c)/ in front of everyone (d).",
+    options: ["The child started crying", "because he couldn't stand", "his mother scold him", "in front of everyone"],
+    answer: 2,
+    explanation: "Use 'his mother's scolding' instead of 'his mother scold him'. A gerund (scolding) requires a possessive case noun/pronoun preceding it."
+  },
+  {
+    id: 2,
+    question: "Several commander-in-chiefs (a)/ were invited to attend (b)/ the international defence summit (c)/ in Geneva (d).",
+    options: ["Several commander-in-chiefs", "were invited to attend", "the international defence summit", "in Geneva"],
+    answer: 0,
+    explanation: "Use 'commanders-in-chief' instead of 'commander-in-chiefs'. In compound nouns, the plural marker is added to the principal root word."
+  },
+  {
+    id: 3,
+    question: "The newly adopted puppy (a)/ has gained weight (b)/ in just three week (c)/ after getting proper food and care (d).",
+    options: ["The newly adopted puppy", "has gained weight", "in just three week", "after getting proper food and care"],
+    answer: 2,
+    explanation: "Use 'three weeks' instead of 'three week' because the cardinal adjective 'three' denotes a plural quantity."
+  },
+  {
+    id: 4,
+    question: "The mental health of students (a)/ is affected by the (b)/ surrounding in which they study and interact (c)/ with their teachers and peers (d).",
+    options: ["The mental health of students", "is affected by the", "surrounding in which they study and interact", "with their teachers and peers"],
+    answer: 2,
+    explanation: "Use 'surroundings' instead of 'surrounding' when referring to the environment or neighborhood area as a noun."
+  },
+  {
+    id: 5,
+    question: "Due to an increase in (a)/ the number of breaks-in (b)/ the residents decided to install CCTV cameras (c)/ in the entire neighborhood (d).",
+    options: ["Due to an increase in", "the number of breaks-in", "the residents decided to install CCTV cameras", "in the entire neighborhood"],
+    answer: 1,
+    explanation: "Use 'break-ins' instead of 'breaks-in'. For compound words that do not contain a clear primary noun, the plural suffix attaches to the end."
+  },
+  {
+    id: 6,
+    question: "Reporters gathered outside (a)/ the headquarter of (b)/ the Intelligence Bureau (c)/ to cover the press conference (d).",
+    options: ["Reporters gathered outside", "the headquarter of", "the Intelligence Bureau", "to cover the press conference"],
+    answer: 1,
+    explanation: "Use 'headquarters' instead of 'headquarter'. The noun 'headquarters' is always spelled with an 's' in both singular and plural forms."
+  },
+  {
+    id: 7,
+    question: "They supplied (a)/ four dozen (b)/ pencils and (c)/ five dozens notebooks to the school (d).",
+    options: ["They supplied", "four dozen", "pencils and", "five dozens notebooks to the school"],
+    answer: 3,
+    explanation: "Use 'five dozen' instead of 'five dozens'. Words like dozen, score, hundred, thousand remain singular when preceded by a definite cardinal number."
+  },
+  {
+    id: 8,
+    question: "The government has announced (a)/ special schemes for disabled (b)/ to improve their standard of living (c)/ in rural areas (d).",
+    options: ["The government has announced", "special schemes for disabled", "to improve their standard of living", "in rural areas"],
+    answer: 1,
+    explanation: "Use 'for the disabled' or 'for disabled people'. An adjective requires a definite article 'the' to function collectively as a plural noun group."
+  },
+  {
+    id: 9,
+    question: "Many readers prefer (a)/ these kind (b)/ of mystery stories which involve unexpected twists (c)/ and deep psychological elements (d).",
+    options: ["Many readers prefer", "these kind", "of mystery stories which involve unexpected twists", "and deep psychological elements"],
+    answer: 1,
+    explanation: "Use 'these kinds' instead of 'these kind' to match the plural demonstrative adjective 'these'."
+  },
+  {
+    id: 10,
+    question: "He has kept the money deposited in his saving (a)/ account aside to (b)/ cover future expenses such as medical bills (c)/ and his children's education (d).",
+    options: ["He has kept the money deposited in his saving", "account aside to", "cover future expenses such as medical bills", "and his children's education"],
+    answer: 0,
+    explanation: "Use 'savings account' instead of 'saving account' because 'savings' is the correct financial noun form."
+  },
+  {
+    id: 11,
+    question: "After finishing all the household chores, (a)/ she suggested that they should (b)/ go for walking (c)/ on the beach (d).",
+    options: ["After finishing all the household chores,", "she suggested that they should", "go for walking", "on the beach"],
+    answer: 2,
+    explanation: "Use 'go for a walk' instead of 'go for walking' to complete the correct nominal idiomatic expression."
+  },
+  {
+    id: 12,
+    question: "The Prime Minister of India (a)/ economic vision has been appreciated globally (b)/ as it focuses on sustainable development (c)/ and inclusive growth (d).",
+    options: ["The Prime Minister of India", "economic vision has been appreciated globally", "as it focuses on sustainable development", "and inclusive growth"],
+    answer: 0,
+    explanation: "Use 'The Prime Minister of India's' to add the essential possessive apostrophe at the tail end of the compound title."
+  },
+  {
+    id: 13,
+    question: "The manager instructed (a)/ all the worker's (b)/ to attend the emergency meeting (c)/ without any delay (d).",
+    options: ["The manager instructed", "all the worker's", "to attend the emergency meeting", "without any delay"],
+    answer: 1,
+    explanation: "Use 'all the workers' instead of 'all the worker's'. We need a plain plural noun here, not a possessive singular case form."
+  },
+  {
+    id: 14,
+    question: "During the shifting, (a)/ many old furnitures were (b)/ damaged badly because of poor packaging (c)/ and careless handling by the workers (d).",
+    options: ["During the shifting,", "many old furnitures were", "damaged badly because of poor packaging", "and careless handling by the workers"],
+    answer: 1,
+    explanation: "Use 'much / a lot of old furniture was' or 'many old pieces of furniture were'. 'Furniture' is an uncountable noun and cannot be pluralized with '-s'."
+  },
+  {
+    id: 15,
+    question: "In many bird species, (a)/ the offsprings remain in the nest (b)/ for several weeks before they learn to fly (c)/ and become independent (d).",
+    options: ["In many bird species,", "the offsprings remain in the nest", "for several weeks before they learn to fly", "and become independent"],
+    answer: 1,
+    explanation: "Use 'the offspring' instead of 'the offsprings'. The noun 'offspring' has identical singular and plural forms."
+  },
+  {
+    id: 16,
+    question: "Most doctors agree that home quarantine (a)/ proves to be more convenient and effective (b)/ than hospitalize in case (c)/ of a minor viral infection (d).",
+    options: ["Most doctors agree that home quarantine", "proves to be more convenient and effective", "than hospitalize in case", "of a minor viral infection"],
+    answer: 2,
+    explanation: "Use 'than hospitalization' instead of 'than hospitalize'. The prepositional comparison demands a noun form rather than a base verb."
+  },
+  {
+    id: 17,
+    question: "The students were amazed to learn (a)/ about the rotation and revolution (b)/ that are responsible for the earth gravitational changes (c)/ affecting the climate throughout the year (d).",
+    options: ["The students were amazed to learn", "about the rotation and revolution", "that are responsible for the earth gravitational changes", "affecting the climate throughout the year"],
+    answer: 2,
+    explanation: "Use 'the earth's gravitational changes'. A possessive case inflection is required for planetary bodies qualifying nouns."
+  },
+  {
+    id: 18,
+    question: "Aman Sir gave me many useful advices (a)/ that helped me improve my English (b)/ and score better in the examination (c)/ no error (d).",
+    options: ["Aman Sir gave me many useful advices", "that helped me improve my English", "and score better in the examination", "no error"],
+    answer: 0,
+    explanation: "Use 'many pieces of useful advice' or 'much useful advice'. 'Advice' is an uncountable noun and cannot take a direct plural ending."
+  },
+  {
+    id: 19,
+    question: "Delhi's (a)/ traffic problems (b)/ are increasing rapidly (c)/ due to poor urban planning and rising population / no error (d).",
+    options: ["Delhi's", "traffic problems", "are increasing rapidly", "no error"],
+    answer: 3,
+    explanation: "The sentence contains no error. Possessive inflections on location names ('Delhi's') managing non-living units are structurally valid."
+  },
+  {
+    id: 20,
+    question: "The police (a)/ acted quickly (b)/ as there was a strong (c)/ suspect on the new employee (d).",
+    options: ["The police", "acted quickly", "as there was a strong", "suspect on the new employee"],
+    answer: 3,
+    explanation: "Use 'suspicion' instead of 'suspect'. The abstract concept noun 'suspicion' is required following the modifying adjective 'strong'."
+  },
+  {
+    id: 21,
+    question: "The experts could not (a)/ determine the exact reason (b)/ of the floods that led to (c)/ many causalities in the district (d).",
+    options: ["The experts could not", "determine the exact reason", "of the floods that led to", "many causalities in the district"],
+    answer: 1,
+    explanation: "Use 'cause' instead of 'reason'. 'Cause' creates physical dynamic outcomes, while 'reason' serves rational psychological explanations."
+  },
+  {
+    id: 22,
+    question: "Although his mean (a)/ are not sufficient (b)/ to maintain such a luxurious lifestyle, (c)/ he throws grand parties every month (d).",
+    options: ["Although his mean", "are not sufficient", "to maintain such a luxurious lifestyle,", "he throws grand parties every month"],
+    answer: 0,
+    explanation: "Use 'means' instead of 'mean'. When representing income resources or financial capabilities, 'means' is used with a plural construction."
+  },
+  {
+    id: 23,
+    question: "The comments you made (a)/ during the meeting (b)/ were completely irrelevance (c)/ to the topic under discussion (d).",
+    options: ["The comments you made", "during the meeting", "were completely irrelevance", "to the topic under discussion"],
+    answer: 2,
+    explanation: "Use the predicate adjective 'irrelevant' instead of the pure noun 'irrelevance' after the linking verb 'were'."
+  },
+  {
+    id: 24,
+    question: "Sikha got frightened (a)/ when she noticed (b)/ her shade moving (c)/ on the wall behind her (d).",
+    options: ["Sikha got frightened", "when she noticed", "her shade moving", "on the wall behind her"],
+    answer: 2,
+    explanation: "Use 'shadow' instead of 'shade'. A 'shadow' is the distinct dark outline silhouette cast by an obstructed light source."
+  },
+  {
+    id: 25,
+    question: "The farmer got worried (a)/ when he saw several mouse (b)/ eating the grains (c)/ stored in his barn (d).",
+    options: ["The farmer got worried", "when he saw several mouse", "eating the grains", "stored in his barn"],
+    answer: 1,
+    explanation: "Use 'mice' instead of 'mouse' to correctly provide the irregular plural form demanded by 'several'."
+  },
+  {
+    id: 26,
+    question: "People in different parts of India (a)/ have their own distinct (b)/ habits when it comes to marriages and festivals (c)/ no error (d).",
+    options: ["People in different parts of India", "have their own distinct", "habits when it comes to marriages and festivals", "no error"],
+    answer: 2,
+    explanation: "Use 'customs' instead of 'habits'. 'Habits' apply to individual persons, whereas shared community traditions are labeled 'customs'."
+  },
+  {
+    id: 27,
+    question: "The coach warned the players (a)/ not to lose their tempers (b)/ on the field even if the referee made (c)/ an unfair decision (d).",
+    options: ["The coach warned the players", "not to lose their tempers", "on the field even if the referee made", "an unfair decision"],
+    answer: 1,
+    explanation: "Use 'temper' instead of 'tempers'. The abstract idiom phrase configuration is 'lose one's temper'."
+  },
+  {
+    id: 28,
+    question: "The rescue team (a)/ immediately reached the site (b)/ where several navy personal were trapped (c)/ inside the damaged submarine (d).",
+    options: ["The rescue team", "immediately reached the site", "where several navy personal were trapped", "inside the damaged submarine"],
+    answer: 2,
+    explanation: "Use the plural collective noun 'personnel' (staff/force) instead of the private character adjective 'personal'."
+  },
+  {
+    id: 29,
+    question: "The publics are demanding (a)/ that the government should withdraw (b)/ the recently introduced education policy (c)/ No error (d).",
+    options: ["The publics are demanding", "that the government should withdraw", "the recently introduced education policy", "No error"],
+    answer: 0,
+    explanation: "Use 'the public is'. The noun 'public' is an indivisible collective mass unit and takes singular tracking links."
+  },
+  {
+    id: 30,
+    question: "Your son's-in-law's (a)/ car broke down on the highway (b)/ while he was travelling (c)/ to Delhi for an official meeting (d).",
+    options: ["Your son's-in-law's", "car broke down on the highway", "while he was travelling", "to Delhi for an official meeting"],
+    answer: 0,
+    explanation: "Use 'son-in-law's'. For complex hyphenated compounds, possessive apostrophes are assigned exclusively to the final word unit."
+  },
+  {
+    id: 31,
+    question: "The committee conducted a nationwide poll (a)/ to understand the (b)/ public's opinion (c)/ on the recently proposed education reforms (d).",
+    options: ["The committee conducted a nationwide poll", "to understand the", "public's opinion", "on the recently proposed education reforms"],
+    answer: 2,
+    explanation: "Use the plain noun adjunct layout 'public opinion' or simply 'public' because the phrase exists as a fixed non-possessive combination standard."
+  },
+  {
+    id: 32,
+    question: "Among the main factors (a)/ responsible for his resignation (b)/ were the long working hours, constant travel (c)/ and desiring to start his own business (d).",
+    options: ["Among the main factors", "responsible for his resignation", "were the long working hours, constant travel", "and desiring to start his own business"],
+    answer: 3,
+    explanation: "Use 'desire' instead of 'desiring' to properly maintain stylistic parallel noun balance alongside 'hours' and 'travel'."
+  },
+  {
+    id: 33,
+    question: "The professor explained that (a)/ human society, like language, (b)/ is divided into multiple stratums (c)/ based on culture and education (d).",
+    options: ["The professor explained that", "human society, like language,", "is divided into multiple stratums", "based on culture and education"],
+    answer: 2,
+    explanation: "Use the classical Latin structural plural form 'strata' instead of the incorrect phrase 'stratums'."
+  },
+  {
+    id: 34,
+    question: "Gifts and sweets were distributed (a)/ among the childrens (b)/ on the occasion of the annual function of the school (c)/ No error (d).",
+    options: ["Gifts and sweets were distributed", "among the childrens", "on the occasion of the annual function of the school", "No error"],
+    answer: 1,
+    explanation: "Use 'children'. 'Children' is already plural and must never take a secondary suffix modification '-s'."
+  },
+  {
+    id: 35,
+    question: "The manager appreciated (a)/ your dedication towards work (b)/ but said that your friends attitude (c) towards deadlines needs improvement (d).",
+    options: ["The manager appreciated", "your dedication towards work", "but said that your friends attitude", "towards deadlines needs improvement"],
+    answer: 2,
+    explanation: "Use 'friend's attitude' or 'friends' attitude'. An explicit possessive apostrophe is required to link the noun to its following property 'attitude'."
+  },
+  {
+    id: 36,
+    question: "Her visitings to the office (a)/ have become irregular these days (b)/ as she is working on several field projects (c)/ in different parts of the country (d).",
+    options: ["Her visitings to the office", "have become irregular these days", "as she is working on several field projects", "in different parts of the country"],
+    answer: 0,
+    explanation: "Use 'Her visits to the office'. The accurate plural action noun form is 'visits', not the artificial gerund plural 'visitings'."
+  },
+  {
+    id: 37,
+    question: "Many cattles have been reported missing (a)/ from the nearby villages (b)/ due to the heavy rains (c)/ and broken fences (d).",
+    options: ["Many cattles have been reported missing", "from the nearby villages", "due to the heavy rains", "and broken fences"],
+    answer: 0,
+    explanation: "Use 'cattle'. 'Cattle' is an inherent plural collective tracking form and does not accept an ending '-s'."
+  },
+  {
+    id: 38,
+    question: "The teacher provided (a)/ all the necessary informations (b)/ about the upcoming examination (c)/ to the students during the meeting (d).",
+    options: ["The teacher provided", "all the necessary informations", "about the upcoming examination", "to the students during the meeting"],
+    answer: 1,
+    explanation: "Use 'information'. 'Information' is an abstract uncountable group mass and can never take a plural marker."
+  },
+  {
+    id: 39,
+    question: "The committee is responsible for (a)/ organizing the annual event (b)/ and prepare the list of guest speakers (c)/ before the deadline (d).",
+    options: ["The committee is responsible for", "organizing the annual event", "and prepare the list of guest speakers", "before the deadline"],
+    answer: 2,
+    explanation: "Use 'preparing' to match the grammatical parallel structure initiated by the coordinate gerund form 'organizing'."
+  },
+  {
+    id: 40,
+    question: "Everyone gathered near the riverbank (a)/ to watch such a magnificent spectacles (b)/ created by the colorful lights (c)/ and the flowing water (d).",
+    options: ["Everyone gathered near the riverbank", "to watch such a magnificent spectacles", "created by the colorful lights", "and the flowing water"],
+    answer: 1,
+    explanation: "Use singular 'spectacle' because it is preceded by the singular itemizing determiner expression 'such a'."
+  },
+  {
+    id: 41,
+    question: "As the bridge was getting repaired (a)/ the villagers had no alternate (b)/ but to take the longer route (c)/ through the dense forest to reach the market (d).",
+    options: ["As the bridge was getting repaired", "the villagers had no alternate", "but to take the longer route", "through the dense forest to reach the market"],
+    answer: 1,
+    explanation: "Use the noun choice 'alternative' instead of 'alternate' which functions primarily as an alternating transition verb/adjective."
+  },
+  {
+    id: 42,
+    question: "Because of multiple server issues, (a)/ he could solve only (b)/ three-fourth of the questions in the exam(c)/ No error (d).",
+    options: ["Because of multiple server issues,", "he could solve only", "three-fourth of the questions in the exam", "No error"],
+    answer: 2,
+    explanation: "Use 'three-fourths'. Fractional descriptions carrying a numerator greater than one require their structural denominator to be pluralized."
+  },
+  {
+    id: 43,
+    question: "The teacher said (a)/ it would take around (b)/ one and a half month (c)/ to finish the syllabus (d).",
+    options: ["The teacher said", "it would take around", "one and a half month", "to finish the syllabus"],
+    answer: 2,
+    explanation: "Use 'months' inside the compound expression 'one and a half months' since the fractional value exceeds a single whole count."
+  },
+  {
+    id: 44,
+    question: "The committee decided (a)/ to donate the proceed of the charity event (b)/ to the families affected by the recent floods (c)/ in the northern region (d).",
+    options: ["The committee decided", "to donate the proceed of the charity event", "to the families affected by the recent floods", "in the northern region"],
+    answer: 1,
+    explanation: "Use the plural noun 'proceeds' when denoting the financial cash earnings or monetary intake generated from an activity."
+  },
+  {
+    id: 45,
+    question: "My cousin's manager's car (a)/ broke down (b)/ on the highway (c)/ while he was returning from his office (d).",
+    options: ["My cousin's manager's car", "broke down", "on the highway", "while he was returning from his office"],
+    answer: 0,
+    explanation: "Use 'The car of my cousin's manager'. Consecutive trailing apostrophes ('noun's noun's') are considered structurally ungrammatical."
+  },
+  {
+    id: 46,
+    question: "The district court (a)/ has already issued three summons (b)/ to director of the company, (c)/ but he did not appear before the court (d).",
+    options: ["The district court", "has already issued three summons", "to director of the company,", "but he did not appear before the court"],
+    answer: 1,
+    explanation: "Use 'summonses'. 'Summons' is singular; when modified by 'three', it must be converted to its regular plural form 'summonses'."
+  },
+  {
+    id: 47,
+    question: "She could not (a)/ remember (b)/ my time of arrival (c)/ when the police asked her about it (d).",
+    options: ["She could not", "remember", "my time of arrival", "when the police asked her about it"],
+    answer: 2,
+    explanation: "Use 'the time of my arrival' to avoid stylistic clumsiness in embedding pronominal possessives directly into complex compound time phrases."
+  },
+  {
+    id: 48,
+    question: "The various facilities of the hotel (a)/ along with its excellent service (b)/ and peaceful environment makes (c)/ it one of the best resorts in the region (d).",
+    options: ["The various facilities of the hotel", "along with its excellent service", "and peaceful environment makes", "it one of the best resorts in the region"],
+    answer: 2,
+    explanation: "Use 'make'. Parenthetical strings beginning with 'along with' do not change the core subject noun weight, which is the plural unit 'facilities'."
+  },
+  {
+    id: 49,
+    question: "She (a)/ bought two breads (b)/ from the (c)/ bakery this morning. (d)",
+    options: ["She", "bought two breads", "from the", "bakery this morning."],
+    answer: 1,
+    explanation: "Use 'two loaves of bread' or 'two pieces of bread' because 'bread' is an uncountable noun matter form."
+  },
+  {
+    id: 50,
+    question: "The handwriting of the teacher (a)/ as well as the students (b)/ was appreciated by the principal (c)/ during the meeting. (d)",
+    options: ["The handwriting of the teacher", "as well as the students", "was appreciated by the principal", "during the meeting."],
+    answer: 1,
+    explanation: "Use 'the students' or 'the student's' to properly maintain a logical baseline comparison against 'the handwriting of the teacher'."
+  },
+  {
+    id: 51,
+    question: "The principal appreciated (a)/ Ravi's and Kiran's (b)/ duet that they sang in (c)/ the annual function. (d)",
+    options: ["The principal appreciated", "Ravi's and Kiran's", "duet that they sang in", "the annual function."],
+    answer: 1,
+    explanation: "Use 'Ravi and Kiran's duet'. When a singular shared entity ('duet') is jointly owned by multiple parties, the apostrophe is assigned only to the final name."
+  },
+  {
+    id: 52,
+    question: "The government's main goal under the new welfare policy is to enhance people's daily lifestyles by providing better housing, education, and employment opportunities.",
+    options: ["family values", "living standards", "social gatherings", "mental awareness"],
+    answer: 1,
+    explanation: "The correct substitution choice is 'living standards' (रहने का स्तर), which perfectly aligns with structural housing and economic indicators."
+  },
+  {
+    id: 53,
+    question: "When the flood blocked all roads and vehicles stopped moving, villagers had no option but to reach the nearby shelter by walk through the muddy fields.",
+    options: ["on walk", "by walking", "on foot", "in walking"],
+    answer: 2,
+    explanation: "The standard adverbial vehicular idiom representing human physical walking is 'on foot'."
+  },
+  {
+    id: 54,
+    question: "In ancient civilizations, natural disasters like floods and earthquakes were often considered as God's revenge for people's sins, leading to mass prayers and sacrifices to please the deities.",
+    options: ["reaction to kindness", "punishment for wrongdoings", "reward for goodness", "appreciation for faith"],
+    answer: 1,
+    explanation: "The correct semantic interpretation matches 'punishment for wrongdoings' (गलतियों की सज़ा), tracking natural tribal beliefs."
+  },
+  {
+    id: 55,
+    question: "After several requests, the students finally received a permission from the principal to organize the annual cultural festival.",
+    options: ["received all permission", "received proper permission", "received permission", "No improvement"],
+    answer: 2,
+    explanation: "'Permission' is an uncountable abstract noun mass and should not be modified by the indefinite singular article 'a'."
+  },
+  {
+    id: 56,
+    question: "Although the project report was well prepared and neatly presented, there is still some space for correction before we submit it to the board.",
+    options: ["some advice for correction", "some room for improvement", "some opportunity for advice", "No improvement"],
+    answer: 1,
+    explanation: "The correct idiomatic noun phrase placeholder is 'room for improvement' (सुधार की गुंजाइश)."
+  },
+  {
+    id: 57,
+    question: "The students could not go out to play because they had many homeworks to complete before Monday morning.",
+    options: ["many homework", "a lot of homework", "several homework", "No improvement"],
+    answer: 1,
+    explanation: "Option (b) is correct. 'Homework' is an uncountable concept and should be quantified via 'a lot of homework' or 'much homework'."
+  },
+  {
+    id: 58,
+    question: "After the meeting was over, the manager said that no other informations was conveyed to him regarding the new policy changes.",
+    options: ["No other's information", "No improvement required", "No other information", "None another information"],
+    answer: 2,
+    explanation: "Option (c) applies the correct uncountable singular noun structure configuration 'No other information'."
+  },
+  {
+    id: 59,
+    question: "A frightened man called the police when a swarm of dogs started chasing him on the main road.",
+    options: ["pack of", "herd of", "No substitution required", "school of"],
+    answer: 0,
+    explanation: "The correct collective noun term for canine groups or dogs is a 'pack of dogs'."
+  },
+  {
+    id: 60,
+    question: "The researchers announced that India has successfully developed a nose-based vaccine to provide stronger immunity against the new Covid variant.",
+    options: ["No substitution required", "a nasal vaccine", "an aural vaccine", "a sense-based vaccine"],
+    answer: 1,
+    explanation: "Option (b) shifts the crude description into its accurate scientific medical adjective phrase 'a nasal vaccine'."
+  },
+  {
+    id: 61,
+    question: "These days, I avoid junk food completely and prefer homemade meals and green smoothies since I've become more conscious of my healthfulness.",
+    options: ["healthful", "health", "healthy", "No substitution required"],
+    answer: 1,
+    explanation: "Option (b) is correct. The context requires the basic noun 'health' following the possessive determiner 'my'."
+  },
+  {
+    id: 62,
+    question: "While on a safari in Africa, we were thrilled to see a group of lions resting under a large acacia tree.",
+    options: ["a pride of lions", "a flock of lions", "a herd of lions", "a school of lions"],
+    answer: 0,
+    explanation: "Option (a) introduces the accurate species-specific collective noun term: a 'pride of lions'."
+  },
+  {
+    id: 63,
+    question: "Ramesh started learning computer programming at a very early age of ten years old and soon became skilled in coding.",
+    options: ["a very early age of ten", "the very early age of ten years", "a very early age of ten years", "no improvement"],
+    answer: 0,
+    explanation: "Option (a) fixes the phrase by eliminating the redundant trailing expression 'years old' after 'age of ten'."
+  },
+  {
+    id: 64,
+    question: "The tailor handed over my new trouser yesterday, but I found the fitting slightly loose at the waist.",
+    options: ["trouser", "pair of trouser", "a trouser", "pair of trousers"],
+    answer: 3,
+    explanation: "Option (d) implements the correct regular tool pattern syntax 'pair of trousers'."
+  },
+  {
+    id: 65,
+    question: "She purchased three dozens eggs from the market.",
+    options: ["three dozen of eggs", "three dozens of eggs", "three dozen eggs", "No improvement"],
+    answer: 2,
+    explanation: "Option (c) correctly removes the plural marker from 'dozen' because it is locked behind a definitive cardinal count multiplier ('three')."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q${i+1}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

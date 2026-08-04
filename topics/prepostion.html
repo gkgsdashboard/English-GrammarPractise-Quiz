@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Preposition Practice Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "If a sudden sandstorm starts in the middle of a desert safari, (a)/ travellers should quickly sit above (b)/ the protective tent cover (c)/ and keep their faces covered until the wind slows down. (d)",
+    options: ["If a sudden sandstorm starts in the", "travellers should quickly sit above", "the protective tent cover", "and keep their faces covered until..."],
+    answer: 1,
+    explanation: "Correction: Use 'under' instead of 'above'. People sit under a protective cover for safety, not on top of it[cite: 11]."
+  },
+  {
+    id: 2,
+    question: "After months of planning, our college council proposed the principal (a)/ that we should organise a national student-startup expo (b)/ to showcase innovative ideas (c)/ and build collaboration with industry mentors. (d)",
+    options: ["After months of planning, our college council proposed the principal", "that we should organise a national student-startup expo", "to showcase innovative ideas", "and build collaboration with industry mentors."],
+    answer: 0,
+    explanation: "Correction: Use 'proposed to the principal' instead of 'proposed the principal'. The verb 'propose' requires the preposition 'to' before the person being addressed[cite: 11]."
+  },
+  {
+    id: 3,
+    question: "Select the sentence with the appropriate use of preposition.",
+    options: [
+      "He has been waiting by the morning hours, hoping the office would open early.",
+      "He has been waiting from the morning time, expecting someone to come and meet him.",
+      "He has been waiting till the morning since he wanted to be the first one there.",
+      "He has been waiting since the early morning hours to submit his documents at the office."
+    ],
+    answer: 3,
+    explanation: "Option (d) is correct. 'Since' is the appropriate preposition to use with a specific starting point in time ('the early morning hours') in perfect tenses[cite: 11]."
+  },
+  {
+    id: 4,
+    question: "When the chef opened the lid of the boiling soup, (a)/ hot steam began to rise instantly, (b)/ spreading to the entire kitchen. (c)/ No error (d)",
+    options: ["When the chef opened the lid of the boiling soup,", "hot steam began to rise instantly,", "spreading to the entire kitchen.", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'through' or 'throughout' instead of 'to' to convey the sense of steam dispersing across the entire area[cite: 11]."
+  },
+  {
+    id: 5,
+    question: "When I reached the main road yesterday evening, (a)/ I saw my childhood friend waiting in the bus stop, (b)/ holding an umbrella. (c)/ No error (d)",
+    options: ["When I reached the main road yesterday evening,", "I saw my childhood friend waiting in the bus stop,", "holding an umbrella.", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'at the bus stop' instead of 'in the bus stop'. 'At' is used for specific points or locations[cite: 11]."
+  },
+  {
+    id: 6,
+    question: "Although she earns a decent salary, (a)/ she has a habit of spending against her means (b)/ by purchasing expensive designer clothes and gadgets (c)/ that she doesn't need. (d)",
+    options: ["Although she earns a decent salary,", "she has a habit of spending against her means", "by purchasing expensive designer clothes and gadgets", "that she doesn't need."],
+    answer: 1,
+    explanation: "Correction: Use 'beyond' instead of 'against'. The correct idiomatic phrase is 'spending beyond one's means'[cite: 11]."
+  },
+  {
+    id: 7,
+    question: "Last summer on this day (a)/ our whole group was strolling in the beach (b)/ taking pictures (c)/ and chatting happily. (d)",
+    options: ["Last summer on this day", "our whole group was strolling in the beach", "taking pictures", "and chatting happily."],
+    answer: 1,
+    explanation: "Correction: Use 'on the beach' instead of 'in the beach'[cite: 11]."
+  },
+  {
+    id: 8,
+    question: "She has not travelled outside her country by the last five years, (a)/ even though she always talks (b)/ about exploring different cultures and experiencing life (c)/ in other parts of the world. (d)",
+    options: ["She has not travelled outside her country by the last five years,", "even though she always talks", "about exploring different cultures and experiencing life", "in other parts of the world."],
+    answer: 0,
+    explanation: "Correction: Use 'for' or 'in' instead of 'by' to denote a duration of time in a negative sentence ('for the last five years')[cite: 11]."
+  },
+  {
+    id: 9,
+    question: "They returned home in Tuesday morning, (a)/ just before sunrise, and quietly unpacked their bags (b)/ so they wouldn't wake the children, (c)/ who were still sleeping peacefully. (d)",
+    options: ["They returned home in Tuesday morning,", "just before sunrise, and quietly unpacked their bags", "so they wouldn't wake the children,", "who were still sleeping peacefully."],
+    answer: 0,
+    explanation: "Correction: Use 'on' instead of 'in'. Days of the week and specific day parts take the preposition 'on' ('on Tuesday morning')[cite: 11]."
+  },
+  {
+    id: 10,
+    question: "They were travelling overnight to reach their hometown (a)/ and planned to stop to breakfast at a popular dhaba on the highway, (b)/ where the fresh parathas and chai are famous among travellers. (c)/ no error (d)",
+    options: ["They were travelling overnight to reach their hometown", "and planned to stop to breakfast at a popular dhaba...", "where the fresh parathas and chai are famous...", "no error"],
+    answer: 1,
+    explanation: "Correction: Use 'for' instead of 'to' ('stop for breakfast') to indicate the purpose of stopping[cite: 11]."
+  },
+  {
+    id: 11,
+    question: "For almost five years, (a)/ Ayaan lived in the northern part off Canada, (b)/ where the snow-covered landscapes looked breathtaking, (c)/ but adjusting to the freezing temperatures was always a challenge for him. (d)",
+    options: ["For almost five years,", "Ayaan lived in the northern part off Canada,", "where the snow-covered landscapes looked breathtaking,", "but adjusting to the freezing temperatures was always a challenge"],
+    answer: 1,
+    explanation: "Correction: Use single 'of' instead of 'off' to denote possession or part of a whole ('part of Canada')[cite: 11]."
+  },
+  {
+    id: 12,
+    question: "On his way back from work (a)/ Ravi rode his small boat through the river (b)/ to reach his farmland. (c)/ No error (d)",
+    options: ["On his way back from work", "Ravi rode his small boat through the river", "to reach his farmland.", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'across the river' or 'on the river' instead of 'through the river'[cite: 11]."
+  },
+  {
+    id: 13,
+    question: "The conference was held upon for nearly forty-five minutes (a)/ because several key speakers were stuck in traffic (b)/, which led to frustration among the attendees (c)/ who had arrived early. (d)",
+    options: ["The conference was held upon for nearly forty-five minutes", "because several key speakers were stuck in traffic", "which led to frustration among the attendees", "who had arrived early."],
+    answer: 0,
+    explanation: "Correction: Use 'held up' instead of 'held upon'. The phrasal verb 'hold up' means to delay or postpone[cite: 11]."
+  },
+  {
+    id: 14,
+    question: "No arguing on the dining table is tolerated in our house, (a)/ as my grandparents firmly believe (b)/ that mealtime should remain peaceful and respectful (c)/ for everyone sitting together. (d)",
+    options: ["No arguing on the dining table is tolerated in our house,", "as my grandparents firmly believe", "that mealtime should remain peaceful and respectful", "for everyone sitting together."],
+    answer: 0,
+    explanation: "Correction: Use 'at the dining table' instead of 'on the dining table' when referring to people gathered around a table for a meal[cite: 11]."
+  },
+  {
+    id: 15,
+    question: "There might be ancient fossils and rare minerals (a)/ in the surface of this rocky hill, (b)/ hidden for thousands of years and waiting to be discovered by researchers. (c)/ No error (d)",
+    options: ["There might be ancient fossils and rare minerals", "in the surface of this rocky hill,", "hidden for thousands of years and waiting to be discovered", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'on the surface' or 'under the surface' instead of 'in the surface'[cite: 11]."
+  },
+  {
+    id: 16,
+    question: "Two ambitious brothers fought by the family estate (a)/ after their father passed away, (b)/ leading to years of bitterness and legal battles (c)/ that affected not only them but also the entire extended family. (d)",
+    options: ["Two ambitious brothers fought by the family estate", "after their father passed away,", "leading to years of bitterness and legal battles", "that affected not only them but also the entire extended..."],
+    answer: 0,
+    explanation: "Correction: Use 'fought for' or 'fought over' instead of 'fought by' when indicating the object of dispute[cite: 11]."
+  },
+  {
+    id: 17,
+    question: "The customers were completely put off by the unhygienic condition of the restaurant, (a)/ as the tables were sticky, the plates were poorly cleaned, (b)/ and the unpleasant smell instantly ruined their appetite. (c)/ no error (d)",
+    options: ["The customers were completely put off by the unhygienic", "as the tables were sticky, the plates were poorly cleaned,", "and the unpleasant smell instantly ruined their appetite.", "no error"],
+    answer: 3,
+    explanation: "The sentence contains no error. The phrasal verb 'put off' (meaning discouraged or repulsed) is used correctly[cite: 11]."
+  },
+  {
+    id: 18,
+    question: "Her approach to solving problems is different (a)/ and far more efficient than mine, (b)/ as she always thinks creatively and carefully analyses every detail (c)/ before reaching a conclusion. (d)",
+    options: ["Her approach to solving problems is different", "and far more efficient than mine,", "as she always thinks creatively and carefully analyses", "before reaching a conclusion."],
+    answer: 0,
+    explanation: "Correction: Use 'different from' instead of just 'different' when paving a comparative setup, or check the specific combination. Note: The adjective 'different' correctly takes 'from'[cite: 11]."
+  },
+  {
+    id: 19,
+    question: "During his university years abroad, (a)/ he enjoyed all the comforts to life, (b)/ from living in a spacious apartment (c)/ to having access to all modern facilities. (d)",
+    options: ["During his university years abroad,", "he enjoyed all the comforts to life,", "from living in a spacious apartment", "to having access to all modern facilities."],
+    answer: 1,
+    explanation: "Correction: Use 'comforts of life' instead of 'comforts to life'[cite: 11]."
+  },
+  {
+    id: 20,
+    question: "When the guests arrived late at night (a)/ they entered into the banquet hall (b)/ and were amazed by the beautiful decorations and lights (c)/ arranged for the anniversary celebration. (d)",
+    options: ["When the guests arrived late at night", "they entered into the banquet hall", "and were amazed by the beautiful decorations and lights", "arranged for the anniversary celebration."],
+    answer: 1,
+    explanation: "Correction: Remove 'into' after 'entered'. The verb 'enter' is transitive when physical spaces are involved and doesn't take 'into'[cite: 11]."
+  },
+  {
+    id: 21,
+    question: "Before starting his private clinic, (a)/ he served as a cardiac surgeon of (b)/ one of the top multi-specialty hospitals in the region (c)/ handling critical emergency cases regularly. (d)",
+    options: ["Before starting his private clinic,", "he served as a cardiac surgeon of", "one of the top multi-specialty hospitals in the region", "handling critical emergency cases regularly."],
+    answer: 1,
+    explanation: "Correction: Use 'surgeon at' or 'surgeon in' instead of 'surgeon of'[cite: 11]."
+  },
+  {
+    id: 22,
+    question: "Among the lawyer and the client (a)/ there was a clear misunderstanding (b)/ regarding the final terms of the property agreement (c)/ signed last week. (d)",
+    options: ["Among the lawyer and the client", "there was a clear misunderstanding", "regarding the final terms of the property agreement", "signed last week."],
+    answer: 0,
+    explanation: "Correction: Use 'Between' instead of 'Among' because the reference explicitly involves exactly two parties[cite: 11]."
+  },
+  {
+    id: 23,
+    question: "Traditional folk songs (a)/ are passed down effortlessly (b)/ from one generation through another (c)/ as children learn them by listening to elders at festivals and family gatherings. (d)",
+    options: ["Traditional folk songs", "are passed down effortlessly", "from one generation through another", "as children learn them by listening to elders..."],
+    answer: 2,
+    explanation: "Correction: Use 'from one generation to another' instead of 'through another'[cite: 11]."
+  },
+  {
+    id: 24,
+    question: "The teacher politely requested to the students (a)/ not to make noise (b)/ as the examination was going on (c)/ in the adjacent classroom. (d)",
+    options: ["The teacher politely requested to the students", "not to make noise", "as the examination was going on", "in the adjacent classroom."],
+    answer: 0,
+    explanation: "Correction: Remove 'to' after 'requested'. 'Request' is a transitive verb that directly links to its object person[cite: 11]."
+  },
+  {
+    id: 25,
+    question: "Many luxury hotels (a)/ offer to their regular guests (b)/ complimentary spa vouchers, room upgrades, and private lounge access (c)/ as a gesture of appreciation for their loyalty. (d)",
+    options: ["Many luxury hotels", "offer to their regular guests", "complimentary spa vouchers, room upgrades, and private...", "as a gesture of appreciation for their loyalty."],
+    answer: 1,
+    explanation: "Correction: Remove 'to' after 'offer'. 'Offer' functions as a transitive verb linking directly to its indirect object person[cite: 11]."
+  },
+  {
+    id: 26,
+    question: "After attending the late-night cultural event (a)/ with my friends, I went to home, (b)/ had dinner and went to bed. (c)/ No error (d)",
+    options: ["After attending the late-night cultural event", "with my friends, I went to home,", "had dinner and went to bed.", "No error"],
+    answer: 1,
+    explanation: "Correction: Remove 'to' before 'home' in the phrase 'went home'[cite: 11]."
+  },
+  {
+    id: 27,
+    question: "Despite of facing several technical glitches (a)/ during the online exam, (b)/ she managed to attempt all the questions. (c)/ No error (d)",
+    options: ["Despite of facing several technical glitches", "during the online exam,", "she managed to attempt all the questions.", "No error"],
+    answer: 0,
+    explanation: "Correction: Remove 'of' after 'despite'. 'Despite' is a preposition on its own; 'inspire of' takes 'of'[cite: 11]."
+  },
+  {
+    id: 28,
+    question: "While rushing to catch the early morning bus (a)/ my wallet suddenly slipped with my pocket (b)/ and fell on the pavement. (c)/ No error (d)",
+    options: ["While rushing to catch the early morning bus", "my wallet suddenly slipped with my pocket", "and fell on the pavement.", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'from my pocket' or 'out of my pocket' instead of 'with my pocket'[cite: 11]."
+  },
+  {
+    id: 29,
+    question: "Our yoga instructor has been conducting (a)/ free early-morning sessions at the community park (b)/ since the past eight months (c)/ to help people improve their physical and mental well-being. (d)",
+    options: ["Our yoga instructor has been conducting", "free early-morning sessions at the community park", "since the past eight months", "to help people improve their physical and mental..."],
+    answer: 2,
+    explanation: "Correction: Use 'for' instead of 'since'. 'The past eight months' indicates a numerical duration block of time[cite: 11]."
+  },
+  {
+    id: 30,
+    question: "The travel agency promised that (a)/ the visa approval process would be completed by ten working days (b)/ so that the customers could plan their holidays accordingly. (c)/ No error (d)",
+    options: ["The travel agency promised that", "the visa approval process would be completed by ten working days", "so that the customers could plan their holidays accordingly.", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'within ten working days' instead of 'by ten working days' to indicate completion inside that time period[cite: 11]."
+  },
+  {
+    id: 31,
+    question: "The man besides me in the crowded metro (a)/ was talking to his friend very loudly (b)/ without realizing that everyone was getting disturbed. (c)/ No error (d)",
+    options: ["The man besides me in the crowded metro", "was talking to his friend very loudly", "without realizing that everyone was getting disturbed.", "No error"],
+    answer: 0,
+    explanation: "Correction: Use 'beside' (meaning next to) instead of 'besides' (meaning in addition to)[cite: 11]."
+  },
+  {
+    id: 32,
+    question: "At the hill resort near Mussoorie (a)/ our room had a stunning view of the clouds floating over the mountains (b)/ in the wide glass window that covered the entire wall. (c)/ No error (d)",
+    options: ["At the hill resort near Mussoorie", "our room had a stunning view of the clouds floating...", "in the wide glass window that covered the entire wall.", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'through the wide glass window' instead of 'in the wide glass window'[cite: 11]."
+  },
+  {
+    id: 33,
+    question: "Did you tell to your sister (a)/ that the parcel she was waiting (b)/ for finally arrived this afternoon. (c)/ No error (d)",
+    options: ["Did you tell to your sister", "that the parcel she was waiting", "for finally arrived this afternoon.", "No error"],
+    answer: 0,
+    explanation: "Correction: Remove 'to' after 'tell'. 'Tell' is a transitive verb followed directly by its indirect object[cite: 11]."
+  },
+  {
+    id: 34,
+    question: "Riya called an urgent team meeting (a)/ and discussed about the sudden drop in customer feedback scores (b)/ on various online platforms. (c)/ No error (d)",
+    options: ["Riya called an urgent team meeting", "and discussed about the sudden drop in customer feedback", "on various online platforms.", "No error"],
+    answer: 1,
+    explanation: "Correction: Remove 'about' after 'discussed'. 'Discuss' is a transitive verb that directly links to its object topic[cite: 11]."
+  },
+  {
+    id: 35,
+    question: "Many NGOs are working tirelessly to (a)/ create better employment opportunities to unemployed artists (b)/ so they can sustain themselves and continue their passion without financial pressure. (c)/ No error (d)",
+    options: ["Many NGOs are working tirelessly to", "create better employment opportunities to unemployed artists", "so they can sustain themselves and continue their passion...", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'for unemployed artists' instead of 'to'[cite: 11]."
+  },
+  {
+    id: 36,
+    question: "Even though the twin puppies were born on the same day (a)/ they do not resemble to one another (b)/ as one has fluffy brown fur (c)/ while the other has black fur. (d)",
+    options: ["Even though the twin puppies were born on the same day", "they do not resemble to one another", "as one has fluffy brown fur", "while the other has black fur."],
+    answer: 1,
+    explanation: "Correction: Remove 'to' after 'resemble'. 'Resemble' is a transitive verb that directly links to its object noun[cite: 11]."
+  },
+  {
+    id: 37,
+    question: "In about forty-five minutes the flight to Dubai will take off (a)/ and passengers are requested (b)/ to reach the boarding gate without any delay. (c)/ no error (d)",
+    options: ["In about forty-five minutes the flight to Dubai will take off", "and passengers are requested", "to reach the boarding gate without any delay.", "no error"],
+    answer: 3,
+    explanation: "The sentence contains no error. 'In about forty-five minutes' is used correctly to show a future timeframe[cite: 11]."
+  },
+  {
+    id: 38,
+    question: "Across his early morning jog in the community park (a)/ Rahul often stops near the lake (b)/ to feed stray dogs and greet elderly walkers (c)/ who enjoy sharing stories from their youth. (d)",
+    options: ["Across his early morning jog in the community park", "Rahul often stops near the lake", "to feed stray dogs and greet elderly walkers", "who enjoy sharing stories from their youth."],
+    answer: 0,
+    explanation: "Correction: Use 'During his early morning jog' instead of 'Across'[cite: 11]."
+  },
+  {
+    id: 39,
+    question: "The central health ministry has deployed additional (a)/ medical teams at flood-affected Bihar to monitor outbreaks of water-borne diseases (b)/ and ensure that relief camps receive proper sanitation facilities. (c)/ No error (d)",
+    options: ["The central health ministry has deployed additional", "medical teams at flood-affected Bihar to monitor outbreaks...", "and ensure that relief camps receive proper sanitation...", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'in flood-affected Bihar' instead of 'at flood-affected Bihar'. Large regions or states take 'in'[cite: 11]."
+  },
+  {
+    id: 40,
+    question: "After a long drought, farmers hoped to be back at the valley (a)/ cultivating their fields again (b)/ as the government released water from the nearby dam (c)/ ensuring proper irrigation for the new harvest season. (d)",
+    options: ["After a long drought, farmers hoped to be back at the valley", "cultivating their fields again", "as the government released water from the nearby dam", "ensuring proper irrigation for the new harvest season."],
+    answer: 0,
+    explanation: "Correction: Use 'in the valley' instead of 'at the valley'[cite: 11]."
+  },
+  {
+    id: 41,
+    question: "While reviewing resumes, the HR manager (a)/ compared each candidate's previous work performance to the required skills (b)/ and selected only those who demonstrated consistent achievements (c)/ in their respective fields. (d)",
+    options: ["While reviewing resumes, the HR manager", "compared each candidate's previous work performance to the required skills", "and selected only those who demonstrated consistent achievements", "in their respective fields."],
+    answer: 1,
+    explanation: "Correction: The verb 'compare' can take 'with' for checking similarities/differences or 'to' for matching unlike items. According to the specific answer index key, it notes checking 'with' instead of 'to' here[cite: 11]."
+  },
+  {
+    id: 42,
+    question: "To attend my cousin's wedding in Jaipur (a)/ we decided to travel on bus (b)/ because flight tickets were very costly (c)/ and we needed to save some money. (d)",
+    options: ["To attend my cousin's wedding in Jaipur", "we decided to travel on bus", "because flight tickets were very costly", "and we needed to save some money."],
+    answer: 1,
+    explanation: "Correction: Use 'by bus' instead of 'on bus' to express the mode of transport[cite: 11]."
+  },
+  {
+    id: 43,
+    question: "When the journalist exposed a major corruption case (a)/ involving several local leaders (b)/ a group of hired goons attacked on him outside his office (c)/ to silence him so he couldn't report further. (d)",
+    options: ["When the journalist exposed a major corruption case", "involving several local leaders", "a group of hired goons attacked on him outside his office", "to silence him so he couldn't report further."],
+    answer: 2,
+    explanation: "Correction: Remove 'on' after 'attacked'. When 'attack' functions as a verb, it is directly followed by its object[cite: 11]."
+  },
+  {
+    id: 44,
+    question: "She insisted on preparing for the competitive exam in home (a)/ rather than joining a coaching institute (b)/ because she believed she could discipline herself better (c)/ and save travel time as well. (d)",
+    options: ["She insisted on preparing for the competitive exam in home", "rather than joining a coaching institute", "because she believed she could discipline herself better", "and save travel time as well."],
+    answer: 0,
+    explanation: "Correction: Use the idiomatic phrase 'at home' instead of 'in home'[cite: 11]."
+  },
+  {
+    id: 45,
+    question: "Tight security measures were arranged for the upcoming visit to the (a)/ President of France as several international agreements are expected (b)/ to be signed during the bilateral discussions. (c)/No error (d)",
+    options: ["Tight security measures were arranged for the upcoming visit to the", "President of France as several international agreements are expected", "to be signed during the bilateral discussions.", "No error"],
+    answer: 0,
+    explanation: "Correction: Use 'visit of the President of France' instead of 'visit to the President of France'[cite: 11]."
+  },
+  {
+    id: 46,
+    question: "Normally, it takes me around an hour (a)/ to reach the city hospital where I work (b)/ because the roads are packed with vehicles in week day. (c)/ No error (d)",
+    options: ["Normally, it takes me around an hour", "to reach the city hospital where I work", "because the roads are packed with vehicles in week day.", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'on a weekday' or 'on weekdays' instead of 'in week day'[cite: 11]."
+  },
+  {
+    id: 47,
+    question: "All vehicles entering the toll plaza (a)/ will be inspected along they pass through the security gate (b)/ in order to prevent illegal transportation (c)/ during the festival season. (d)",
+    options: ["All vehicles entering the toll plaza", "will be inspected along they pass through the security gate", "in order to prevent illegal transportation", "during the festival season."],
+    answer: 1,
+    explanation: "Correction: Use 'as' or 'before' instead of 'along'[cite: 11]."
+  },
+  {
+    id: 48,
+    question: "Whether it is cooking traditional dishes or experimenting with fusion cuisines, (a)/ my grandmother is completely with home in the kitchen (b)/ and never fails to impress us (c)/ with her creativity and flavours. (d)",
+    options: ["Whether it is cooking traditional dishes or experimenting...", "my grandmother is completely with home in the kitchen", "and never fails to impress us", "with her creativity and flavours."],
+    answer: 1,
+    explanation: "Correction: Use the idiom 'at home' instead of 'with home' (meaning comfortable/proficient)[cite: 11]."
+  },
+  {
+    id: 49,
+    question: "We must patiently await for the final judgement (a)/ in the court case (b)/ as both parties have presented strong evidence (c)/ and the decision could set a new legal precedent. (d)",
+    options: ["We must patiently await for the final judgement", "in the court case", "as both parties have presented strong evidence", "and the decision could set a new legal precedent."],
+    answer: 0,
+    explanation: "Correction: Use 'await' without 'for' or change it to 'wait for'[cite: 11]."
+  },
+  {
+    id: 50,
+    question: "We camped in the desert of Jaisalmer (a)/ enjoying the folk music, warm bonfire, and star-studded sky (b)/ in a chilly winter night (c)/ before returning to the fort the next morning. (d)",
+    options: ["We camped in the desert of Jaisalmer", "enjoying the folk music, warm bonfire, and star-studded sky", "in a chilly winter night", "before returning to the fort the next morning."],
+    answer: 2,
+    explanation: "Correction: Use 'on a chilly winter night' instead of 'in a chilly winter night'[cite: 11]."
+  },
+  {
+    id: 51,
+    question: "Even after continuous warnings issued by the central bank, a large number of investors are still not beware of the fraudulent schemes being circulated through social media platforms.",
+    options: ["aware of", "aware at", "beware to", "beware for"],
+    answer: 0,
+    explanation: "Option (a) is correct. We use the adjective 'aware of' to follow the verb 'are'[cite: 11]."
+  },
+  {
+    id: 52,
+    question: "Every winter morning, the farmers in the remote village wake up before sunrise and continue ploughing their fields after the fog becomes too dense to work comfortably.",
+    options: ["till the fog becomes too dense", "by the fog becomes too dense", "still the fog becomes too dense", "utmost the fog becomes too dense"],
+    answer: 0,
+    explanation: "Option (a) is correct. 'Till' correctly marks the temporal boundary up to which the action continues[cite: 11]."
+  },
+  {
+    id: 53,
+    question: "After the announcement of the civil services results, all his relatives visited his home to congratulate him with securing such a prestigious rank in the examination.",
+    options: ["congratulate him at", "congratulate him on", "congratulate him along", "congratulate him to"],
+    answer: 1,
+    explanation: "Option (b) is correct. The verb 'congratulate' takes the fixed preposition 'on' followed by the reason[cite: 11]."
+  },
+  {
+    id: 54,
+    question: "The audience response to the newly released documentary went out all our assumptions, as people appreciated the depth of research and praised the filmmaker's effort across social media platforms.",
+    options: ["beyond all our assumptions", "under all our assumptions", "besides all our assumptions", "over all our assumptions"],
+    answer: 0,
+    explanation: "Option (a) is correct. The preposition 'beyond' means exceeding or surpassing expectations/assumptions[cite: 11]."
+  },
+  {
+    id: 55,
+    question: "In order to improve your vocabulary effectively, you should read quality books and newspapers every day instead rely only on online videos.",
+    options: ["instead of relying only", "instead at relying only", "instead rely only", "instead for rely only"],
+    answer: 0,
+    explanation: "Option (a) is correct. 'Instead of' requires a following gerund ('relying') when substituting actions[cite: 11]."
+  },
+  {
+    id: 56,
+    question: "Ramesh has been suffering with chronic back pain from the day he had that major accident ten years ago, and the digits have advised him to continue physiotherapy regularly.",
+    options: ["suffering with chronic back pain from", "suffering from chronic back pain from when", "suffering from chronic back pain since", "no improvement required"],
+    answer: 2,
+    explanation: "Option (c) is correct. The fixed preposition for disease states is 'suffering from', paired with 'since' to denote the specific historic milestone starting point[cite: 11]."
+  },
+  {
+    id: 57,
+    question: "The government has recently focused on promote renewable energy sources to reduce dependence on fossil fuels and minimize environmental pollution.",
+    options: ["on promoting", "on promotion", "to promoting", "no improvement"],
+    answer: 0,
+    explanation: "Option (a) is correct. Prepositions like 'on' must be followed by a gerund ('promoting') when indicating actions[cite: 11]."
+  },
+  {
+    id: 58,
+    question: "Since the farmland includes irrigation facilities, good soil quality and fencing protection, the farmer pays the landowner five thousand rupees the month of that agricultural plot.",
+    options: ["five thousand rupees the month for those", "five thousand rupees a month for that", "five thousand rupees month of that", "five thousand rupees a month over this"],
+    answer: 1,
+    explanation: "Option (b) is correct. It uses standard rate tracking: 'five thousand rupees a month for that agricultural plot'[cite: 11]."
+  },
+  {
+    id: 59,
+    question: "After completing a hectic shift at the hospital and attending an urgent emergency call, Dr. Meera finally returned from duty in 7:30 p.m., looking completely exhausted yet satisfied with her work.",
+    options: ["from duty on", "from duty at", "duty from at", "no improvement"],
+    answer: 1,
+    explanation: "Option (b) is correct. Exact clock times take the preposition 'at' ('at 7:30 p.m.')[cite: 11]."
+  },
+  {
+    id: 60,
+    question: "For effective fermentation in yogurt production, the milk is warm into the required temperature and then mixed with a culture before being allowed to set for several hours.",
+    options: ["is warmed into", "is warmed for", "is warmed to", "is warming at"],
+    answer: 2,
+    explanation: "Option (c) is correct. Thermal targets or limits take the preposition 'to' ('warmed to the required temperature')[cite: 11]."
+  },
+  {
+    id: 61,
+    question: "The student needed patience and consistent practice beyond textbooks, because language learning demands real-life usage and exposure as well.",
+    options: ["beyond textbooks", "besides textbooks", "beneath textbooks", "beside textbooks"],
+    answer: 1,
+    explanation: "Option (b) is correct. 'Besides' means 'in addition to', which logically fits the context of learning expanding past book sets[cite: 11]."
+  },
+  {
+    id: 62,
+    question: "At family gatherings, my aunt always tries to look superior and spends most of her time ordering about the household helpers, even when there is no urgent work to be done.",
+    options: ["ordering the household helpers at", "ordering about the household helpers", "ordering the household helpers about", "no substitution required"],
+    answer: 2,
+    explanation: "Option (c) provides the standard ordering sequence for the phrasal verb split: 'ordering the household helpers about'[cite: 11]."
+  },
+  {
+    id: 63,
+    question: "The education board has recently announced new homework guidelines to reduce academic pressure and ensure balanced learning hours towards the senior secondary students.",
+    options: ["towards the senior secondary students", "for the senior secondary students", "from the senior secondary students", "into the senior secondary students"],
+    answer: 1,
+    explanation: "Option (b) is correct. Target beneficiary groups require the preposition 'for' ('for the senior secondary students')[cite: 11]."
+  },
+  {
+    id: 64,
+    question: "Your silver jewellery will look as good as new if you rub by baking soda and gently clean it under warm water, since baking soda naturally removes tarnish.",
+    options: ["rub by baking soda", "rub it with baking soda", "rubbed it by baking soda", "rubbing it by baking soda"],
+    answer: 1,
+    explanation: "Option (b) is correct. Instruments or materials used to perform an action are accompanied by 'with' ('rub it with baking soda')[cite: 11]."
+  },
+  {
+    id: 65,
+    question: "Among all the delicious dishes prepared at the family gathering, Arjun loved the homemade biryani the most, as it had a rich aroma and perfectly balanced spices.",
+    options: ["Between", "Except", "Amongst", "Over"],
+    answer: 2,
+    explanation: "Option (c) is correct. 'Amongst' can be preferred stylistically before words starting with vowel sounds ('all') when dealing with large group boundaries[cite: 11]."
+  },
+  {
+    id: 66,
+    question: "After the scandal came to light, the company's senior management ensured that every transaction made by the finance team was kept at continuous scrutiny to prevent any further misuse of funds.",
+    options: ["kept by", "kept under", "kept with", "No improvement"],
+    answer: 1,
+    explanation: "Option (b) is correct. The standard idiomatic layout is 'kept under continuous scrutiny'[cite: 11]."
+  },
+  {
+    id: 67,
+    question: "Parents repeatedly warned their children in playing dangerous online games that encourage harmful behaviour and addiction.",
+    options: ["to", "with", "against", "No improvement"],
+    answer: 2,
+    explanation: "Option (c) is correct. The verb 'warn' takes 'against' when alerting someone to avoid harmful practices[cite: 11]."
+  },
+  {
+    id: 68,
+    question: "The judge stated that if the accused continued to threaten the witnesses, the court would have no hesitation in convicting him by tampering with crucial evidence.",
+    options: ["convicting him at", "convicting him by", "convicting him of", "No substitution"],
+    answer: 2,
+    explanation: "Option (c) is correct. The legal charge assignment idiom is 'convict someone of a crime'[cite: 11]."
+  },
+  {
+    id: 69,
+    question: "To hang the festival lights, the workers rested a long metal ladder on the wall and climbed up carefully to decorate the top portion of the entrance gate.",
+    options: ["on the wall", "against the wall", "over the wall", "No substitution"],
+    answer: 1,
+    explanation: "Option (b) is correct. Leaning structural tools for structural support against a vertical layout demands 'against the wall'[cite: 11]."
+  },
+  {
+    id: 70,
+    question: "As soon as the alarm was raised, the children panicked and suddenly ran in the classroom, seeking safety from the chaos happening in the corridor.",
+    options: ["in the classroom", "into the classroom", "on the classroom", "to the classroom"],
+    answer: 1,
+    explanation: "Option (b) is correct. Physical motion directed inward toward an enclosed space requires the preposition 'into'[cite: 11]."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>${q.id}. ${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q${i+1}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tense Practice Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "I walked around the quiet lakeside for hours, (a)/ watching birds and enjoying the cool breeze, (b)/ and then I get on a late-evening bus to Delhi (c)/. No error (d)",
+    options: ["I walked around the quiet lakeside for hours,", "watching birds and enjoying the cool breeze,", "and then I get on a late-evening bus to Delhi", "No error"],
+    answer: 2,
+    explanation: "Correction: Use 'got' instead of 'get'. The sentence describes a sequence of past actions ('walked'), so past tense harmony must be maintained[cite: 9]."
+  },
+  {
+    id: 2,
+    question: "Medical journals told doctors (a)/ about new global health studies (b)/ that highlight important disease patterns (c)/ and their possible treatments. (d)",
+    options: ["Medical journals told doctors", "about new global health studies", "that highlight important disease patterns", "and their possible treatments."],
+    answer: 0,
+    explanation: "Correction: Use 'tell' instead of 'told'. The statement describes a general, regular truth about what medical journals do, which requires the simple present tense[cite: 9]."
+  },
+  {
+    id: 3,
+    question: "This is indeed the first (a)/ time in my professional journey that I hear (b)/ such a powerful and inspiring speech (c)/ from a young entrepreneur. (d)",
+    options: ["This is indeed the first", "time in my professional journey that I hear", "such a powerful and inspiring speech", "from a young entrepreneur."],
+    answer: 1,
+    explanation: "Correction: Use 'have heard' instead of 'hear'. Structures like 'This is the first time...' are standardly followed by the present perfect tense[cite: 9]."
+  },
+  {
+    id: 4,
+    question: "When the bus reached (a)/ the crowded marketplace, it take (b)/ Priya a few minutes (c)/ to gather her luggage and step outside carefully. (d)",
+    options: ["When the bus reached", "the crowded marketplace, it take", "Priya a few minutes", "to gather her luggage and step outside carefully."],
+    answer: 1,
+    explanation: "Correction: Use 'took' instead of 'take' to maintain the sentence's past tense timeline ('reached')[cite: 9]."
+  },
+  {
+    id: 5,
+    question: "Usually, Neeraj hasn't (a)/ attend weekend cultural workshops (b)/ organized by the community center (c)/ because of his tight work schedule. (d)",
+    options: ["Usually, Neeraj hasn't", "attend weekend cultural workshops", "organized by the community center", "because of his tight work schedule."],
+    answer: 0,
+    explanation: "Correction: Use 'doesn't' instead of 'hasn't'. The keyword 'Usually' marks a habitual configuration demanding simple present tense negation[cite: 9]."
+  },
+  {
+    id: 6,
+    question: "They are having (a)/ a grand family gathering with relatives coming (b)/ from different cities at their farmhouse next week (c)/ No error. (d)",
+    options: ["They are having", "a grand family gathering with relatives coming", "from different cities at their farmhouse next week", "No error."],
+    answer: 3,
+    explanation: "The sentence contains no error. 'Are having' can be utilized to depict a firmly planned dynamic future event[cite: 9]."
+  },
+  {
+    id: 7,
+    question: "They are always arguing (a)/ about tiny and meaningless issues (b)/ which makes everyone around uncomfortable. (c)/ No error (d)",
+    options: ["They are always arguing", "about tiny and meaningless issues", "which makes everyone around uncomfortable.", "No error"],
+    answer: 3,
+    explanation: "The sentence is completely correct. 'Always' combined with continuous tenses highlights an ongoing, annoying habit[cite: 9]."
+  },
+  {
+    id: 8,
+    question: "\"The principal is talking to some (a)/ parents in her office (b)/ at the moment,\" \"Alright, I had been waiting (c)/ until she gets free.\" (d)",
+    options: ["The principal is talking to some", "parents in her office at the moment,", "\"Alright, I had been waiting", "until she gets free.\""],
+    answer: 2,
+    explanation: "Correction: Use 'will wait' or 'will be waiting' instead of 'had been waiting' to denote a spontaneous future decision based on a current event[cite: 9]."
+  },
+  {
+    id: 9,
+    question: "I am working on this research (a)/ project continuously for the last three weeks so (b)/ I need 2 days' leave. (c)/ no error (d)",
+    options: ["I am working on this research", "project continuously for the last three weeks so", "I need 2 days' leave.", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'have been working' instead of 'am working'. Time duration tracking expressions ('for the last three weeks') call for present perfect continuous tense[cite: 9]."
+  },
+  {
+    id: 10,
+    question: "He reminded his son (a)/ to close the main gate properly (b)/ before leaving for school, but (c)/ he forget to do that. (d)",
+    options: ["He reminded his son", "to close the main gate properly", "before leaving for school, but", "he forget to do that."],
+    answer: 3,
+    explanation: "Correction: Use 'forgot' instead of 'forget' to accurately continue the past historical chain sequence ('reminded')[cite: 9]."
+  },
+  {
+    id: 11,
+    question: "She reached the audition hall (a)/ much later than she planned (b)/ because of heavy traffic. (c)/ No error (d)",
+    options: ["She reached the audition hall", "much later than she planned", "because of heavy traffic.", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'had planned' instead of 'planned'. The action of planning happened completely prior to the past action of reaching (past of the past)[cite: 9]."
+  },
+  {
+    id: 12,
+    question: "Did he arranged (a)/ the entire surprise celebration by himself (b)/ since nobody else knew about your birthday plan until the moment you walked in? (c)/ No error (d)",
+    options: ["Did he arranged", "the entire surprise celebration by himself", "since nobody else knew about your birthday plan...", "No error"],
+    answer: 0,
+    explanation: "Correction: Use base verb 'arrange' instead of 'arranged'. The past tense interrogative helper 'Did' always takes a bare root form[cite: 9]."
+  },
+  {
+    id: 13,
+    question: "As it has been snowing continuously (a)/ since the last three hours, (b)/ the tourists are staying inside their cottages (c)/ to avoid the harsh weather. (d)",
+    options: ["As it has been snowing continuously", "since the last three hours,", "the tourists are staying inside their cottages", "to avoid the harsh weather."],
+    answer: 1,
+    explanation: "Correction: Use 'for' instead of 'since' because 'the last three hours' represents a numerical duration block of time[cite: 9]."
+  },
+  {
+    id: 14,
+    question: "The heavy overnight snowfall (a)/ in the entire mountain region blocked (b)/ important highways and (c)/ freezing water pipelines in several remote villages. (d)",
+    options: ["The heavy overnight snowfall", "in the entire mountain region blocked", "important highways and", "freezing water pipelines in several remote villages."],
+    answer: 3,
+    explanation: "Correction: Use 'froze' instead of 'freezing' to maintain parallel simple past syntax structure across coordinated predicate elements ('blocked and froze')[cite: 9]."
+  },
+  {
+    id: 15,
+    question: "She has been trying to learn classical music (a)/ for last summer, (b)/ but her schedule often gets too hectic (c)/ due to office work. (d)",
+    options: ["She has been trying to learn classical music", "for last summer,", "but her schedule often gets too hectic", "due to office work."],
+    answer: 1,
+    explanation: "Correction: Use 'since' instead of 'for' because 'last summer' marks a distinct specific starting point in time[cite: 9]."
+  },
+  {
+    id: 16,
+    question: "How long are you preparing (a)/ for your civil services exam (b)/ with this early-morning study routine of yours? (c)/ No error (d)",
+    options: ["How long are you preparing", "for your civil services exam", "with this early-morning study routine of yours?", "No error"],
+    answer: 0,
+    explanation: "Correction: Use 'have you been preparing' instead of 'are you preparing'. Timeline interrogation phrases like 'How long...' demand a perfect aspect template[cite: 9]."
+  },
+  {
+    id: 17,
+    question: "These days, heritage sites in major tourist cities (a)/ are protected by strict laws (b)/ so that valuable monuments and ancient sculptures (c)/ do not being damaged by careless visitors. (d)",
+    options: ["These days, heritage sites in major tourist cities", "are protected by strict laws", "so that valuable monuments and ancient sculptures", "do not being damaged by careless visitors."],
+    answer: 3,
+    explanation: "Correction: Use 'are not damaged' or 'do not get damaged'. The phrase 'do not being' is completely ungrammatical inside passive structures[cite: 9]."
+  },
+  {
+    id: 18,
+    question: "Rohan lived in this apartment (a)/ since his elder sister moved abroad (b)/ for her higher studies (c)/ No error. (d)",
+    options: ["Rohan lived in this apartment", "since his elder sister moved abroad", "for her higher studies", "No error."],
+    answer: 0,
+    explanation: "Correction: Use 'has been living' instead of 'lived'. Clauses linked via present perfect temporal triggers ('since...') require a continuous perfect verb template[cite: 9]."
+  },
+  {
+    id: 19,
+    question: "Last month when I visited the city (a)/ hospital for my routine check-up, I (b)/ consulted the senior cardiologist (c)/ with whom I have booked an appointment. (d)",
+    options: ["Last month when I visited the city", "hospital for my routine check-up, I", "consulted the senior cardiologist", "with whom I have booked an appointment."],
+    answer: 3,
+    explanation: "Correction: Use 'had booked' instead of 'have booked'. The booking occurred entirely prior to the past consultation event (past of the past)[cite: 9]."
+  },
+  {
+    id: 20,
+    question: "My cousin is practising yoga every morning in the community park (a)/ under the guidance of a certified trainer (b)/ since January to improve her strength, flexibility, and overall mental well-being. (c)/ no error (d)",
+    options: ["My cousin is practising yoga every morning...", "under the guidance of a certified trainer", "since January to improve her strength...", "no error"],
+    answer: 0,
+    explanation: "Correction: Use 'has been practicing' instead of 'is practicing'. The inclusion of a fixed time starting mark ('since January') switches a progressive sentence into present perfect continuous[cite: 9]."
+  },
+  {
+    id: 21,
+    question: "The university will not release the final merit list (a)/ for the postgraduate admissions (b)/ until the examination committee will verify (c)/ the documents submitted by the applicants. (d)",
+    options: ["The university will not release the final merit list", "for the postgraduate admissions", "until the examination committee will verify", "the documents submitted by the applicants."],
+    answer: 2,
+    explanation: "Correction: Use simple present tense 'verifies' instead of future 'will verify'. Conditional or temporal introductory words ('until') bar modal future expressions within their immediate dependent clauses[cite: 9]."
+  },
+  {
+    id: 22,
+    question: "In its January 1984 edition (a)/ the National Geographic magazine explain (b)/ how ancient cave paintings were discovered (c)/ deep inside a remote valley in France. (d)",
+    options: ["In its January 1984 edition", "the National Geographic magazine explain", "how ancient cave paintings were discovered", "deep inside a remote valley in France."],
+    answer: 1,
+    explanation: "Correction: Use past tense 'explained' instead of 'explain'. The past time marker context ('January 1984') requires simple past structural templates[cite: 9]."
+  },
+  {
+    id: 23,
+    question: "My parents visit the city hospital (a) / for a routine health examination (b) / this coming Monday morning (c) / No error. (d)",
+    options: ["My parents visit the city hospital", "for a routine health examination", "this coming Monday morning", "No error."],
+    answer: 0,
+    explanation: "Correction: Use 'will visit' or 'are visiting' instead of 'visit'. A specific planned future target timeframe ('this coming Monday') requires a future setup[cite: 9]."
+  },
+  {
+    id: 24,
+    question: "The rapid construction of luxury high-rise apartments in our city (a) / is led to an unexpected surge in rental prices (b) / forcing many middle-income families to move towards the outskirts (c) No error (d)",
+    options: ["The rapid construction of luxury high-rise...", "is led to an unexpected surge in rental prices", "forcing many middle-income families to move...", "No error"],
+    answer: 1,
+    explanation: "Correction: Use active forms like 'has led to' or 'is leading to'. The passive format phrase 'is led to' is contextually erroneous[cite: 9]."
+  },
+  {
+    id: 25,
+    question: "Aarav had frustrated with his elder brother (a) / ever since they had a heated argument (b) / about their father's property last month (c) / No error. (d)",
+    options: ["Aarav had frustrated with his elder brother", "ever since they had a heated argument", "about their father's property last month", "No error."],
+    answer: 0,
+    explanation: "Correction: Use passive state structure 'has been frustrated' instead of 'had frustrated'[cite: 9]."
+  },
+  {
+    id: 26,
+    question: "During the recession last year, our company laid off many employees (a) / and my close colleague lost his position too (b) / but he had secured a far better opportunity now (c) / at a multinational firm abroad. (d)",
+    options: ["During the recession last year, our company...", "and my close colleague lost his position too", "but he had secured a far better opportunity now", "at a multinational firm abroad."],
+    answer: 2,
+    explanation: "Correction: Use 'has secured' instead of 'had secured' due to the explicit current relevance marker 'now'[cite: 9]."
+  },
+  {
+    id: 27,
+    question: "In the chemistry lab, the students measured the chemicals (a) / mixed them according to the procedure (b) / and record their observations carefully (c) / in their lab notebooks. (d)",
+    options: ["In the chemistry lab, the students measured...", "mixed them according to the procedure", "and record their observations carefully", "in their lab notebooks."],
+    answer: 2,
+    explanation: "Correction: Use 'recorded' instead of 'record' to successfully match the pre-established past tense series sequence ('measured', 'mixed')[cite: 9]."
+  },
+  {
+    id: 28,
+    question: "All of us felt relieved (a) / when the train finally reached (b) / the crowded station early this morning after that long and tiring overnight journey (c)/ no error (d)",
+    options: ["All of us felt relieved", "when the train finally reached", "the crowded station early this morning...", "no error"],
+    answer: 3,
+    explanation: "The sentence contains no error. All narrative blocks correctly share matching past tense layouts ('felt', 'reached')[cite: 9]."
+  },
+  {
+    id: 29,
+    question: "Before you (a) / leave to board an international flight (b) / you made sure that you (c)/ have kept your passport and boarding pass (d)",
+    options: ["Before you", "leave to board an international flight", "you made sure that you", "have kept your passport and boarding pass"],
+    answer: 2,
+    explanation: "Correction: Replace 'made' with an imperative root or advice phrase like 'should make sure' or 'make sure'[cite: 9]."
+  },
+  {
+    id: 30,
+    question: "Rashmi dropped her laptop accidentally (a)/ during the project meeting, (b)/ and now she worrying (c)/ about losing all her important presentation files. (d)",
+    options: ["Rashmi dropped her laptop accidentally", "during the project meeting,", "and now she worrying", "about losing all her important presentation files."],
+    answer: 2,
+    explanation: "Correction: Use 'is worrying' or 'is worried' instead of the bare incomplete present participle 'now she worrying'[cite: 9]."
+  },
+  {
+    id: 31,
+    question: "By the time the university will publish (a)/ the semester result on its website, (b)/ all students will have completed their internship. (c)/ No error (d)",
+    options: ["By the time the university will publish", "the semester result on its website,", "all students will have completed their internship.", "No error"],
+    answer: 0,
+    explanation: "Correction: Use simple present tense 'publishes' instead of future 'will publish'. The temporal introductory link phrase 'By the time' prohibits future modals inside its dependent frame[cite: 9]."
+  },
+  {
+    id: 32,
+    question: "When my mother has finished (a)/ cooking lunch yesterday afternoon, (b)/ we had already set the dining table (c)/ and prepared fresh lemonade for everyone. (d)",
+    options: ["When my mother has finished", "cooking lunch yesterday afternoon,", "we had already set the dining table", "and prepared fresh lemonade for everyone."],
+    answer: 0,
+    explanation: "Correction: Use simple past 'finished' instead of 'has finished' because the historical time descriptor marker specifies 'yesterday afternoon'[cite: 9]."
+  },
+  {
+    id: 33,
+    question: "The new hill-station route was not as smooth as I expected (a)/ and the narrow bends and constant landslides (b)/ made the drive even more difficult (c)/. No error (d)",
+    options: ["The new hill-station route was not as smooth...", "and the narrow bends and constant landslides", "made the drive even more difficult", "No error"],
+    answer: 0,
+    explanation: "Correction: Use past perfect 'had expected' instead of 'expected' to mark prior mental assumptions formed before experiencing the actual past drive[cite: 9]."
+  },
+  {
+    id: 34,
+    question: "Basic human dignity (a)/ meaning that every individual is treated with respect (b)/ regardless of their background or social status (c)/ in every part of the community. (d)",
+    options: ["Basic human dignity", "meaning that every individual is treated...", "regardless of their background or social status", "in every part of the community."],
+    answer: 1,
+    explanation: "Correction: Use 'means' instead of 'meaning' to establish a valid main finite verb indicating a timeless definitional truth[cite: 9]."
+  },
+  {
+    id: 35,
+    question: "While travelling by train to Delhi (a)/ one of the passengers was taking ill (b)/ due to extreme heat and dehydration (c)/ causing the train to halt for emergency assistance. (d)",
+    options: ["While travelling by train to Delhi", "one of the passengers was taking ill", "due to extreme heat and dehydration", "causing the train to halt for emergency..."],
+    answer: 1,
+    explanation: "Correction: Use the passive idiomatic phrase layout 'was taken ill' instead of the active progressive 'was taking ill'[cite: 9]."
+  },
+  {
+    id: 36,
+    question: "A London-bound train has to stop at a remote station (a)/ when the conductor noticed smoke rising (b)/ from one of the coaches. (c) No error. (d)",
+    options: ["A London-bound train has to stop at a remote...", "when the conductor noticed smoke rising", "from one of the coaches.", "No error."],
+    answer: 0,
+    explanation: "Correction: Use past format 'had to' instead of 'has to' to align with the chronological past tense anchor clause 'noticed'[cite: 9]."
+  },
+  {
+    id: 37,
+    question: "Celebrated as one of the most dedicated surgeons in the hospital (a)/ Dr. Mehta take charge of the emergency unit (b)/ when multiple accident victims arrived late at night. (c)/ No error. (d)",
+    options: ["Celebrated as one of the most dedicated...", "Dr. Mehta take charge of the emergency unit", "when multiple accident victims arrived late...", "No error."],
+    answer: 1,
+    explanation: "Correction: Use past form 'took charge of' instead of base 'take charge of' to track past event completion markers ('arrived')[cite: 9]."
+  },
+  {
+    id: 38,
+    question: "I don't think that (a)/ I meet this neighbour's son earlier (b)/ though his face seems slightly familiar (c)/ No error. (d)",
+    options: ["I don't think that", "I meet this neighbour's son earlier", "though his face seems slightly familiar", "No error."],
+    answer: 1,
+    explanation: "Correction: Use present perfect 'have met' instead of base 'meet' due to the experience limit indicator keyword 'earlier'[cite: 9]."
+  },
+  {
+    id: 39,
+    question: "Cyber-bullying is a punishable act (a)/ in which a person sending threatening messages (b)/ to individuals online. (c)/ No error (d)",
+    options: ["Cyber-bullying is a punishable act", "in which a person sending threatening messages", "to individuals online.", "No error"],
+    answer: 1,
+    explanation: "Correction: Use simple present finite verb 'sends' instead of bare non-finite participle 'sending' to frame a standard conceptual description clause[cite: 9]."
+  },
+  {
+    id: 40,
+    question: "We need to book a taxi now (a)/ since we had missed the last metro (b)/ and standing here any longer (c)/ will only waste more time. (d)",
+    options: ["We need to book a taxi now", "since we had missed the last metro", "and standing here any longer", "will only waste more time."],
+    answer: 1,
+    explanation: "Correction: Use present perfect 'have missed' instead of past perfect 'had missed' because the event carries direct consequence on our current immediate action ('We need to book a taxi now')[cite: 9]."
+  },
+  {
+    id: 41,
+    question: "Was your mother liking the new ethnic collection (a)/ displayed in the festive season sale (b)/ at the pacific mall? (c)/ No error (d)",
+    options: ["Was your mother liking the new ethnic collection", "displayed in the festive season sale", "at the pacific mall?", "No error"],
+    answer: 0,
+    explanation: "Correction: Use simple past interrogative form 'Did your mother like' instead of 'Was your mother liking'. Stative preference verbs like 'like' reject progressive tense formatting[cite: 9]."
+  },
+  {
+    id: 42,
+    question: "It is believed that he has achieve remarkable success in the field of renewable energy through years of research.",
+    options: ["he will achieved", "he had achieve", "No substitution required", "he has achieved"],
+    answer: 3,
+    explanation: "Option (d) is correct. The present perfect configuration requires the past participle form: 'has achieved'[cite: 9]."
+  },
+  {
+    id: 43,
+    question: "Fresh water constantly is flowing from the snow-covered mountains into the valley, creating a peaceful and scenic environment for tourists.",
+    options: ["flows", "is flowed", "was flows", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) is correct. Timeless natural processes and geographic permanent states are standardly represented via simple present tense ('flows')[cite: 9]."
+  },
+  {
+    id: 44,
+    question: "The museum has been closed for last winter due to renovation work and is expected to reopen soon for tourists.",
+    options: ["to last winter", "since last winter", "from last winter", "for winter"],
+    answer: 1,
+    explanation: "Option (b) is correct. A specific name point starting location in the past ('last winter') paired with a perfect tense timeline requires 'since'[cite: 9]."
+  },
+  {
+    id: 45,
+    question: "She doesn't study for her exams right now because she is feeling unwell and needs some rest.",
+    options: ["is not studying", "doesn't study", "didn't study", "was not studying"],
+    answer: 0,
+    explanation: "Option (a) is correct. The immediate temporal marker keyword phrase 'right now' dictates a present continuous negative layout: 'is not studying'[cite: 9]."
+  },
+  {
+    id: 46,
+    question: "The newly constructed bridge, was completed last month, has already become a major route for daily commuters.",
+    options: ["completed last month", "was completing last month", "was completed last month", "has completed last month"],
+    answer: 0,
+    explanation: "Option (a) is correct. Using the reduced passive participle phrase 'completed last month' cleanly qualifies the leading noun core without creating structural syntax errors[cite: 9]."
+  },
+  {
+    id: 47,
+    question: "They had shifted to a new apartment last December because their old building was under renovation.",
+    options: ["had shifted", "were shifting", "shifted", "have shifted"],
+    answer: 2,
+    explanation: "Option (c) is correct. Explicit definitive past calendar markers ('last December') call for the simple past format: 'shifted'[cite: 9]."
+  },
+  {
+    id: 48,
+    question: "The children finished their homework and they are now playing happily in the park behind our house.",
+    options: ["finish", "had finished", "have finished", "will finish"],
+    answer: 2,
+    explanation: "Option (c) is correct. Present perfect 'have finished' effectively captures a completed milestone action whose consequence links to an ongoing current state ('are now playing')[cite: 9]."
+  },
+  {
+    id: 49,
+    question: "I will finish this important report by the time the management arrives for the morning briefing.",
+    options: ["will be finishing this important report", "will have finished this important report", "have finished this important report", "No substitution required"],
+    answer: 1,
+    explanation: "Option (b) is correct. Future perfect structures ('will have finished') are mandatory when predicting actions wrapped up completely before an upcoming timeline barrier phrase ('by the time')[cite: 9]."
+  },
+  {
+    id: 50,
+    question: "The sky is getting darker, it ______ in a few minutes.",
+    options: ["is raining", "is going to rain", "has to rain", "rains"],
+    answer: 1,
+    explanation: "Option (b) is correct. Present physical predictive signs or evidence ('sky is getting darker') call for the intent format phrase 'is going to rain'[cite: 9]."
+  },
+  {
+    id: 51,
+    question: "Every time the school bell rings for the lunch break, the students will rush quickly towards the canteen to buy snacks.",
+    options: ["the students rush", "the students are rushing", "the students were rushing", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) is correct. Habitual general routine cycles introduced by 'Every time...' require a clean simple present layout: 'the students rush'[cite: 9]."
+  },
+  {
+    id: 52,
+    question: "By the time the police arrived at the crime scene, the thieves escaped with all the expensive jewellery and electronic items.",
+    options: ["the thieves had escaped", "the thieves escape", "the thieves have escaped", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) is correct. Past perfect 'had escaped' is required because the departure of the thieves occurred completely prior to the past arrival event of the officers[cite: 9]."
+  },
+  {
+    id: 53,
+    question: "Last winter, due to the severe cold wave, many water pipes bursting in the residential colony, creating a major inconvenience for the families.",
+    options: ["many water pipes burst", "many water pipes bursting", "many water pipes have burst", "many water pipes will burst"],
+    answer: 0,
+    explanation: "Option (a) is correct. The simple past format of the irregular verb burst remains 'burst' ($V_1=V_2=V_3$), which correctly lines up with 'Last winter'[cite: 9]."
+  },
+  {
+    id: 54,
+    question: "In her school days, she use to participate in every annual cultural event and often won prizes for her classical dance performances.",
+    options: ["used to participated", "participates", "used to participate", "participating"],
+    answer: 2,
+    explanation: "Option (c) is correct. Past habitual activities use the phrase 'used to' tied to a bare base infinitive form[cite: 9]."
+  },
+  {
+    id: 55,
+    question: "Despite traveling across many countries and meeting countless inspiring people, Raj never meet such a generous host again in his life.",
+    options: ["never met such a generous host", "never meets such a generous host", "had never meet such a generous host", "will never met such a generous host"],
+    answer: 0,
+    explanation: "Option (a) is correct. The sentence records a complete past lifespan narrative history milestone, calling for 'never met'[cite: 9]."
+  },
+  {
+    id: 56,
+    question: "Despite being warned repeatedly about reckless driving, the delivery rider is failed to follow the traffic rules and met with a serious accident last night.",
+    options: ["had failed to follow", "failed to follow", "will fail to follow", "is failing to follow"],
+    answer: 1,
+    explanation: "Option (b) is correct. Active simple past tense 'failed to follow' properly fits the sequence tracking completed past incidents ('met with an accident last night')[cite: 9]."
+  },
+  {
+    id: 57,
+    question: "When the judge announced the surprising verdict in the crowded courtroom, his eyes grow wide as he understand what it meant for his future.",
+    options: ["grew wide as he understood", "grow wide as he understood", "was grown wide as he understand", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) is correct. Both verbs must step into simple past configurations ('grew... understood') to stay consistent with 'announced' and 'meant'[cite: 9]."
+  },
+  {
+    id: 58,
+    question: "This automatic streetlight switches on when the sky getting dark and helps pedestrians walk safely during late evenings.",
+    options: ["when the sky got dark", "when the sky gets dark", "when the sky has been getting dark", "No substitution required"],
+    answer: 1,
+    explanation: "Option (b) is correct. General continuous conditional mechanisms or tech operations take simple present forms ('when the sky gets dark')[cite: 9]."
+  },
+  {
+    id: 59,
+    question: "The report stated that thousands of complaints have been registered against him in various police stations across the country.",
+    options: ["had been registered against him.", "has been registered against him.", "had been registering against him.", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) is correct. Indirect reported speech conversions introduced by a past reporting verb ('stated') force present perfect structures to shift into past perfect formats[cite: 9]."
+  },
+  {
+    id: 60,
+    question: "In the ancient world, new trade routes were being appeared as merchants travelled across deserts and seas in search of rare goods.",
+    options: ["appeared", "was appearing", "have appeared", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) is correct. 'Appear' is an unalterable intransitive action verb, meaning it cannot assume passive or progressive passive frames ('were being appeared')[cite: 9]."
+  },
+  {
+    id: 61,
+    question: "She is working as a research analyst in Bengaluru for the past five years, and during this period she has contributed to several international projects.",
+    options: ["has been working", "worked", "have been working", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) is correct. Actions running continuously up across an explicitly measured duration block ('for the past five years') require present perfect continuous templates[cite: 9]."
+  },
+  {
+    id: 62,
+    question: "How many cars had they bought till date as part of their expanding rental business in the city?",
+    options: ["have they bought", "are they buying", "did they buy", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) is correct. Accumulation review phrases checking metrics up to the immediate moment ('till date') take present perfect structures[cite: 9]."
+  },
+  {
+    id: 63,
+    question: "Most students avoid studying with him since he is distracting others by cracking jokes and making unnecessary comments in class every day.",
+    options: ["he distracts others", "he distracted others", "he has distracted others", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) is correct. Generalized daily habitual behavior summaries marked via frequency links ('every day') use simple present setups[cite: 9]."
+  },
+  {
+    id: 64,
+    question: "These days, my cousins are been planning to renovate their old farmhouse located in a remote village in Nainital district.",
+    options: ["are being planning", "are planning", "will planning", "have planned"],
+    answer: 1,
+    explanation: "Option (b) is correct. Active present continuous intentions are formed using the straightforward template: 'are planning'[cite: 9]."
+  },
+  {
+    id: 65,
+    question: "One of the important chapters in this book had not yet been explained by our professor.",
+    options: ["is not yet been explained", "have not been explained yet", "has not been explained yet", "was not explained yet"],
+    answer: 2,
+    explanation: "Option (c) is correct. Negative boundary tracking words pointing to the current moment ('yet') require present perfect matching layouts, and the singular core head 'One' takes 'has'[cite: 9]."
+  },
+  {
+    id: 66,
+    question: "The wedding arrangements has been completed before most of the guests started arriving at the venue.",
+    options: ["were completed", "will have been completed", "had been completed", "is being completed"],
+    answer: 2,
+    explanation: "Option (c) is correct. Past perfect 'had been completed' outlines an action structured and completed prior to a second clear historical event timeline point ('started arriving')[cite: 9]."
+  },
+  {
+    id: 67,
+    question: "When we reached the riverside at sunset, a group of travelers has been setting up their tents and arranging firewood for the night stay.",
+    options: ["had been setting", "has been setting", "were setting", "will have been setting"],
+    answer: 2,
+    explanation: "Option (c) is correct. Past continuous plural 'were setting' captures background actions that were actively in progress at the exact point of our arrival[cite: 9]."
+  },
+  {
+    id: 68,
+    question: "The bus driver talk to a passenger when the bus suddenly hit a speed breaker, causing everyone to jerk forward.",
+    options: ["talked", "had talked", "was talking", "has talked"],
+    answer: 2,
+    explanation: "Option (c) is correct. A mid-process background past ongoing status ('was talking') is interrupted by a sharp, single completed action point ('hit')[cite: 9]."
+  },
+  {
+    id: 69,
+    question: "I have been travelling to different countries before, so I am comfortable dealing with airport procedures and immigration checks.",
+    options: ["have travelled", "was travelling", "had travelled", "will travel"],
+    answer: 0,
+    explanation: "Option (a) is correct. Simple past experiential history benchmarks referencing indefinite times ('before') match present perfect patterns: 'have travelled'[cite: 9]."
+  },
+  {
+    id: 70,
+    question: "The headquarters of this international organization are establishing in Geneva, where many global meetings are held.",
+    options: ["No improvement", "were establishing", "have been establishing", "is established"],
+    answer: 3,
+    explanation: "Option (d) is correct. Permanent passive structural descriptive facts take simple present formats: 'is established' (treating headquarters as a singular agency unit)[cite: 9]."
+  },
+  {
+    id: 71,
+    question: "After finishing the first round of inspection at the construction site, the engineer is noticing several cracks forming near the basement walls.",
+    options: ["notices", "noticed", "had noticed", "was noticed"],
+    answer: 1,
+    explanation: "Option (b) is correct. Individual past observational reaction instances are framed using simple past tense forms: 'noticed'[cite: 9]."
+  },
+  {
+    id: 72,
+    question: "The university authorities have promised to improve and enhance digital learning facilities before the next academic session begins.",
+    options: ["have promised to improve and enhanced", "has promised to improve and enhance", "No improvement required", "have promise to improve and enhance"],
+    answer: 2,
+    explanation: "Option (c) requires no improvement. The plural subject 'authorities' correctly pairs with 'have promised' followed by balanced base infinitives[cite: 9]."
+  },
+  {
+    id: 73,
+    question: "These days, teenagers are becoming conscious in the importance of managing their screen time wisely, as excessive use of gadgets can seriously affect their mental health and productivity.",
+    options: ["are becoming conscious about", "are becoming conscious of", "have become conscious for", "No improvement"],
+    answer: 1,
+    explanation: "Option (b) applies the precise structural prepositional adjective idiom link: 'conscious of'[cite: 9]."
+  },
+  {
+    id: 74,
+    question: "Over the past year, regular awareness campaigns by doctors improve public understanding of the importance of timely vaccinations for children and adults.",
+    options: ["have improved public understanding", "improves public understanding", "are improving public understanding", "improved public understanding"],
+    answer: 0,
+    explanation: "Option (a) is correct. Cumulative progress patterns moving across an immediate timeline block ('Over the past year') require present perfect alignment: 'have improved'[cite: 9]."
+  },
+  {
+    id: 75,
+    question: "Last year, our football team performed exceptionally well in the state championship, but doesn't secure a place in the national finals despite strong efforts.",
+    options: ["but didn't secure a place", "but hasn't secure a place", "although it secures a place", "No improvement"],
+    answer: 0,
+    explanation: "Option (a) is correct. Past chronological negative event blocks require simple past auxiliary negation formatting: 'but didn't secure'[cite: 9]."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>${q.id}. ${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q${i+1}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

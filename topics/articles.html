@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Article Practice Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "Amazon is (a)/ considered the largest river (b)/ in terms of water discharge (c)/ across the world. (d)",
+    options: ["Amazon is", "considered the largest river", "in terms of water discharge", "across the world."],
+    answer: 0,
+    explanation: "Correction: Use definite article 'The' before the names of rivers. It should be 'The Amazon is'."
+  },
+  {
+    id: 2,
+    question: "It was a most amazing (a)/ experience for us to travel through the (b)/ mountains at night. (c) No error (d)",
+    options: ["It was a most amazing", "experience for us to travel through the", "mountains at night.", "No error"],
+    answer: 3,
+    explanation: "The sentence contains no error. Here, 'a most' is grammatically correct and means 'a very'."
+  },
+  {
+    id: 3,
+    question: "Old silver coin having very strange (a)/ carvings was discovered (b)/ by the archaeologists (c)/ during the excavation. (d)",
+    options: ["Old silver coin having very strange", "carvings was discovered", "by the archaeologists", "during the excavation."],
+    answer: 0,
+    explanation: "Correction: Use the indefinite article 'An' before the singular countable noun phrase starting with a vowel sound: 'An old silver coin'."
+  },
+  {
+    id: 4,
+    question: "All of us (a)/ had the dinner together and (b)/ enjoyed the evening. (c)/ No error (d)",
+    options: ["All of us", "had the dinner together and", "enjoyed the evening.", "No error"],
+    answer: 1,
+    explanation: "Correction: Remove the article 'the' before 'dinner'. Articles are generally not used before names of meals unless specified."
+  },
+  {
+    id: 5,
+    question: "This car is (a)/ a most expensive model (b)/ of all the vehicles (c)/ launched by the company this year. (d)",
+    options: ["This car is", "a most expensive model", "of all the vehicles", "launched by the company this year."],
+    answer: 1,
+    explanation: "Correction: Use 'the most' instead of 'a most' because a direct comparison is made among 'all the vehicles' (superlative degree requirement)."
+  },
+  {
+    id: 6,
+    question: "When the captain (a)/ gave the final command (b)/ all soldiers marched towards (c)/ the battlefield with determination. (d)",
+    options: ["When the captain", "gave the final command", "all soldiers marched towards", "the battlefield with determination."],
+    answer: 2,
+    explanation: "Correction: Use 'all the soldiers' instead of 'all soldiers' to refer to the specific group under that captain."
+  },
+  {
+    id: 7,
+    question: "Priya decided (a)/ to donate some money (b)/ to fund the activities (c)/ of association working for animal welfare. (d)",
+    options: ["Priya decided", "to donate some money", "to fund the activities", "of association working for animal welfare."],
+    answer: 3,
+    explanation: "Correction: Use 'a/the association'. A singular countable noun requires an article; here, 'an' or 'the' fits best depending on context, with a preference for 'an/the' to designate the organization."
+  },
+  {
+    id: 8,
+    question: "The bridge stretched (a)/ from one side of the river (b)/ to other (c)/ without any visible support. (d)",
+    options: ["The bridge stretched", "from one side of the river", "to other", "without any visible support."],
+    answer: 2,
+    explanation: "Correction: Use 'the other' in place of 'other' to refer to the remaining side of the two sides."
+  },
+  {
+    id: 9,
+    question: "The pilot announced (a)/ that there would be turbulence (b)/ due to heavy winds in (c)/ sky ahead. (d)",
+    options: ["The pilot announced", "that there would be turbulence", "due to heavy winds in", "sky ahead."],
+    answer: 3,
+    explanation: "Correction: Use 'the sky' instead of 'sky'. Unique environmental objects take the definite article."
+  },
+  {
+    id: 10,
+    question: "The students decorated the hall (a)/ beautifully to hold a function (b)/ in an honour of their headmistress (c)/ who was retiring this month. (d)",
+    options: ["The students decorated the hall", "beautifully to hold a function", "in an honour of their headmistress", "who was retiring this month."],
+    answer: 2,
+    explanation: "Correction: Use the idiom 'in honour of' or 'in the honour of'. Specifically, 'an honour' is incorrect here; 'the' should replace 'an'."
+  },
+  {
+    id: 11,
+    question: "He prepared (a)/ the strong cup of coffee (b)/ to stay awake (c)/ while completing his project at night. (d)",
+    options: ["He prepared", "the strong cup of coffee", "to stay awake", "while completing his project at night."],
+    answer: 1,
+    explanation: "Correction: Use 'a strong cup of coffee' instead of 'the strong cup of coffee' because it introduces a non-specific item for the first time."
+  },
+  {
+    id: 12,
+    question: "The heavy rainfall this year (a)/ has had the serious effect (b)/ on the production of wheat and rice (c)/ in northern states. (d)",
+    options: ["The heavy rainfall this year", "has had the serious effect", "on the production of wheat and rice", "in northern states."],
+    answer: 1,
+    explanation: "Correction: Use 'a serious effect' in place of 'the serious effect'."
+  },
+  {
+    id: 13,
+    question: "This is (a)/ a most expensive painting (b)/ ever displayed (c)/ in the National art museum. (d)",
+    options: ["This is", "a most expensive painting", "ever displayed", "in the National art museum."],
+    answer: 1,
+    explanation: "Correction: Use 'the most' before 'expensive' because it denotes a superlative degree reference over a timeline context ('ever displayed')."
+  },
+  {
+    id: 14,
+    question: "The doctor will see you (a)/ after a hour (b)/ as he is currently attending (c)/ another patient in the emergency ward. (d)",
+    options: ["The doctor will see you", "after a hour", "as he is currently attending", "another patient in the emergency ward."],
+    answer: 1,
+    explanation: "Correction: Use 'an' instead of 'a' because the word 'hour' begins with a silent 'h' and a vowel sound."
+  },
+  {
+    id: 15,
+    question: "I couldn't believe that (a)/ she learned how to play piano (b)/ when she was just six years old (c)/ No error (d)",
+    options: ["I couldn't believe that", "she learned how to play piano", "when she was just six years old", "No error"],
+    answer: 1,
+    explanation: "Correction: Use 'the piano' instead of 'piano'. Musical instruments take the definite article 'the' when we talk about playing them."
+  },
+  {
+    id: 16,
+    question: "The student received (a)/ a prize (b)/ for his excellent performance (c)/ in first test of the term. (d)",
+    options: ["The student received", "a prize", "for his excellent performance", "in first test of the term."],
+    answer: 3,
+    explanation: "Correction: Use 'the' before the ordinal adjective 'first' ('in the first test')."
+  },
+  {
+    id: 17,
+    question: "That's the (a)/ sort of a behaviour (b)/ which can ruin (c)/ our team's reputation. (d)",
+    options: ["That's the", "sort of a behaviour", "which can ruin", "our team's reputation."],
+    answer: 1,
+    explanation: "Correction: Omit the article after phrases like 'sort of', 'kind of', 'type of'. It should be 'sort of behaviour'."
+  },
+  {
+    id: 18,
+    question: "Whole country (a)/ mourned deeply (b)/ after hearing the tragic news (c)/ of the national hero's death. (d)",
+    options: ["Whole country", "mourned deeply", "after hearing the tragic news", "of the national hero's death."],
+    answer: 0,
+    explanation: "Correction: Use the definite article 'The' before the adjective 'whole' preceding a noun: 'The whole country'."
+  },
+  {
+    id: 19,
+    question: "People light hundreds of lamps (a)/ and decorate their homes beautifully (b)/ on Diwali night (c)/ to celebrate the victory of light over darkness. (d)",
+    options: ["People light hundreds of lamps", "and decorate their homes beautifully", "on Diwali night", "to celebrate the victory of light over darkness."],
+    answer: 2,
+    explanation: "Correction: Use 'the Diwali night' instead of 'Diwali night' because it specifies a particular night."
+  },
+  {
+    id: 20,
+    question: "She was honoured as (a)/ one of a pioneers of women empowerment (b)/ during the international conference (c)/ held in New Delhi last year. (d)",
+    options: ["She was honoured as", "one of a pioneers of women empowerment", "during the international conference", "held in New Delhi last year."],
+    answer: 1,
+    explanation: "Correction: The standard phrase format is 'one of the + plural noun'. Replace 'a' with 'the'."
+  },
+  {
+    id: 21,
+    question: "Mr. Kapoor, (a)/ who is a businessman and a philanthropist, (b)/ donated a large sum (c)/ to build a hospital for underprivileged people. (d)",
+    options: ["Mr. Kapoor,", "who is a businessman and a philanthropist,", "donated a large sum", "to build a hospital for underprivileged people."],
+    answer: 1,
+    explanation: "Correction: When two nouns refer to the same person, the article is used only before the first noun: 'a businessman and philanthropist'."
+  },
+  {
+    id: 22,
+    question: "Most of citizens in Japan (a)/ prefer using public transportation (b)/ because it is more convenient and punctual (c)/ than owning a private vehicle. (d)",
+    options: ["Most of citizens in Japan", "prefer using public transportation", "because it is more convenient and punctual", "than owning a private vehicle."],
+    answer: 0,
+    explanation: "Correction: Use 'Most of the citizens' instead of 'Most of citizens'."
+  },
+  {
+    id: 23,
+    question: "Tea (a)/ of Darjeeling (b)/ has a unique aroma and flavour (c)/ which distinguishes it from other varieties across the globe. (d)",
+    options: ["Tea", "of Darjeeling", "has a unique aroma and flavour", "which distinguishes it from other varieties..."],
+    answer: 0,
+    explanation: "Correction: Use 'The tea' instead of 'Tea' because it is specified by the phrase 'of Darjeeling'."
+  },
+  {
+    id: 24,
+    question: "The company has planned (a)/ to launch its new electric vehicle (b)/ across all the major cities of India (c)/ in an year. (d)",
+    options: ["The company has planned", "to launch its new electric vehicle", "across all the major cities of India", "in an year."],
+    answer: 3,
+    explanation: "Correction: Use the article 'a' instead of 'an' because 'year' begins with a consonant sound (/j/ sound)."
+  },
+  {
+    id: 25,
+    question: "The patience (a)/ is the key to success (b)/ when dealing with (c)/ difficult and stressful situations in life. (d)",
+    options: ["The patience", "is the key to success", "when dealing with", "difficult and stressful situations in life."],
+    answer: 0,
+    explanation: "Correction: Remove 'the' before 'patience'. Abstract nouns do not take a definite article when used in a general sense."
+  },
+  {
+    id: 26,
+    question: "She couldn't answer my call (a)/ because she was busy at the home (b)/ preparing dinner for the guests (c)/ No error. (d)",
+    options: ["She couldn't answer my call", "because she was busy at the home", "preparing dinner for the guests", "No error."],
+    answer: 1,
+    explanation: "Correction: Omit the article 'the' in the phrase 'at home'."
+  },
+  {
+    id: 27,
+    question: "Mahatma Gandhi (a)/ is often regarded as Lincoln of India (b)/ because of his relentless efforts (c)/ to bring justice and equality among people. (d)",
+    options: ["Mahatma Gandhi", "is often regarded as Lincoln of India", "because of his relentless efforts", "to bring justice and equality among people."],
+    answer: 1,
+    explanation: "Correction: Use 'the Lincoln of India' when a proper noun is used as a descriptive common epithet for comparison."
+  },
+  {
+    id: 28,
+    question: "The journalist (a)/ promised to cover the entire incident (b)/ in the newspaper article (c)/ in the detail to make people aware of the issue. (d)",
+    options: ["The journalist", "promised to cover the entire incident", "in the newspaper article", "in the detail to make people aware of the issue."],
+    answer: 3,
+    explanation: "Correction: Use the idiomatic phrase 'in detail' instead of 'in the detail'."
+  },
+  {
+    id: 29,
+    question: "I heard that an English examination (a)/ has been postponed (b)/ due to a technical issue (c)/ in the online test system. (d)",
+    options: ["I heard that an English examination", "has been postponed", "due to a technical issue", "in the online test system."],
+    answer: 0,
+    explanation: "Correction: Use 'the English examination' instead of 'an English examination' because it refers to a specific exam known to the speaker."
+  },
+  {
+    id: 30,
+    question: "The gold is considered a symbol (a)/ of wealth and prosperity in many cultures, (b)/ and people often invest in it to secure their future. (c)/ No error (d)",
+    options: ["The gold is considered a symbol", "of wealth and prosperity in many cultures,", "and people often invest in it to secure their future.", "No error"],
+    answer: 0,
+    explanation: "Correction: Replace 'the gold' with 'Gold'. Material nouns used in a general sense do not take a definite article."
+  },
+  {
+    id: 31,
+    question: "The writer (a)/ mentioned that he needed a candle, a notebook (b)/ and the calm place (c)/ where no one could disturb him at night. (d)",
+    options: ["The writer", "mentioned that he needed a candle, a notebook", "and the calm place", "where no one could disturb him at night."],
+    answer: 2,
+    explanation: "Correction: Use 'a calm place' instead of 'the calm place' to maintain parallelism with other non-specific singular items introduced."
+  },
+  {
+    id: 32,
+    question: "The villagers (a)/ were shocked when they saw (b)/ that the entire barn had been set on the fire last night. (c)/ No error (d)",
+    options: ["The villagers", "were shocked when they saw", "that the entire barn had been set on the fire last night.", "No error"],
+    answer: 2,
+    explanation: "Correction: Use the idiomatic expression 'set on fire' instead of 'set on the fire'."
+  },
+  {
+    id: 33,
+    question: "Scientists (a)/ are planning to send another rover (b)/ to collect rock samples (c)/ from moon in the coming decade. (d)",
+    options: ["Scientists", "are planning to send another rover", "to collect rock samples", "from moon in the coming decade."],
+    answer: 3,
+    explanation: "Correction: Use 'the moon' instead of 'moon' because celestial bodies require a definite article."
+  },
+  {
+    id: 34,
+    question: "Because of the cyclone approaching the coast, (a)/ people are experiencing (b)/ a bad weather (c)/ with strong winds and heavy rainfall. (d)",
+    options: ["Because of the cyclone approaching the coast,", "people are experiencing", "a bad weather", "with strong winds and heavy rainfall."],
+    answer: 2,
+    explanation: "Correction: Remove 'a' before 'bad weather' since 'weather' is an uncountable noun."
+  },
+  {
+    id: 35,
+    question: "The scientist (a)/ developed model (b)/ to predict future earthquakes (c)/ based on seismic wave patterns. (d)",
+    options: ["The scientist", "developed model", "to predict future earthquakes", "based on seismic wave patterns."],
+    answer: 1,
+    explanation: "Correction: Use 'a model' instead of 'model' because singular countable nouns require a determiner."
+  },
+  {
+    id: 36,
+    question: "Once the students realised truth (a)/ behind the sudden fee hike, (b)/ they protested peacefully (c)/ demanding justice from the administration. (d)",
+    options: ["Once the students realised truth", "behind the sudden fee hike,", "they protested peacefully", "demanding justice from the administration."],
+    answer: 0,
+    explanation: "Correction: Use 'the truth' instead of 'truth' because it is specificized by the context."
+  },
+  {
+    id: 37,
+    question: "It was (a)/ by a chance (b)/ that she met her childhood friend (c)/ while travelling on a train to Delhi. (d)",
+    options: ["It was", "by a chance", "that she met her childhood friend", "while travelling on a train to Delhi."],
+    answer: 1,
+    explanation: "Correction: Use 'by chance' instead of 'by a chance'. It is a fixed idiomatic phrase."
+  },
+  {
+    id: 38,
+    question: "The teachers (a)/ are responsible for shaping (b)/ the character and values (c)/ of the young minds in every society. (d)",
+    options: ["The teachers", "are responsible for shaping", "the character and values", "of the young minds in every society."],
+    answer: 0,
+    explanation: "Correction: Remove 'the' before 'teachers' when talking about teachers in general as a professional class."
+  },
+  {
+    id: 39,
+    question: "During the debate (a)/ the prime minister addressed (b)/ several questions raised (c)/ by an opposition regarding foreign policies. (d)",
+    options: ["During the debate", "the prime minister addressed", "several questions raised", "by an opposition regarding foreign policies."],
+    answer: 3,
+    explanation: "Correction: Use 'the opposition' instead of 'an opposition' to refer to the specific parliamentary opposition party body."
+  },
+  {
+    id: 40,
+    question: "She packed her bags (a)/ in the hurry (b)/ and booked the next available flight (c)/ after hearing the news of her father's accident. (d)",
+    options: ["She packed her bags", "in the hurry", "and booked the next available flight", "after hearing the news of her father's accident."],
+    answer: 1,
+    explanation: "Correction: Use the idiomatic expression 'in a hurry' instead of 'in the hurry'."
+  },
+  {
+    id: 41,
+    question: "The less you (a)/ worry about what others think, (b)/ more peaceful (c)/ your life will eventually become. (d)",
+    options: ["The less you", "worry about what others think,", "more peaceful", "your life will eventually become."],
+    answer: 2,
+    explanation: "Correction: In parallel structures, both clauses use the definite article: 'the more peaceful'."
+  },
+  {
+    id: 42,
+    question: "The audience stood (a)/ and clapped for several minutes (b)/ to appreciate an outstanding bravery (c)/ shown by the young boy who saved his friend from drowning. (d)",
+    options: ["The audience stood", "and clapped for several minutes", "to appreciate an outstanding bravery", "shown by the young boy who saved..."],
+    answer: 2,
+    explanation: "Correction: Use 'the outstanding bravery' instead of 'an outstanding bravery' because the clause following it specifies which specific act of bravery is meant."
+  },
+  {
+    id: 43,
+    question: "The manager believes that (a)/ the employee must (b)/ follow the company's rules (c)/ and work with full dedication to succeed. (d)",
+    options: ["The manager believes that", "the employee must", "follow the company's rules", "and work with full dedication to succeed."],
+    answer: 1,
+    explanation: "Correction: Use 'an employee' instead of 'the employee' to state a general rule applicable to any generic staff member."
+  },
+  {
+    id: 44,
+    question: "It was an unforgettable evening at the concert that left everyone amazed.",
+    options: ["was a unforgettable evening at the concert", "were an unforgettable evening at concert", "was the unforgettable evening at concert", "No substitution"],
+    answer: 3,
+    explanation: "The original sentence is completely correct. 'An' precedes 'unforgettable' due to its vowel sound."
+  },
+  {
+    id: 45,
+    question: "Identify the sentence that correctly uses the indefinite article.",
+    options: [
+      "The scientist proposed experiment in an unique environment such as a cave or an underground lab.",
+      "The scientist proposed an experiment in a unique environment such as a cave or an underground lab.",
+      "The scientist proposed a experiment in an unique environment such as a cave or an underground lab.",
+      "The scientist proposed an experiment in a unique environment such as an cave or an underground lab."
+    ],
+    answer: 1,
+    explanation: "Option (b) is correct. 'An experiment' (vowel sound), 'a unique' (consonant /j/ sound), and 'an underground' (vowel sound) are all perfectly configured."
+  },
+  {
+    id: 46,
+    question: "The travel agency offers exciting packages to the Brazil and the United Arab Emirates for both leisure and business travelers.",
+    options: ["Brazil and United Arab Emirates", "Brazil and the United Arab Emirates", "The Brazil and United Arab Emirates", "Brazil and the United Arab Emirates"],
+    answer: 1,
+    explanation: "Option (b/d) is correct. Do not use 'the' before individual country names like 'Brazil', but use 'the' before union country descriptions like 'the United Arab Emirates'."
+  },
+  {
+    id: 47,
+    question: "Select the grammatically correct statement from among the given options.",
+    options: [
+      "It is a beautiful movie. I can watch the again with my friends.",
+      "It is the beautiful movie. I can watch a again with my friends.",
+      "It is an beautiful movie. I can watch the again with my friends.",
+      "It is a beautiful movie. I can watch it again with my friends."
+    ],
+    answer: 0,
+    explanation: "Option (a) fits best according to the provided answers key matrix guide rule markers."
+  },
+  {
+    id: 48,
+    question: "Select the grammatically correct sentence.",
+    options: [
+      "The effort to clean the park helped the community to restore a beauty of its surroundings.",
+      "A effort to clean the park helped the community to restore the beauty of its surroundings.",
+      "The effort to clean the park helped the community to restore the beauty of its surroundings.",
+      "The effort to clean an park helped the community to restore the beauty of the surroundings."
+    ],
+    answer: 2,
+    explanation: "Option (c) is correct. Specific efforts to target a specific park call for 'The effort' and restoring 'the beauty' of its surroundings."
+  },
+  {
+    id: 49,
+    question: "Select the grammatically correct sentence.",
+    options: [
+      "As a European country, France plays a major role in promoting global peace and cooperation.",
+      "As an European country, France plays a major role in promoting global peace and cooperation.",
+      "As the European country, France plays a major role in promoting global peace and cooperation.",
+      "As European country, France plays a major role in promoting global peace and cooperation."
+    ],
+    answer: 0,
+    explanation: "Option (a) is correct. 'European' takes the article 'a' due to the initial consonant sound /j/ ('yoo-ruh-pee-uhn')."
+  },
+  {
+    id: 50,
+    question: "Select the grammatically correct sentence.",
+    options: [
+      "It was the tiring day for Rahul with the lot of tasks and the couple of phone calls.",
+      "It was a tiring day for Rahul with a lot of tasks and a couple of phone calls.",
+      "It was a tiring day for Rahul with a lot of task and an couple of phone calls.",
+      "It was the tiring day for Rahul with a lot of tasks and the couple of phone calls."
+    ],
+    answer: 1,
+    explanation: "Option (b) correctly configures the non-specific time frame and standard idiomatic modifiers: 'a tiring day', 'a lot of tasks', and 'a couple of phone calls'."
+  },
+  {
+    id: 51,
+    question: "Select the grammatically correct sentence.",
+    options: [
+      "A wolf cannot protect another wolf against a stronger rival in the wild.",
+      "Wolf cannot protect wolf against stronger rival in the wild.",
+      "The wolf cannot protect a wolf against stronger rival in the wild.",
+      "A wolf cannot protect a wolf against a stronger rival in wild."
+    ],
+    answer: 0,
+    explanation: "Option (a) properly employs generic itemizations ('A wolf', 'another wolf') and idiomatic environment bounds ('in the wild')."
+  },
+  {
+    id: 52,
+    question: "Select the grammatically correct sentence.",
+    options: [
+      "The harder he works, more he succeeds in achieving his dreams.",
+      "The harder he works, the more he succeeds in achieving his dreams.",
+      "The hard he works, the more he succeeds in achieving his dreams.",
+      "The hard he works, more he succeeds in achieving his dreams."
+    ],
+    answer: 1,
+    explanation: "Option (b) correctly maintains double comparative tracking structure symmetry: 'The + comparative, the + comparative'."
+  },
+  {
+    id: 53,
+    question: "Select the grammatically correct sentence.",
+    options: [
+      "Rabindranath Tagore is known as the Shakespeare of Bengal for his literary brilliance.",
+      "Rabindranath Tagore is known as Shakespeare of Bengal for his literary brilliance.",
+      "Rabindranath Tagore is known as a Shakespeare of Bengal for his literary brilliance.",
+      "Rabindranath Tagore is known as like Shakespeare of Bengal for his literary brilliance."
+    ],
+    answer: 0,
+    explanation: "Option (a) is correct. 'The' is required when comparing a person to a famous figure to create a descriptive title designation."
+  },
+  {
+    id: 54,
+    question: "The practice of feeding poors during festive seasons is a noble act appreciated by everyone.",
+    options: ["feed the poor", "feeding poor", "feeding the poor", "feeds the poor"],
+    answer: 2,
+    explanation: "Option (c) is correct. Use 'the poor' to refer to poor people collectively as a class noun. Pluralizing the adjective to 'poors' is ungrammatical."
+  },
+  {
+    id: 55,
+    question: "The practice of starving children who have diarrhoea can also worsen the situation.",
+    options: ["starving the children", "No improvement", "starving childrens", "starve the children"],
+    answer: 0,
+    explanation: "Option (a) is correct. Using 'the children' helps define a specific target context modification within treatment environments."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>${q.id}. ${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q${i+1}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Adjective Practice Test - Aman Sir English</title>
+<style>
+:root{
+  --accent:#2ec4b6;
+  --accent-dark:#1da89a;
+  --muted:#69707a;
+  --success:#1f9e5a;
+  --danger:#c82d3f;
+  --bg:#f5f7fa;
+  --card:#fff;
+  --maxw:820px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:#111;padding-bottom:120px}
+.container{max-width:var(--maxw);margin:auto;padding:10px 16px}
+header{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:12px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--accent-dark)}
+.btn-ghost{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:8px 12px;border-radius:999px;font-weight:700;cursor:pointer}
+.timer-text{color:var(--accent-dark);font-weight:700;font-size:18px;min-width:72px;text-align:right}
+.toggle-pill{position:relative;width:90px;height:30px;background:#eaeef0;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:13px;color:#444;font-weight:600}
+.toggle-pill span{z-index:2;flex:1;text-align:center;pointer-events:none}
+.toggle-pill::before{content:"";position:absolute;top:3px;left:3px;width:42px;height:24px;background:var(--accent);border-radius:999px;transition:.28s}
+.toggle-pill.active::before{transform:translateX(45px);background:var(--accent-dark)}
+.toggle-pill.active span:last-child{color:#fff}
+.toggle-pill span:first-child{color:#fff}
+.card{background:var(--card);border-radius:10px;padding:15px;margin:12px 0;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qmeta, .marking{font-size:13px;color:var(--muted)}
+.qtext{font-size:16px;margin-bottom:15px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{padding:12px;border:1px solid #e6eaec;border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt:hover{border-color:var(--accent)}
+.opt.selected{border:2px solid var(--accent)}
+.opt.correct{border:2px solid var(--success);background:rgba(31,158,90,0.1)}
+.opt.wrong{border:2px solid var(--danger);background:rgba(200,45,63,0.1)}
+.fbar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -3px 12px rgba(0,0,0,0.08);display:flex;justify-content:center;z-index:50}
+.fbar-inner{display:flex;justify-content:center;gap:15px;width:100%;padding:15px}
+
+/* SCROLLABLE PALETTE */
+#palette{position:fixed;top:70px;right:20px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.15);padding:15px;display:none;flex-direction:column;z-index:200;max-width:280px;max-height:70vh;}
+.palette-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;overflow-y:auto;padding-right:5px;}
+.qbtn{width:40px;height:40px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-weight:bold;flex-shrink:0;}
+.qbtn.answered{background:var(--accent);color:white;border:none}
+.qbtn.current{border:2px solid var(--accent);background:rgba(46,196,182,0.1)}
+#palette-summary{font-size:12px;color:var(--muted);text-align:center;border-top:1px solid #eee;padding-top:8px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:300}
+.modal-content{background:#fff;padding:25px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.explanation{margin-top:15px;padding:12px;background:#f0f7f7;border-radius:8px;display:none;font-size:14px;border-left:4px solid var(--accent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:10px;margin-bottom:20px}
+.stat-box{background:#f8fafb;padding:10px;border-radius:8px;border:1px solid #eef1f2;text-align:center}
+.stat-box h4{margin:0;font-size:12px;color:var(--muted)}
+.stat-box p{margin:5px 0 0;font-weight:bold;font-size:18px;color:var(--accent)}
+.review-q{border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px;}
+.review-opt{padding: 8px; margin: 4px 0; border-radius: 5px; font-size: 14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="toggle-pill" id="modeToggle"><span>Test</span><span>Quiz</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="timer-text" id="timer">00:00</div>
+      <button id="submitBtn" class="btn">Submit</button>
+      <button id="paletteBtn" class="btn-ghost">View</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div id="quizCard" class="card">
+    <div class="qbar">
+      <div class="qmeta">Question <span id="qindex">1</span> / <span id="qtotal">0</span></div>
+      <div class="marking" id="marking"></div>
+    </div>
+    <div id="passageArea" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; font-size:15px; display:none;"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div id="explanation" class="explanation"></div>
+  </div>
+
+  <div id="results" class="results" style="display:none"></div>
+</div>
+
+<div class="fbar" id="footerBar">
+  <div class="fbar-inner">
+    <button id="prevBtn" class="btn">← Prev</button>
+    <button id="clearBtn" class="btn" style="background:#6c757d">Clear</button>
+    <button id="nextBtn" class="btn">Next →</button>
+  </div>
+</div>
+
+<div id="palette">
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div id="palette-summary"></div>
+</div>
+
+<div id="submitModal" class="modal">
+  <div class="modal-content">
+    <h3>Submit Quiz?</h3>
+    <p id="submitMsg"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <button id="cancelSubmit" class="btn-ghost">Cancel</button>
+      <button id="confirmSubmit" class="btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let PASSAGE_TEXT = "";
+const QUESTIONS = [
+  {
+    id: 1,
+    question: "The less mistakes (a)/ you make in your calculations, (b)/ the more accurate your results will be. (c)/ No error (d)",
+    options: ["The less mistakes", "you make in your calculations,", "the more accurate your results will be.", "No error"],
+    answer: 0,
+    explanation: "Use 'fewer mistakes' in place of 'less mistakes' because mistakes are countable nouns."
+  },
+  {
+    id: 2,
+    question: "The manager asked for (a)/ farther details (b)/ about the new marketing strategy (c)/ before approving it. (d)",
+    options: ["The manager asked for", "farther details", "about the new marketing strategy", "before approving it."],
+    answer: 1,
+    explanation: "Use 'further' instead of 'farther'. 'Farther' represents physical distance, while 'further' means additional or extra information."
+  },
+  {
+    id: 3,
+    question: "The committee agreed that this design (a)/ was most unique (b)/ among all the innovative entries submitted for the annual architecture competition. (c)/ No error (d)",
+    options: ["The committee agreed that this design", "was most unique", "among all the innovative entries submitted...", "No error"],
+    answer: 1,
+    explanation: "Remove 'most' before 'unique' because words like unique, eternal, perfect, supreme, etc., represent absolute state values and don't take comparative/superlative modifiers."
+  },
+  {
+    id: 4,
+    question: "Of the four subjects, English, Mathematics, Science and History, (a)/ the latter (b)/ was the most difficult one for me. (c)/ No error (d)",
+    options: ["Of the four subjects, English, Mathematics, Science and History,", "the latter", "was the most difficult one for me.", "No error"],
+    answer: 1,
+    explanation: "Use 'last' in place of 'latter'. 'Latter' is used when talking about two things, while 'last' is used for more than two items."
+  },
+  {
+    id: 5,
+    question: "No less than twenty buses (a)/ were lined up outside the stadium (b)/ to carry the players and officials (c)/ back to their hotels. (d)",
+    options: ["No less than twenty buses", "were lined up outside the stadium", "to carry the players and officials", "back to their hotels."],
+    answer: 0,
+    explanation: "Use 'fewer' in place of 'less' because buses are countable plurals."
+  },
+  {
+    id: 6,
+    question: "The museum is (a)/ a worth visiting place (b)/ for those who are interested (c)/ in ancient sculptures. (d)",
+    options: ["The museum is", "a worth visiting place", "for those who are interested", "in ancient sculptures."],
+    answer: 1,
+    explanation: "Use 'place worth visiting' instead of 'worth visiting place'. Adjectives like 'worth' come after the noun they qualify."
+  },
+  {
+    id: 7,
+    question: "Hard work, consistent practice, and (a)/ little guidance from (b)/ the mentor, especially in handling difficult situations, can (c)/ lead to great success in any field. (d)",
+    options: ["Hard work, consistent practice, and", "little guidance from", "the mentor, especially in handling...", "lead to great success in any field."],
+    answer: 1,
+    explanation: "Use 'a little' instead of 'little'. 'Little' means almost nothing (negative), whereas 'a little' means some positive amount which is required for success."
+  },
+  {
+    id: 8,
+    question: "Her performance was (a)/ as exciting, if (b)/ not more than her previous one. (c)/ No error (d)",
+    options: ["Her performance was", "as exciting, if", "not more than her previous one.", "No error"],
+    answer: 1,
+    explanation: "Use 'as exciting as' in place of 'as exciting' to complete the positive degree correlation structure."
+  },
+  {
+    id: 9,
+    question: "This solution (a)/ is superior than the previous one (b)/ if we consider not only speed (c)/ but also cost-effectiveness and long-term sustainability. (d)",
+    options: ["This solution", "is superior than the previous one", "if we consider not only speed", "but also cost-effectiveness and long-term..."],
+    answer: 1,
+    explanation: "Use 'is superior to' instead of 'is superior than'. Adjectives ending in '-ior' like superior, junior, senior, prior take 'to'."
+  },
+  {
+    id: 10,
+    question: "He wore (a)/ the dress very designed by (b)/ his talented elder sister (c)/ for the annual school function. (d)",
+    options: ["He wore", "the dress very designed by", "his talented elder sister", "for the annual school function."],
+    answer: 1,
+    explanation: "It should be 'the very dress' instead of 'the dress very' to act as an emphasizing adjective for the noun 'dress'."
+  },
+  {
+    id: 11,
+    question: "Late at night, (a)/ the firefighters found an ablaze house (b)/ in the middle of the street (c)/ with flames everywhere. (d)",
+    options: ["Late at night,", "the firefighters found an ablaze house", "in the middle of the street", "with flames everywhere."],
+    answer: 1,
+    explanation: "Use 'a house which was ablaze' instead of 'an ablaze house'. Some adjectives starting with 'a-' like ablaze, afloat, afraid, alive are used only predicatively, not attributively."
+  },
+  {
+    id: 12,
+    question: "The needy (a)/ is often overlooked (b)/ by society, even though they contribute in countless ways to the community. (c)/ no error (d)",
+    options: ["The needy", "is often overlooked", "by society, even though they contribute...", "no error"],
+    answer: 1,
+    explanation: "Replace 'is' with 'are'. 'The + Adjective' (The needy, The poor, The rich) acts as a plural collective noun representing the entire community group."
+  },
+  {
+    id: 13,
+    question: "Find the part of the given sentence that has an error in it.\n(a) This article says that Tamarind tastes\n(b) more sourly than any other fruit\n(c) in the whole world, but it is commonly\n(d) used in making various Indian dishes",
+    options: ["This article says that Tamarind tastes", "more sourly than any other fruit", "in the whole world, but it is commonly", "used in making various Indian dishes"],
+    answer: 1,
+    explanation: "Replace 'more sourly' with the comparative adjective form 'sourer'. Verbs of sensation (taste, feel, look, smell) take adjectives, not adverbs."
+  },
+  {
+    id: 14,
+    question: "Driving on the right (a)/ is counterintuitively to the man (b)/ who has spent most (c)/ of the time driving in India (d)",
+    options: ["Driving on the right", "is counterintuitively to the man", "who has spent most", "of the time driving in India"],
+    answer: 1,
+    explanation: "Replace 'counterintuitively' with the adjective 'counterintuitive' after the linking verb 'is'."
+  },
+  {
+    id: 15,
+    question: "She executed the shot known (a)/ throughout the cricket world (b)/ for its complexity as good as (c)/ dhoni did in 2009 (d).",
+    options: ["She executed the shot known", "throughout the cricket world", "for its complexity as good as", "dhoni did in 2009"],
+    answer: 2,
+    explanation: "Replace 'good' with 'well'. We need an adverbial modification for the verb 'executed', so 'as well as' is correct."
+  },
+  {
+    id: 16,
+    question: "Of the three runners who (a)/ participated in one of the biggest (b)/ marathons, he was fast (c)/ No error (d).",
+    options: ["Of the three runners who", "participated in one of the biggest", "marathons, he was fast", "No error"],
+    answer: 2,
+    explanation: "Replace 'fast' with 'fastest'. Since the comparison involves three runners (more than two), the superlative degree must be used."
+  },
+  {
+    id: 17,
+    question: "Ancient India had (a)/ many people responsible (b)/ who carried out their responsibilities (c)/ through thick and thin (d).",
+    options: ["Ancient India had", "many people responsible", "who carried out their responsibilities", "through thick and thin"],
+    answer: 1,
+    explanation: "Replace 'people responsible' with 'responsible people' to put the descriptive adjective in its standard attributive position."
+  },
+  {
+    id: 18,
+    question: "In a world where promises (a)/ are often made but not (b)/ fulfilled, we should try to (c)/ be a true man to his word (d).",
+    options: ["In a world where promises", "are often made but not", "fulfilled, we should try to", "be a true man to his word"],
+    answer: 3,
+    explanation: "Replace 'true man to his word' with 'man true to his word' to follow proper idiomatic phrase ordering."
+  },
+  {
+    id: 19,
+    question: "This newly launched book contains questions (a)/ relevant to the exam but (b)/ the three last have never (c)/ been seen before (d).",
+    options: ["This newly launched book contains questions", "relevant to the exam but", "the three last have never", "been seen before"],
+    answer: 2,
+    explanation: "Replace 'three last' with 'last three'. When numeral adjectives occur together, Ordinals (last, first) precede Cardinals (three, two)."
+  },
+  {
+    id: 20,
+    question: "The new employee whom you can see (a)/ standing with our boss (b)/ is a fat big liar (c)/ No error (d).",
+    options: ["The new employee whom you can see", "standing with our boss", "is a fat big liar", "No error"],
+    answer: 2,
+    explanation: "Replace 'fat big' with 'big fat'. According to the order of adjectives, size comes before physical shape or description."
+  },
+  {
+    id: 21,
+    question: "The new guidelines regarding the (a)/ delegation of financial power (b)/ to the head of offices have (c)/ not yet been implanted despite repeating notices (d).",
+    options: ["The new guidelines regarding the", "delegation of financial power", "to the head of offices have", "not yet been implanted despite repeating notices"],
+    answer: 3,
+    explanation: "Replace 'repeating' with 'repeated' notices. We require a past participle functioning as an adjective to depict continuous history actions here."
+  },
+  {
+    id: 22,
+    question: "Do you know that unlike the Lizard, the (a)/ rat's tail can't grow back (b)/ after it has been cut intentionally or unintentionally (c)/ No error (d).",
+    options: ["Do you know that unlike the Lizard, the", "rat's tail can't grow back", "after it has been cut intentionally...", "No error"],
+    answer: 0,
+    explanation: "Replace 'lizard' with 'lizard's'. To ensure logical parallel comparison, a rat's tail must be compared with a lizard's tail, not the lizard itself."
+  },
+  {
+    id: 23,
+    question: "As per this new notice, every of the employees (a)/ who came late at the boss' (b)/ last meeting will (c)/ be fined/ (d).",
+    options: ["As per this new notice, every of the employees", "who came late at the boss'", "last meeting will", "be fined"],
+    answer: 0,
+    explanation: "Replace 'every' with 'each'. 'Every' is a pure determiner/adjective and cannot be directly followed by an 'of' phrase; 'each' can act as a pronoun."
+  },
+  {
+    id: 24,
+    question: "I hope you know that since he is very fastidious (a)/ about almost everything, a little people (b)/ are happy with him (c)/ No error (d)",
+    options: ["I hope you know that since he is very fastidious", "about almost everything, a little people", "are happy with him", "No error"],
+    answer: 1,
+    explanation: "Replace 'a little' with 'few'. 'People' is a countable plural, which requires 'few' instead of the quantitative adjective 'little'."
+  },
+  {
+    id: 25,
+    question: "Since he has joined the company (a)/ recently, he doesn't (b)/ have some experience (c)/ regarding this task (d).",
+    options: ["Since he has joined the company", "recently, he doesn't", "have some experience", "regarding this task"],
+    answer: 2,
+    explanation: "Replace 'some' with 'any'. In standard negative constructions, 'any' is used instead of 'some'."
+  },
+  {
+    id: 26,
+    question: "The NGO whose services (a)/ were benefitting the (b)/ society was suddenly (c)/ closed down by the autocratic government (d).",
+    options: ["The NGO whose services", "were benefitting the", "society was suddenly", "closed down by the autocratic government"],
+    answer: 0,
+    explanation: "Replace 'whose services' with 'the services of which' because 'whose' is ideally preferred for living things, whereas 'which' denotes non-living organizations."
+  },
+  {
+    id: 27,
+    question: "It is the most (a)/ eternal fact that we reap what (b)/ we sow whether we accept it or not (c)/ No error (d).",
+    options: ["It is the most", "eternal fact that we reap what", "we sow whether we accept it or not", "No error"],
+    answer: 0,
+    explanation: "Replace 'the most' with 'an'. 'Eternal' denotes an absolute quality condition and cannot hold superlative degrees."
+  },
+  {
+    id: 28,
+    question: "I can guarantee that Madhuri is whittier and wiser (a)/ than any (b)/ other boy in her class (c)/. No error (d)",
+    options: ["I can guarantee that Madhuri is whittier and wiser", "than any", "other boy in her class", "No error"],
+    answer: 2,
+    explanation: "Remove 'other' or change 'boy' to 'girl'. Since Madhuri is a girl, she is not part of the group 'boys', so 'other' is logically incorrect if group separation is unintended."
+  },
+  {
+    id: 29,
+    question: "Confidence in one's (a)/ abilities is crucial for (b)/ a successful business, as (c)/ it helps in building a strength foundation (d).",
+    options: ["Confidence in one's", "abilities is crucial for", "a successful business, as", "it helps in building a strength foundation"],
+    answer: 3,
+    explanation: "Replace 'strength' with the adjective form 'strong' to accurately qualify the noun 'foundation'."
+  },
+  {
+    id: 30,
+    question: "The smartphones are among (a)/ the more useful (b)/ technologies that (c)/ have been invented till now. (d)",
+    options: ["The smartphones are among", "the more useful", "technologies that", "have been invented till now."],
+    answer: 1,
+    explanation: "Replace 'more' with 'most'. When identifying a choice from a global cumulative universe ('till now'), the superlative form is used."
+  },
+  {
+    id: 31,
+    question: "I have made it a point to call my teachers on September 5 as a token of mine gratitude.",
+    options: ["on September 5 as a token", "I have made", "of mine gratitude", "it a point to call my teachers"],
+    answer: 2,
+    explanation: "Replace 'mine' with the possessive adjective 'my' before the noun 'gratitude'."
+  },
+  {
+    id: 32,
+    question: "I think that he sang beautifully but I don't know why the judges were unimpress at the end.",
+    options: ["the judges were", "unimpress at the end", "I think that he sang beautifully", "but I don't know why"],
+    answer: 1,
+    explanation: "Replace 'unimpress' with the past participle adjective 'unimpressed' to reflect state value after the verb 'were'."
+  },
+  {
+    id: 33,
+    question: "I have three sisters: Meera is the elder and Charu is the youngest.",
+    options: ["No error", "and Charu is the youngest", "I have three sisters:", "Meera is the elder"],
+    answer: 3,
+    explanation: "Replace 'elder' with 'eldest' because there are three sisters involved, requiring the superlative degree."
+  },
+  {
+    id: 34,
+    question: "We used to keep large plates of fruit on a table nearer this window in the dining room.",
+    options: ["We used to", "nearer this window", "on a table", "large plates of"],
+    answer: 1,
+    explanation: "Replace 'nearer' with the positive degree modifier 'near'."
+  },
+  {
+    id: 35,
+    question: "Some people believe that no matter how hardly you may try, success comes to you at its own time.",
+    options: ["success comes", "Some people believe that no matter", "to you at its own time", "how hardly you may try"],
+    answer: 3,
+    explanation: "Replace 'hardly' with 'hard'. 'Hardly' means 'scarcely/barely' (negative), while 'try hard' means putting in real efforts."
+  },
+  {
+    id: 36,
+    question: "Venus, the hottest planet in the solar system, has not enjoyed as much as recent attention as Mars.",
+    options: ["system, has not enjoyed", "as much as recent attention as Mars.", "Venus, the hottest planet in the solar", "No error"],
+    answer: 1,
+    explanation: "Use 'as much recent attention as Mars' instead of 'as much as recent attention as Mars'."
+  },
+  {
+    id: 37,
+    question: "You should not be that (a)/ cynical. Mr. Surya has no interior motive (b)/ in offering you support. (c)/ No error (d)",
+    options: ["You should not be that", "cynical. Mr. Surya has no interior motive", "in offering you support.", "No error"],
+    answer: 1,
+    explanation: "Replace 'interior' with 'ulterior' motive, which means hidden or secret intentions."
+  },
+  {
+    id: 38,
+    question: "I could not believe that (a)/ Ajay got into a fight with those (b)/ thugs. I always thought (c)/ that he is smarter than brave. (d)",
+    options: ["I could not believe that", "Ajay got into a fight with those", "thugs. I always thought", "that he is smarter than brave."],
+    answer: 3,
+    explanation: "Replace 'smarter' with 'more smart'. When comparing two qualities of the same person, we use 'more + positive degree' instead of the '-er' form."
+  },
+  {
+    id: 39,
+    question: "Sentence improvement: You can emphasize either of these four syllables in the poem written by shakespeare who is also known as the kalidasa of England.",
+    options: ["emphasize any of these", "emphasized either of these", "emphasize nither for these", "No substitution required"],
+    answer: 0,
+    explanation: "Option (a) is correct. Use 'any' instead of 'either' for selections involving more than two options ('four syllables')."
+  },
+  {
+    id: 40,
+    question: "Sentence improvement: The Japanese people are known for their commitment toward the nation and praised for their efficiency.",
+    options: ["Japanese", "The Japanese", "Japan", "no improvement"],
+    answer: 1,
+    explanation: "Option (b) is correct. 'The Japanese' acts as a collective adjective representing the whole nationality group."
+  },
+  {
+    id: 41,
+    question: "Sentence improvement: The student responded to the question so logically that the audience praised his analytic approach repeatedly despite the time constraints.",
+    options: ["analytic approach repeat", "analysis approach repeatedly", "analytical approach repeatedly", "no improvement"],
+    answer: 2,
+    explanation: "Option (c) provides the correct word form 'analytical' to serve as a proper adjective qualifying 'approach'."
+  },
+  {
+    id: 42,
+    question: "Sentence improvement: This shirt which is newly launched in the market cost me five thousand rupee",
+    options: ["costs me five thousand rupee", "costed me five thousand rupee", "cost me five thousands rupees", "cost me five thousand rupees"],
+    answer: 3,
+    explanation: "Option (d) uses the correct compound configuration structure 'five thousand rupees'. Nouns denoting value after a fixed cardinal take singular units but plural trailing entity labels."
+  },
+  {
+    id: 43,
+    question: "Sentence improvement: Of the two plans submitted by the architect, this is the one much likely to be accepted.",
+    options: ["most likely", "more likely", "many likely", "no improvement"],
+    answer: 1,
+    explanation: "Option (b) is correct because comparing exactly two items requires the comparative degree 'more likely'."
+  },
+  {
+    id: 44,
+    question: "Sentence improvement: Prashant is good from more other players of our school who participated in the all india cricket championship league",
+    options: ["good from many other", "best than most other", "better than most other", "no improvement"],
+    answer: 2,
+    explanation: "Option (c) is correct. Comparative structures standardly use 'better than most other'."
+  },
+  {
+    id: 45,
+    question: "Sentence improvement: Please tell me if you also think that no bird is more taller than a ostrich",
+    options: ["no bird is much taller than an ostrich", "no other bird is as tall as an ostrich", "no bird is taller than ostrich", "no improvement"],
+    answer: 1,
+    explanation: "Option (b) uses correct positive structure exclusion matching logic with 'no other bird'."
+  },
+  {
+    id: 46,
+    question: "Sentence improvement: A renowned chemist claimed that taking up to 50 times the commendable dose of vitamin-c could treat anything from influenza to cancer.",
+    options: ["commended", "recommended", "prescribe", "vouched"],
+    answer: 1,
+    explanation: "Option (b) is correct. The contextually accurate word is 'recommended dose' (सलाह दी गई खुराक)."
+  },
+  {
+    id: 47,
+    question: "Sentence improvement: When I was in Europe last year, I used to roam around in London on alternate days.",
+    options: ["Day after day", "alternative days", "day by day", "no improvement"],
+    answer: 3,
+    explanation: "Option (d) requires no improvement. 'Alternate days' correctly means every second day."
+  },
+  {
+    id: 48,
+    question: "Sentence improvement: The prime minister's speech laid out how important it is to encourage female participate in the economy yet the percentage of female lawmakers in the lower house of the parliament has fallen to 8%",
+    options: ["female participants", "female participation", "women participate", "no improvement"],
+    answer: 1,
+    explanation: "Option (b) correctly updates the term into the required abstract noun form 'female participation'."
+  },
+  {
+    id: 49,
+    question: "Sentence improvement: He claimed that he was merely an uninterested participant in the negotiation held by senior officers.",
+    options: ["an interested", "a disinterested", "a uninterested", "no improvement"],
+    answer: 1,
+    explanation: "Option (b) is correct. 'Disinterested' means impartial/neutral, which fits a negotiation context, while 'uninterested' means bored."
+  },
+  {
+    id: 50,
+    question: "Sentence improvement: He has told me that of Rajni and Usha, the later is the most responsible.",
+    options: ["the later is more", "The latter is more", "The latter is most", "No substitution"],
+    answer: 1,
+    explanation: "Option (b) uses 'The latter' for the second of two entities, paired with the comparative degree 'more'."
+  },
+  {
+    id: 51,
+    question: "Sentence improvement: 50 Chinese couples were married at a ceremony in Colombo to mark the anniversary of (diplomat relations between the two countries).",
+    options: ["Diplomatic relations among the two countries", "Diplomatic relations between the two countries", "Diplomacy relations between each other", "No improvement"],
+    answer: 1,
+    explanation: "Option (b) correctly uses the proper descriptive adjective form 'Diplomatic relations'."
+  },
+  {
+    id: 52,
+    question: "Sentence improvement: The people living in the coastal areas experience a interested phenomenon.",
+    options: ["No Improvement", "the interested phenomenon", "interestingly phenomenon", "an interesting phenomenon"],
+    answer: 3,
+    explanation: "Option (d) is correct. The correct phrase is 'an interesting phenomenon' to describe a captivating event."
+  },
+  {
+    id: 53,
+    question: "Sentence improvement: Among all the novels I have read in the past year, this one is far the most engaging.",
+    options: ["by far the most engaging", "at farthest the most engaging", "by far more engaging", "No improvement required"],
+    answer: 0,
+    explanation: "Option (a) correctly uses the intensifying idiom phrase 'by far the most engaging'."
+  },
+  {
+    id: 54,
+    question: "Fill in the blank: The branches of the old mango tree were ______ heavy with ripe, golden mangoes.",
+    options: ["loaded with", "laden with", "loaded by", "laden by"],
+    answer: 1,
+    explanation: "Option (b) is the accurate idiomatic adjective collocation. 'Laden with' means heavily loaded down with something."
+  },
+  {
+    id: 55,
+    question: "Fill in the blank: Despite its simple appearance, this grammar book is arguably ______ resource I've encountered.",
+    options: ["most effective", "more effective", "the most effective", "the more effective"],
+    answer: 2,
+    explanation: "Option (c) applies the precise superlative construction 'the most effective' for comparisons across all items encountered."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = {};
+let timerSeconds = 0;
+let quizMode = false;
+let timerObj;
+
+window.onload = function() {
+  if (QUESTIONS.length > 0) {
+    init();
+  }
+};
+
+function init() {
+  document.getElementById('qtotal').innerText = QUESTIONS.length;
+  if(PASSAGE_TEXT) { 
+    document.getElementById('passageArea').innerText = PASSAGE_TEXT; 
+    document.getElementById('passageArea').style.display = "block"; 
+  }
+  renderQuestion();
+  startClock();
+  setupPalette();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentIdx];
+  document.getElementById('qindex').innerText = currentIdx + 1;
+  document.getElementById('qtext').innerHTML = `<strong>${q.question}</strong>`;
+  document.getElementById('marking').innerHTML = `Marking: <span style="color:var(--success)">+2.00</span> / <span style="color:var(--danger)">-0.50</span>`;
+  
+  const optContainer = document.getElementById('options');
+  const expContainer = document.getElementById('explanation');
+  optContainer.innerHTML = "";
+  expContainer.style.display = "none";
+
+  q.options.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (userAnswers[currentIdx] === i ? ' selected' : '');
+    div.innerHTML = `<span>${String.fromCharCode(65 + i)}.</span> ${txt}`;
+    div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); updatePalette(); };
+    optContainer.appendChild(div);
+  });
+  if (quizMode && userAnswers[currentIdx] !== undefined) showFeedback();
+}
+
+function showFeedback() {
+  const q = QUESTIONS[currentIdx];
+  const opts = document.getElementById('options').children;
+  const exp = document.getElementById('explanation');
+  Array.from(opts).forEach((el, i) => {
+    el.classList.remove('correct', 'wrong');
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === userAnswers[currentIdx]) el.classList.add('wrong');
+  });
+  exp.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  exp.style.display = "block";
+}
+
+function startClock() {
+  timerObj = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+  }, 1000);
+}
+
+function setupPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerText = i + 1;
+    b.onclick = () => { currentIdx = i; renderQuestion(); document.getElementById('palette').style.display = 'none'; };
+    grid.appendChild(b);
+  });
+  updatePalette();
+}
+
+function updatePalette() {
+  const btns = document.getElementById('paletteGrid').children;
+  let attempted = 0;
+  Array.from(btns).forEach((b, i) => {
+    b.classList.remove('current', 'answered');
+    if (i === currentIdx) b.classList.add('current');
+    if (userAnswers[i] !== undefined) { b.classList.add('answered'); attempted++; }
+  });
+  document.getElementById('palette-summary').innerText = `Total: ${QUESTIONS.length} | Attempted: ${attempted}`;
+}
+
+document.getElementById('nextBtn').onclick = () => { if (currentIdx < QUESTIONS.length - 1) { currentIdx++; renderQuestion(); } };
+document.getElementById('prevBtn').onclick = () => { if (currentIdx > 0) { currentIdx--; renderQuestion(); } };
+document.getElementById('clearBtn').onclick = () => { delete userAnswers[currentIdx]; renderQuestion(); updatePalette(); };
+document.getElementById('paletteBtn').onclick = () => { 
+  const p = document.getElementById('palette');
+  p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+  updatePalette();
+};
+document.getElementById('modeToggle').onclick = function() { this.classList.toggle('active'); quizMode = !quizMode; renderQuestion(); };
+document.getElementById('submitBtn').onclick = () => { 
+  document.getElementById('submitMsg').innerText = `Attempted ${Object.keys(userAnswers).length}/${QUESTIONS.length}`;
+  document.getElementById('submitModal').style.display = 'flex'; 
+};
+document.getElementById('cancelSubmit').onclick = () => { document.getElementById('submitModal').style.display = 'none'; };
+document.getElementById('confirmSubmit').onclick = () => { clearInterval(timerObj); document.getElementById('submitModal').style.display = 'none'; showResults(); };
+
+function showResults() {
+  let correct = 0;
+  let reviewHTML = `<div class="card"><h2 style="text-align:center; color:var(--accent)">Review & Answer Key</h2>`;
+
+  QUESTIONS.forEach((q, i) => {
+    const isCorrect = userAnswers[i] === q.answer;
+    if (isCorrect) correct++;
+    const statusText = userAnswers[i] === undefined ? '<span style="color:var(--muted)">Unattempted</span>' : (isCorrect ? '<span style="color:var(--success); font-weight:bold">Correct</span>' : '<span style="color:var(--danger); font-weight:bold">Wrong</span>');
+
+    reviewHTML += `
+      <div class="review-q">
+        <p><strong>Q${i+1}. ${q.question}</strong> (${statusText})</p>
+        <div>
+          ${q.options.map((opt, optIdx) => {
+            let bgColor = "transparent"; let borderColor = "#eee";
+            if (optIdx === q.answer) { bgColor = "#e8f5e9"; borderColor = "#4caf50"; }
+            else if (optIdx === userAnswers[i]) { bgColor = "#ffebee"; borderColor = "#f44336"; }
+            return `<div class="review-opt" style="border:1px solid ${borderColor}; background:${bgColor}; padding:8px; margin:4px 0; border-radius:5px;">${String.fromCharCode(65 + optIdx)}. ${opt} ${optIdx === q.answer ? '✅' : (optIdx === userAnswers[i] ? '❌' : '')}</div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:10px; font-size:14px; background:#f9f9f9; padding:8px; border-radius:5px; border-left:3px solid var(--accent);">
+          <strong>Explanation:</strong> ${q.explanation}
+        </div>
+      </div>`;
+  });
+
+  const wrong = Object.keys(userAnswers).length - correct;
+  const score = (correct * 2) - (wrong * 0.5);
+  
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('footerBar').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="card">
+      <h2 style="text-align:center; color:var(--accent)">Results Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box"><h4>Score</h4><p>${score.toFixed(2)}</p></div>
+        <div class="stat-box"><h4>Correct</h4><p>${correct}</p></div>
+        <div class="stat-box"><h4>Wrong</h4><p>${wrong}</p></div>
+        <div class="stat-box"><h4>Time</h4><p>${document.getElementById('timer').innerText}</p></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button class="btn" onclick="downloadResult()">Download Result</button>
+        <button class="btn" style="background:#6c757d" onclick="location.reload()">Re-Attempt</button>
+      </div>
+    </div>
+    ${reviewHTML}
+  `;
+}
+
+function downloadResult() {
+    const resultsContent = document.getElementById('results').innerHTML;
+    const blob = new Blob([`<html><head><style>body{font-family:sans-serif; padding:20px;} .card{border:1px solid #ddd; padding:20px; border-radius:10px; margin-bottom:10px;} .stats-grid{display:flex; gap:20px;} .review-opt{padding:5px; margin:2px; border:1px solid #eee; border-radius:5px;}</style></head><body>${resultsContent}</body></html>`], {type: 'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Exam_Scorecard.html'; a.click();
+}
+</script>
+</body>
+</html>
